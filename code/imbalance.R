@@ -1,24 +1,19 @@
 library(apTreeshape)
 
-d<-dir("Phylos/")
+d<-dir("data/")
 t<-grep("tree_",d)
 tt<-d[t]
 e.trees<-list()
-
 #read trees
 for(i in 1:length(tt)){
   typ<- strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][3]
   prefix<-paste(strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][2])
-  if (typ == ".nex"){
-    tree <- read.nexus(paste0("Phylos/",tt[[i]]))
-    e.trees[[i]]<-tree
-  } else {
-    tree <- read.tree(paste0("Phylos/",tt[[i]]))
+    tree <- read.tree(paste0("data/",tt[[i]]))
     e.trees[[i]]<-tree
   }
-}  
-
-imbalance_metrics=function(trees,n.mc){
+ 
+##Imbalance metrics
+imbalance_metrics=function(e.trees,n.mc){
   tree.ts<-c()
   
   shape.yule<-c()
@@ -36,37 +31,37 @@ imbalance_metrics=function(trees,n.mc){
   p.lt.pda<-c()
   
   imbalance_metrics<-c()
-  for (i in 1:length(trees)){
-    tree<-e.trees[[i]]
-    tree.ts<-as.treeshape(tree)
+  for (i in 1:length(e.trees)){
+    tr<-e.trees[[i]]
+    tree.ts<-as.treeshape(tr)
     
     shape.yule[i]<-shape.statistic(tree.ts, norm = "yule")
-    colles.yule[i]<-colless(tree.ts,norm = "yule")
-    
-    df<-data.frame(colless.test(tree.ts, model = "yule", alternative = "less", n.mc = n.mc))
-    p.coless.t.y.less[i]<-df$p.value
-    df<-data.frame(colless.test(tree.ts, model = "yule", alternative = "greater", n.mc = n.mc))
-    p.coless.t.y.great[i]<-df$p.value
-    df<-data.frame(likelihood.test(tree.ts, model = "yule", alternative = "two.sided"))
-    p.lt.yule[i]<-df$p.value
-    
+    colles.yule[i]<-colless(tree.ts, norm = "yule")
     sackin.yule[i]<-sackin(tree.ts, norm = "yule")
     
     shape.pda[i]<-shape.statistic(tree.ts, norm = "pda")
     colles.pda[i]<-colless(tree.ts,norm = "pda")
-    
-    df<-data.frame(colless.test(tree.ts, model = "pda", alternative = "less", n.mc = n.mc))
-    p.coless.t.pda.less[i]<-df$p.value
-    df<-data.frame(colless.test(tree.ts, model = "pda", alternative = "greater", n.mc = n.mc))
-    p.coless.t.pda.great[i]<-df$p.value
-    df<-data.frame(likelihood.test(tree.ts, model = "pda", alternative = "two.sided"))
-    p.lt.pda[i]<-df$p.value
     sackin.pda[i]<-sackin(tree.ts, norm = "pda")
     
-imbalance.metrics<-data.frame(
-  shape.yule,colles.yule,p.coless.t.y.less,p.coless.t.y.great,sackin.yule,p.lt.yule,
-  shape.pda,colles.pda,p.coless.t.pda.less,p.coless.t.pda.great,sackin.pda,p.lt.pda)
+    df<-data.frame(colless.test(tree.ts, model = "yule", alternative = "less", n.mc = n.mc))
+    p.coless.t.y.less[i]<-df$p.value
+    df1<-data.frame(colless.test(tree.ts, model = "yule", alternative = "greater", n.mc = n.mc))
+    p.coless.t.y.great[i]<-df1$p.value
+    df2<-data.frame(likelihood.test(tree.ts, model = "yule", alternative = "two.sided"))
+    p.lt.yule[i]<-df2$p.value
+    
+    df3<-data.frame(colless.test(tree.ts, model = "pda", alternative = "less", n.mc = n.mc))
+    p.coless.t.pda.less[i]<-df3$p.value
+    df4<-data.frame(colless.test(tree.ts, model = "pda", alternative = "greater", n.mc = n.mc))
+    p.coless.t.pda.great[i]<-df4$p.value
+    df5<-data.frame(likelihood.test(tree.ts, model = "pda", alternative = "two.sided"))
+    p.lt.pda[i]<-df5$p.value
+     
+imbalance.metrics<-data.frame(shape.yule,colles.yule,p.coless.t.y.less,p.coless.t.y.great,sackin.yule,
+  p.lt.yule,shape.pda,colles.pda,p.coless.t.pda.less,p.coless.t.pda.great,sackin.pda,p.lt.pda)
   }
+  
   return(imbalance.metrics)
 }
+
 imbalance.metrics<-imbalance_metrics(e.trees,1000)

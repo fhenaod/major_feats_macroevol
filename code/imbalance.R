@@ -65,3 +65,4 @@ imbalance.metrics<-data.frame(shape.yule,colles.yule,p.coless.t.y.less,p.coless.
 }
 
 imbalance.metrics<-imbalance_metrics(e.trees,1000)
+round(imbalance.metrics,3)

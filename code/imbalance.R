@@ -1,7 +1,7 @@
 library(apTreeshape)
 
 d<-dir("data/")
-t<-grep("tree_",d)
+t<-grep("phylo_",d)
 tt<-d[t]
 e.trees<-list()
 #read trees

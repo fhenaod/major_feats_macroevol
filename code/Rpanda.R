@@ -1,13 +1,24 @@
 library(RPANDA)
 library(parallel)
-data("Phyllostomidae")
-data("Phyllostomidae_genera")
+
+d<-dir("data/")
+t<-grep("phylo_",d)
+tt<-d[t]
+e.trees<-list()
+#read trees
+for(i in 1:length(tt)){
+  typ<- strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][3]
+  prefix<-paste(strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][2])
+  tree <- read.tree(paste0("data/",tt[[i]]))
+  e.trees[[i]]<-tree
+}
 
 # Estimate tree's spectrum from a list of trees
-trees.spect<-lapply(Phyllostomidae_genera,spectR)
+trees_spectR<-mclapply(e.trees,spectR, mc.cores = 2)
+trees_spectR<-readRDS("trees_spec_sum.rds")
 
 # Extract tree's spectrum summary stats
-extract_spect=function(l){
+extract_spect=function(lap){
   principal_eigenvalue<-c()
   asymmetry<-c()
   peakedness<-c()
@@ -23,8 +34,8 @@ spec_sum<-data.frame()
   }
 return(spec_sum)
 }
-trees.spect.sum<-extract_spect(trees.spect)
-trees.spect.sum$modalities
+trees_spec_sum<-extract_spect(trees_spectR)
+trees_spec_sum$modalities
 
 # Estimate BIC trees modality number
 bic.compare=function(tr,e.gap){
@@ -40,4 +51,5 @@ bic.compare=function(tr,e.gap){
   }
   return(df)
 }
-bc.s<-bic.compare(Phyllostomidae_genera,trees.spect.sum$modalities)
+sum_bic_compare<-bic.compare(e.trees,trees_spec_sum$modalities)
+

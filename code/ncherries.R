@@ -7,4 +7,4 @@ ncherries=function(trees.spectrums){
   }
   return(ncherries)
 }
-ncherries(trees.spectrums)
+n_cherries<-ncherries(trees_spectrum)

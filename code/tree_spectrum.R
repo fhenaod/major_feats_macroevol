@@ -22,6 +22,4 @@ tree_spectrum=function(trees){
   }
   return(tree.spectrum)
 }
-trees.spectrums<-tree_spectrum(e.trees)
-
-plot(spectrum.treeshape(as.treeshape(e.trees)), type="l")
+trees_spectrum<-tree_spectrum(e.trees)

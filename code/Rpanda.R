@@ -51,5 +51,4 @@ bic.compare=function(tr,e.gap){
   }
   return(df)
 }
-sum_bic_compare<-bic.compare(e.trees[1:2],trees_spec_sum$modalities[1:2])
-
+sum_bic_compare<-bic.compare(e.trees,trees_spec_sum$modalities)

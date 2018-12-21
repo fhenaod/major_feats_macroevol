@@ -12,7 +12,7 @@ for(i in 1:length(tt)){
     e.trees[[i]]<-tree
   }
  
-##Imbalance metrics
+# Imbalance metrics ####
 imbalance_metrics=function(e.trees,n.mc){
   tree.ts<-c()
   

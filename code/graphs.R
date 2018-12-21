@@ -4,11 +4,12 @@ library(tidyverse)
 library(ggpubr)
 library(cowplot)
 library(ggthemes)
+library(visreg)
 
 sum_stats<-data.frame(tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
 #sum_bic_compare,
 
-## Shape
+# Shape ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(shape.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
@@ -23,7 +24,7 @@ ggarrange(hh1, hh2,
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 
-## Colles & Sackin 
+# Colles & Sackin ####
 hh3<-ggplot(sum_stats, aes(x=colles.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(colles.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
@@ -48,7 +49,7 @@ ggarrange(hh3, hh4, hh5, hh6,
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
-# Outer and Cherry branches
+# Outer and Cherry branches ####
 hh7<-ggplot(sum_stats, aes(x = n_cherries)) + geom_histogram(color="darkblue", fill="white") + 
   labs(title="", x="Cherry branches", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(0, 1500), y=c(0, 60)), aes(x, y)) 
@@ -62,7 +63,7 @@ ggarrange(hh7, hh8,
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 
-# Prin. eigenvalue, asymmetry, peakedness and modalities
+# Prin. eigenvalue, asymmetry, peakedness and modalities ####
 hh9<-ggplot(sum_stats, aes(x=log(principal_eigenvalue))) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(log(principal_eigenvalue))),color="red", linetype="dashed", size=1) +
   labs(title="", x="Log Principal eigenvalue", y = "Count") + theme_tufte(base_family = "Helvetica") + 
@@ -97,14 +98,34 @@ sum_stats_f<-select(sum_stats, ntips, tree.min.age, tree.max.age, gamma.stat, tr
                     shape.yule, colles.yule, sackin.yule, shape.pda, colles.pda, sackin.pda, n_cherries,
                     outer_branches, principal_eigenvalue, asymmetry, peakedness, modalities)
 
-#Mean and CI95
+# Mean and CI95 ####
 x<-log(sum_stats_f$modalities)
 round(mean(x),2) ## MEAN Lambda
 sem<-sd(x)/sqrt(length(x)) # SE
 round(c(mean(x)-2*sem,mean(x)+2*sem),2) # CI95
 rm(x)
 
-# Correlation table
+par(mfrow=c(1,2))
+visreg(lm(ln_dr~shape.yule, data=sum_stats_f))
+visreg(lm(ln_dr~shape.pda, data=sum_stats_f))
+
+par(mfrow=c(2,2))
+visreg(lm(ln_dr~(colles.yule), data=sum_stats_f))
+visreg(lm(ln_dr~(colles.pda), data=sum_stats_f))
+visreg(lm(ln_dr~(sackin.yule), data=sum_stats_f))
+visreg(lm(ln_dr~(sackin.pda), data=sum_stats_f))
+
+par(mfrow=c(1,2))
+visreg(lm(ln_dr~n_cherries, data=sum_stats_f))
+visreg(lm(ln_dr~outer_branches, data=sum_stats_f))
+
+par(mfrow=c(2,2))
+visreg(lm(ln_dr~(principal_eigenvalue), data=sum_stats_f))
+visreg(lm(ln_dr~(asymmetry), data=sum_stats_f))
+visreg(lm(ln_dr~(peakedness), data=sum_stats_f))
+visreg(lm(ln_dr~(modalities), data=sum_stats_f))
+
+# Correlation table ####
 par(mfrow=c(1,1))
 # propertCorrM
 M<-psych::lowerCor(sum_stats_f,digits=2, method = "spearman")

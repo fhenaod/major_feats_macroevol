@@ -16,7 +16,7 @@ for(i in 1:length(tt)){
 # Estimate tree's spectrum from a list of trees
 trees_spectR<-mclapply(e.trees,spectR, mc.cores = 2)
 
-# Extract tree's spectrum summary stats
+# Extract tree's spectrum summary stats ####
 extract_spect=function(lap){
   principal_eigenvalue<-c()
   asymmetry<-c()
@@ -37,7 +37,7 @@ trees_spec_sum<-extract_spect(trees_spectR)
 trees_spec_sum<-readRDS("trees_spec_sum.rds")
 trees_spec_sum$modalities
 
-# Estimate BIC trees modality number
+# Estimate BIC trees modality number ####
 bic.compare=function(tr,e.gap){
   bicc<-c() 
   bic.test.r<-c()

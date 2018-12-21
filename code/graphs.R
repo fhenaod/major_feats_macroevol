@@ -10,10 +10,12 @@ sum_stats<-data.frame(tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr),
 
 ## Shape
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(shape.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(-10, 20), y=c(0, 20)), aes(x, y)) 
 
 hh2<-ggplot(sum_stats, aes(x=shape.pda)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(shape.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(-20, 10), y=c(0, 30)), aes(x, y)) 
 
@@ -23,18 +25,22 @@ ggarrange(hh1, hh2,
 
 ## Colles & Sackin 
 hh3<-ggplot(sum_stats, aes(x=colles.yule)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(colles.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(-5, 15), y=c(0, 20)), aes(x, y)) 
 
 hh4<-ggplot(sum_stats, aes(x=sackin.yule)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(sackin.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Sackin Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(-5, 15), y=c(0, 20)), aes(x, y)) 
 
 hh5<-ggplot(sum_stats, aes(x=colles.pda)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(colles.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 20)), aes(x, y)) 
 
 hh6<-ggplot(sum_stats, aes(x=sackin.pda)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(sackin.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Sackin Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 20)), aes(x, y)) 
 
@@ -58,26 +64,31 @@ ggarrange(hh7, hh8,
 
 # Prin. eigenvalue, asymmetry, peakedness and modalities
 hh9<-ggplot(sum_stats, aes(x=log(principal_eigenvalue))) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(log(principal_eigenvalue))),color="red", linetype="dashed", size=1) +
   labs(title="", x="Log Principal eigenvalue", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(2, 15), y=c(0, 20)), aes(x, y)) 
 
 hh10<-ggplot(sum_stats, aes(x=asymmetry)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(asymmetry)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Asymmetry", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(-1, 2.5), y=c(0, 20)), aes(x, y)) 
 
 hh11<-ggplot(sum_stats, aes(x=peakedness)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(peakedness)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Peakedness", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(0, 12), y=c(0, 20)), aes(x, y)) 
 
 hh12<-ggplot(sum_stats, aes(x=modalities)) + geom_histogram(color="darkblue", fill="white") + 
+  geom_vline(aes(xintercept= mean(modalities)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(1, 8350), y=c(0, 100)), aes(x, y)) 
 
-#hh13<-ggplot(sum_stats, aes(x=log(modalities))) + geom_histogram(color="darkblue", fill="white") + 
-#  labs(title="", x="Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-#  geom_rangeframe(data=data.frame(x=c(-5, 10), y=c(0, 50)), aes(x, y)) 
+hh13<-ggplot(sum_stats, aes(x=log(modalities))) + geom_histogram(color="darkblue", fill="white") +
+  geom_vline(aes(xintercept= mean(log(modalities))),color="red", linetype="dashed", size=1) +
+  labs(title="", x="Log Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x=c(-5, 10), y=c(0, 40)), aes(x, y)) 
 
-ggarrange(hh9, hh10, hh11, hh12,   
+ggarrange(hh9, hh10, hh11, hh13,   
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
@@ -86,7 +97,12 @@ sum_stats_f<-select(sum_stats, ntips, tree.min.age, tree.max.age, gamma.stat, tr
                     shape.yule, colles.yule, sackin.yule, shape.pda, colles.pda, sackin.pda, n_cherries,
                     outer_branches, principal_eigenvalue, asymmetry, peakedness, modalities)
 
-pairs(sum_stats_f)
+#Mean and CI95
+x<-log(sum_stats_f$modalities)
+round(mean(x),2) ## MEAN Lambda
+sem<-sd(x)/sqrt(length(x)) # SE
+round(c(mean(x)-2*sem,mean(x)+2*sem),2) # CI95
+rm(x)
 
 # Correlation table
 par(mfrow=c(1,1))

@@ -6,7 +6,7 @@ library(cowplot)
 library(ggthemes)
 library(visreg)
 
-sum_stats<-data.frame(tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
+sum_stats<-data.frame(tree_names,tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
 #sum_bic_compare,
 
 # Shape ####
@@ -48,6 +48,14 @@ hh6<-ggplot(sum_stats, aes(x=sackin.pda)) + geom_histogram(color="darkblue", fil
 ggarrange(hh3, hh4, hh5, hh6,   
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
+
+# p-value tests
+hist(table(sum_stats$p.coless.t.y.less<=0.05))
+hist(table(sum_stats$p.coless.t.y.great<=0.05))
+hist(table(sum_stats$p.coless.t.pda.less<=0.05))
+hist(table(sum_stats$p.coless.t.pda.great<=0.05))
+hist(table(sum_stats$p.lt.yule<=0.05))
+hist(table(sum_stats$p.lt.pda<=0.05))
 
 # Outer and Cherry branches ####
 hh7<-ggplot(sum_stats, aes(x = n_cherries)) + geom_histogram(color="darkblue", fill="white") + 
@@ -105,27 +113,31 @@ sem<-sd(x)/sqrt(length(x)) # SE
 round(c(mean(x)-2*sem,mean(x)+2*sem),2) # CI95
 rm(x)
 
+# Regressions ####
 par(mfrow=c(1,2))
-visreg(lm(ln_dr~shape.yule, data=sum_stats_f))
-visreg(lm(ln_dr~shape.pda, data=sum_stats_f))
+visreg(lm(shape.yule~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)")
+visreg(lm(shape.pda~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)")
 
-par(mfrow=c(2,2))
-visreg(lm(ln_dr~(colles.yule), data=sum_stats_f))
-visreg(lm(ln_dr~(colles.pda), data=sum_stats_f))
-visreg(lm(ln_dr~(sackin.yule), data=sum_stats_f))
-visreg(lm(ln_dr~(sackin.pda), data=sum_stats_f))
+summary(lm(shape.yule~log(tree.max.age), data=sum_stats_f))
+summary(lm(shape.pda~log(tree.max.age), data=sum_stats_f))
 
 par(mfrow=c(1,2))
-visreg(lm(ln_dr~n_cherries, data=sum_stats_f))
-visreg(lm(ln_dr~outer_branches, data=sum_stats_f))
+visreg(lm(log(n_cherries)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Cherry branches")
+visreg(lm(log(outer_branches)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Outer branches")
+
+summary(lm(log(n_cherries)~log(tree.max.age), data=sum_stats_f))
+summary(lm(log(outer_branches)~log(tree.max.age), data=sum_stats_f))
 
 par(mfrow=c(2,2))
-visreg(lm(ln_dr~(principal_eigenvalue), data=sum_stats_f))
-visreg(lm(ln_dr~(asymmetry), data=sum_stats_f))
-visreg(lm(ln_dr~(peakedness), data=sum_stats_f))
-visreg(lm(ln_dr~(modalities), data=sum_stats_f))
+visreg(lm(log(principal_eigenvalue)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Principal eigenvalue")
+visreg(lm(log(asymmetry+0.15)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Asymmetry")
+visreg(lm(log(peakedness)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Peakedness")
 
-# Correlation table ####
+summary(lm(log(principal_eigenvalue)~log(tree.max.age), data=sum_stats_f))
+summary(lm(log(asymmetry+0.15)~log(tree.max.age), data=sum_stats_f))
+summary(lm(log(peakedness)~log(tree.max.age), data=sum_stats_f))
+
+# Correlation matrix ####
 par(mfrow=c(1,1))
 # propertCorrM
 M<-psych::lowerCor(sum_stats_f,digits=2, method = "spearman")

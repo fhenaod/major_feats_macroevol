@@ -1,14 +1,14 @@
 library(apTreeshape)
 
-d<-dir("data/")
-t<-grep("phylo_",d)
+d<-dir("data_megaPhylos/")
+t<-grep("tree_",d)
 tt<-d[t]
 e.trees<-list()
 #read trees
 for(i in 1:length(tt)){
   typ<- strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][3]
   prefix<-paste(strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][2])
-    tree <- read.tree(paste0("data/",tt[[i]]))
+    tree <- read.tree(paste0("data_megaPhylos/",tt[[i]]))
     e.trees[[i]]<-tree
   }
  

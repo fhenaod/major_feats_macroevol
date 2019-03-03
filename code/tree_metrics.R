@@ -16,7 +16,7 @@ tree_metrics=function(tt){
   }  
   return(trees.metrics)
 }
-tree_metrics_sum<-tree_metrics(e.trees)
+tree_metrics_sum<-round(tree_metrics(e.trees),2)
 
 source('code/get_DR.R')
 trees_dr<-sapply(e.trees,get_DR)

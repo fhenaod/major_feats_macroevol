@@ -16,10 +16,10 @@ smaller_spect(e.trees)
 tree_spectrum=function(trees){
   tree.spectrum<-list()
   for (i in 1:length(trees)){
-    tree<-e.trees[[i]]
+    tree<-trees[[i]]
     tree.ts<-as.treeshape(tree)
     tree.spectrum[[i]]<-spectrum.treeshape(tree.ts)
   }
   return(tree.spectrum)
 }
-trees_spectrum<-tree_spectrum(e.trees)
+trees_spectrum<-tree_spectrum(amph.sl[6:62])

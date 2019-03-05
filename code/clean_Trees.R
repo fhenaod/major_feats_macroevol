@@ -3,8 +3,8 @@ library(phytools)
 library(rncl)
 library(castor)
 
-source.path<-"Phylos/"
-destination.path<-"data/"
+source.path<-"megaphylos_raw/"
+destination.path<-"data_megaPhylos/"
 
 J2012<-read.tree(paste0(source.path,"tree_J2012_.txt"))
 plot(J2012,cex=.6, show.tip.label = F,no.margin = T)
@@ -40,6 +40,7 @@ write.tree(S2018,file=paste0(destination.path,"tree_S2018.cr.bi_.txt"))
 ST2018<-read.nexus(paste0(source.path,"tree_ST2018_.nex"))
 plot(ST2018,cex=.6, show.tip.label = F,no.margin = T)
 is.ultrametric(ST2018)
+is.binary(ST2018)
 write.tree(ST2018,file=paste0(destination.path,"tree_ST2018.tr_.txt"))
 
 T2016<-read.tree(paste0(source.path,"tree_T2016_.tre"))

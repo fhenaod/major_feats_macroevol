@@ -1,4 +1,5 @@
 library(apTreeshape)
+## This is for the complete megaphylogenies
 
 # Number of tips from the smaller daughter clade given the node
 smaller_spect=function(trees){
@@ -10,7 +11,7 @@ smaller_spect=function(trees){
   }
   return(tree.spectrum)
 }
-smaller_spect(e.trees)
+smaller_spect(e.trees[[1]])
 
 # Number of subtrees of each size 
 tree_spectrum=function(trees){
@@ -22,4 +23,13 @@ tree_spectrum=function(trees){
   }
   return(tree.spectrum)
 }
-trees_spectrum<-tree_spectrum(amph.sl[6:62])
+trees_spectrum<-tree_spectrum(e.trees[1])
+
+ncherries=function(trees.spectrums){
+  ncherries<-c()
+  for (i in 1:length(trees.spectrums)){
+    ncherries[i]<-trees.spectrums[[i]][length(trees.spectrums[[i]])]
+  }
+  return(ncherries)
+}
+n_cherries<-ncherries(trees_spectrum)

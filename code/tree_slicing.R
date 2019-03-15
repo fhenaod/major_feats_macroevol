@@ -23,24 +23,28 @@ slice_tree_ages<-function(tree, ages2cut){
   }  
   return(cutted.trees)
 }
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[1]])), by=5)
-bird.sl<-slice_tree_ages(e.trees[[1]],ages2cut[2:length(ages2cut)])
 
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[2]])), by=5)
-amph.sl<-slice_tree_ages(e.trees[[2]],ages2cut[2:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[1]])), by=5)
+bird.sl<-slice_tree_ages(e.trees[[1]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[3]])), by=5)
-fish.sl<-slice_tree_ages(e.trees[[3]],ages2cut[2:length(ages2cut)])
+#par(mfrow=c(11,2))
+#mapply(plot, bird.sl, MoreArgs = list(type="fan", show.tip.label=F, no.margin=T))
 
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[4]])), by=5)
-squa.sl<-slice_tree_ages(e.trees[[4]],ages2cut[2:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[2]])), by=5)
+amph.sl<-slice_tree_ages(e.trees[[2]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[5]])), by=5)
-fern.sl<-slice_tree_ages(e.trees[[5]],ages2cut[2:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[3]])), by=5)
+fish.sl<-slice_tree_ages(e.trees[[3]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[6]])), by=5)
-seed.sl<-slice_tree_ages(e.trees[[6]],ages2cut[2:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[4]])), by=5)
+squa.sl<-slice_tree_ages(e.trees[[4]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=0, to=max(branching.times(e.trees[[7]])), by=5)
-chon.sl<-slice_tree_ages(e.trees[[7]],ages2cut[2:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[5]])), by=5)
+fern.sl<-slice_tree_ages(e.trees[[5]],ages2cut[1:length(ages2cut)])
+
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[6]])), by=5)
+seed.sl<-slice_tree_ages(e.trees[[6]],ages2cut[1:length(ages2cut)])
+
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[7]])), by=5)
+chon.sl<-slice_tree_ages(e.trees[[7]],ages2cut[1:length(ages2cut)])
 

@@ -6,7 +6,7 @@ library(cowplot)
 library(ggthemes)
 library(visreg)
 
-sum_stats<-data.frame(tree_names,tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
+sum_stats<-data.frame(tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
 #sum_bic_compare,
 
 # Shape ####
@@ -170,24 +170,19 @@ corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name
                    diag=FALSE, mar = c(0.5,0.5,0.5,0.5))
 
 library(plotly)
-x<-rnorm(100, 30, sd = 5)
-y<-rnorm(100)
-z<-rnorm(100, 0, sd = 1)
-clade_age<-1:100
-clade_size<-runif(100,4,2000)
-  
-sum_stats_f<-data.frame(principal_eigenvalue=x, asymmetry=y, peakedness=z, clade_age,clade_size)
+sum_stats_f<-data.frame(trees_spec_sum, tree_metrics_sum)
 
-express<-expression(paste("Ln mean ", lambda, " (species ", Myr^-1,")"),sep=" ")
+#express<-expression(paste("Ln mean ", lambda, " (species ", Myr^-1,")"),sep=" ")
 
 plot_ly(sum_stats_f, x = ~principal_eigenvalue, y = ~asymmetry, z = ~peakedness,
         type = "scatter3d", mode = "markers",
-        marker = list(symbol = 'circle', sizemode = 'area', 
-                      color = ~clade_age, size = ~clade_size,
+        marker = list(symbol = 'circle', sizemode = '', 
+                      color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
     title = "",
-    scene = list( xaxis = list(title = "Lambda"),
-                  yaxis = list(title = "nu"),
-                  zaxis = list(title = "psi"))
+    scene = list( xaxis = list(title = "Principal eigenvalued"),
+                  yaxis = list(title = "Asymmetry"),
+                  zaxis = list(title = "Peakedness"))
     )
+

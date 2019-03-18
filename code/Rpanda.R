@@ -2,7 +2,7 @@ library(RPANDA)
 library(parallel)
 
 # Estimate tree's spectrum from a list of trees
-trees_spectR<-mclapply(bird.sl[1:15],spectR, mc.cores = 3)
+trees_spectR<-mclapply(bird.sl,spectR, mc.cores = 3)
 
 # Extract tree's spectrum summary stats ####
 extract_spect=function(lap){
@@ -13,10 +13,18 @@ extract_spect=function(lap){
   
 spec_sum<-data.frame()  
   for(i in 1:length(lap)){
-    principal_eigenvalue[i]<-lap[[i]]$principal_eigenvalue
-    asymmetry[i]<-lap[[i]]$asymmetry
-    peakedness[i]<-lap[[i]]$peakedness
-    modalities[i]<-lap[[i]]$eigengap
+    if (is.null(trees_spectR[[i]])) {
+      principal_eigenvalue[i]<-NA
+      asymmetry[i]<-NA
+      peakedness[i]<-NA
+      modalities[i]<-NA
+      }
+    else {
+      principal_eigenvalue[i]<-lap[[i]]$principal_eigenvalue
+      asymmetry[i]<-lap[[i]]$asymmetry
+      peakedness[i]<-lap[[i]]$peakedness
+      modalities[i]<-lap[[i]]$eigengap}
+    
   spec_sum<-data.frame(principal_eigenvalue,asymmetry,peakedness,modalities)
   }
 return(spec_sum)

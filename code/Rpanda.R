@@ -1,20 +1,8 @@
 library(RPANDA)
 library(parallel)
 
-d<-dir("data/")
-t<-grep("phylo_",d)
-tt<-d[t]
-e.trees<-list()
-#read trees
-for(i in 1:length(tt)){
-  typ<- strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][3]
-  prefix<-paste(strsplit(tt[[i]], split="_", fixed=TRUE)[[1]][2])
-  tree <- read.tree(paste0("data/",tt[[i]]))
-  e.trees[[i]]<-tree
-}
-
 # Estimate tree's spectrum from a list of trees
-trees_spectR<-mclapply(e.trees,spectR, mc.cores = 2)
+trees_spectR<-mclapply(bird.sl[1:15],spectR, mc.cores = 3)
 
 # Extract tree's spectrum summary stats ####
 extract_spect=function(lap){
@@ -51,4 +39,4 @@ bic.compare=function(tr,e.gap){
   }
   return(df)
 }
-sum_bic_compare<-bic.compare(e.trees,trees_spec_sum$modalities)
+sum_bic_compare<-bic.compare(bird.sl,trees_spec_sum$modalities)

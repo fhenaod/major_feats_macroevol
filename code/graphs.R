@@ -7,7 +7,7 @@ library(ggthemes)
 library(visreg)
 
 sum_stats<-data.frame(tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
-#sum_bic_compare,
+sum_stats<-readRDS("Slicing/bird/output/bird_sum_stats.rds")
 
 # Shape ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
@@ -171,16 +171,16 @@ corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name
 
 library(plotly)
 sum_stats_f<-data.frame(trees_spec_sum, tree_metrics_sum)
-
+sum_stats_f<-readRDS("output/bird_sum_stats.rds")
 #express<-expression(paste("Ln mean ", lambda, " (species ", Myr^-1,")"),sep=" ")
 
 plot_ly(sum_stats_f, x = ~principal_eigenvalue, y = ~asymmetry, z = ~peakedness,
         type = "scatter3d", mode = "markers",
-        marker = list(symbol = 'circle', sizemode = '', 
+        marker = list(symbol = 'circle', sizemode = 'area', 
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "",
+    title = "Birds",
     scene = list( xaxis = list(title = "Principal eigenvalued"),
                   yaxis = list(title = "Asymmetry"),
                   zaxis = list(title = "Peakedness"))

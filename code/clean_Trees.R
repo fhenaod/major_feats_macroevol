@@ -39,9 +39,13 @@ write.tree(S2018,file=paste0(destination.path,"tree_S2018.cr.bi_.txt"))
 
 ST2018<-read.nexus(paste0(source.path,"tree_ST2018_.nex"))
 plot(ST2018,cex=.6, show.tip.label = F,no.margin = T)
-is.ultrametric(ST2018)
 is.binary(ST2018)
-write.tree(ST2018,file=paste0(destination.path,"tree_ST2018.tr_.txt"))
+min(ST2018$edge.length)
+ST2018$edge.length[ST2018$edge.length<=0] <-1e-6
+ST2018<-phangorn::nnls.tree(cophenetic(ST2018),ST2018,rooted=TRUE)
+is.ultrametric(ST2018)
+ST2018$edge.length[ST2018$edge.length<=0] <-1e-6
+write.tree(ST2018,file=paste0(destination.path,"tree_ST2018.tr.cr_.txt"))
 
 T2016<-read.tree(paste0(source.path,"tree_T2016_.tre"))
 plot(T2016,cex=.6, show.tip.label = F,no.margin = T)
@@ -49,7 +53,11 @@ repi.tips<-c("Sphenodon_punctatus")
 T2016<-drop.tip(T2016,repi.tips)
 T2016<-multi2di(T2016)
 is.binary(T2016)
-T2016<-phangorn::nnls.tree(cophenetic(T2016),T2016,rooted=TRUE)
+T2016<-castor:::extend_tree_to_height(T2016)$tree
+is.ultrametric(T2016)
+min(T2016$edge.length)
+T2016$edge.length[T2016$edge.length==0] <-1e-6
+T2016<-castor:::extend_tree_to_height(T2016)$tree
 is.ultrametric(T2016)
 write.tree(T2016,file=paste0(destination.path,"tree_T2016.cr.pr.bi_.txt"))
 

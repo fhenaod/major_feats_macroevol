@@ -7,18 +7,18 @@ library(ggthemes)
 library(visreg)
 
 sum_stats<-data.frame(tree_metrics_sum, trees_mean_dr, ln_dr=log(trees_mean_dr), imbalance.metrics, n_cherries, outer_branches=sum_stats$ntips-sum_stats$n_cherries, trees_spec_sum)
-sum_stats<-readRDS("Slicing/chon/output/chon_sum_stats.rds")
+sum_stats<-readRDS("Slicing/squa/output/squa_sum_stats.rds")
 
 # Shape ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(shape.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-10, 10), y=c(0, 30)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-5, 25), y=c(0, 10)), aes(x, y)) 
 
 hh2<-ggplot(sum_stats, aes(x=shape.pda)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(shape.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-15, 10), y=c(0, 30)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-25, 5), y=c(0, 10)), aes(x, y)) 
 
 ggarrange(hh1, hh2,   
           labels = c("A", "B"),
@@ -28,22 +28,22 @@ ggarrange(hh1, hh2,
 hh3<-ggplot(sum_stats, aes(x=colles.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(colles.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-2, 2), y=c(0, 20)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-2, 8), y=c(0, 15)), aes(x, y)) 
 
 hh4<-ggplot(sum_stats, aes(x=sackin.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(sackin.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Sackin Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-2.5, 5), y=c(0, 20)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-2, 8), y=c(0, 15)), aes(x, y)) 
 
 hh5<-ggplot(sum_stats, aes(x=colles.pda)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(colles.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 1), y=c(0, 20)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(0, 1), y=c(0, 15)), aes(x, y)) 
 
 hh6<-ggplot(sum_stats, aes(x=sackin.pda)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(sackin.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Sackin Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 1.5), y=c(0, 20)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 15)), aes(x, y)) 
 
 ggarrange(hh3, hh4, hh5, hh6,   
           labels = c("A", "B", "C", "D"),
@@ -75,17 +75,17 @@ ggarrange(hh7, hh8,
 hh9<-ggplot(sum_stats, aes(x=log(principal_eigenvalue))) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(log(principal_eigenvalue))),color="red", linetype="dashed", size=1) +
   labs(title="", x="Log Principal eigenvalue", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(2, 16), y=c(0, 15)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(2, 16), y=c(0, 10)), aes(x, y)) 
 
 hh10<-ggplot(sum_stats, aes(x=asymmetry)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(asymmetry)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Asymmetry", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-1, 3), y=c(0, 20)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-1, 4), y=c(0, 10)), aes(x, y)) 
 
 hh11<-ggplot(sum_stats, aes(x=peakedness)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(peakedness)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Peakedness", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 8), y=c(0, 40)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(0, 18), y=c(0, 20)), aes(x, y)) 
 
 hh12<-ggplot(sum_stats, aes(x=modalities)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(modalities)),color="red", linetype="dashed", size=1) +
@@ -95,7 +95,7 @@ hh12<-ggplot(sum_stats, aes(x=modalities)) + geom_histogram(color="darkblue", fi
 hh13<-ggplot(sum_stats, aes(x=log(modalities))) + geom_histogram(color="darkblue", fill="white") +
   geom_vline(aes(xintercept= mean(log(modalities))),color="red", linetype="dashed", size=1) +
   labs(title="", x="Log Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-2.5, 5), y=c(0, 60)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-2, 6), y=c(0, 20)), aes(x, y)) 
 
 ggarrange(hh9, hh10, hh11, hh13,   
           labels = c("A", "B", "C", "D"),
@@ -105,7 +105,7 @@ sum_stats_f<-select(sum_stats, ntips, tree.min.age, tree.max.age, gamma.stat, tr
                     shape.yule, colles.yule, sackin.yule, shape.pda, colles.pda, sackin.pda, n_cherries,
                     outer_branches, principal_eigenvalue, asymmetry, peakedness, modalities)
 
-sum_stats_f<-readRDS("Slicing/chon/output/chon_sum_stats.rds")
+sum_stats_f<-sum_stats
 
 # Mean and CI95 ####
 x<-log(sum_stats_f$modalities)
@@ -182,7 +182,7 @@ plot_ly(sum_stats_f, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peaked
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "Chondrichthyans",
+    title = "Squamates",
     scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
                   yaxis = list(title = "Asymmetry"),
                   zaxis = list(title = "Peakedness"))

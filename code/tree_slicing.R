@@ -52,7 +52,6 @@ fern.sl<-slice_tree_ages(e.trees[[7]],ages2cut[1:length(ages2cut)])
 ages2cut<-seq(from=4, to=max(branching.times(e.trees[[8]])), by=5)
 agar.sl<-slice_tree_ages(e.trees[[8]],ages2cut[1:length(ages2cut)])
 
-
 saveRDS(amph.sl,"sliced_trees/amph.sl.rds")
 saveRDS(bird.sl,"sliced_trees/bird.sl.rds")
 saveRDS(chon.sl,"sliced_trees/chon.sl.rds")

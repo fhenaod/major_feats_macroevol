@@ -8,19 +8,26 @@ saveRDS(strees, "strees.rds")
 s.trees<-readRDS("Slicing/strees/strees.rds")
 
 library(castor)
-ages2cut<-seq(from=.2, to=max(branching.times(s.trees[[1]])), by=0.02)
+slice_tree_ages<-function(tree, ages2cut){
+  cutted.trees<-list()
+  for(i in 1:length(ages2cut)){
+    cutted.trees[[i]]<-trim_tree_at_height(tree,ages2cut[[i]])$tree 
+  }  
+  return(cutted.trees)
+}
+ages2cut<-seq(from=.3, to=max(branching.times(s.trees[[1]])), by=0.02)
 stree1.sl<-slice_tree_ages(s.trees[[1]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=.2, to=max(branching.times(s.trees[[2]])), by=0.02)
+ages2cut<-seq(from=.3, to=max(branching.times(s.trees[[2]])), by=0.02)
 stree2.sl<-slice_tree_ages(s.trees[[2]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=.2, to=max(branching.times(s.trees[[3]])), by=0.02)
+ages2cut<-seq(from=.3, to=max(branching.times(s.trees[[3]])), by=0.02)
 stree3.sl<-slice_tree_ages(s.trees[[3]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=.2, to=max(branching.times(s.trees[[4]])), by=0.02)
+ages2cut<-seq(from=.3, to=max(branching.times(s.trees[[4]])), by=0.02)
 stree4.sl<-slice_tree_ages(s.trees[[4]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=.2, to=max(branching.times(s.trees[[5]])), by=0.02)
+ages2cut<-seq(from=.3, to=max(branching.times(s.trees[[5]])), by=0.02)
 stree5.sl<-slice_tree_ages(s.trees[[5]],ages2cut[1:length(ages2cut)])
 
 saveRDS(stree1.sl,"Slicing/simtrees/s100/stree1.sl.rds")

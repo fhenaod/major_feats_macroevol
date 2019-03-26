@@ -35,3 +35,15 @@ saveRDS(stree2.sl,"Slicing/simtrees/s1k/stree2.sl.rds")
 saveRDS(stree3.sl,"Slicing/simtrees/s10k/stree3.sl.rds")
 saveRDS(stree4.sl,"Slicing/simtrees/s50k/stree4.sl.rds")
 saveRDS(stree5.sl,"Slicing/simtrees/s100k/stree5.sl.rds")
+
+s100_sl_stat<-readRDS("Slicing/simtrees/s100/s100_sum_stats.rds")
+s100_sl_stat$taxon<-"s100"
+s1k_sl_stat<-readRDS("Slicing/simtrees/s1k/s1k_sum_stats.rds")
+s1k_sl_stat$taxon<-"s1k"
+s10k_sl_stat<-readRDS("Slicing/simtrees/s10k/s10k_sum_stats.rds")
+s10k_sl_stat$taxon<-"s10k"
+s50k_sl_stat<-readRDS("Slicing/simtrees/s50k/")
+
+s50k_sl_stat<-readRDS("Slicing/simtrees/s50k/")
+
+sum_stats<-rbind(s100_sl_stat, s1k_sl_stat, s10k_sl_stat)

@@ -101,14 +101,8 @@ ggarrange(hh9, hh10, hh11, hh13,
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
-sum_stats_f<-select(sum_stats, ntips, tree.min.age, tree.max.age, gamma.stat, trees_mean_dr, ln_dr,
-                    shape.yule, colles.yule, sackin.yule, shape.pda, colles.pda, sackin.pda, n_cherries,
-                    outer_branches, principal_eigenvalue, asymmetry, peakedness, modalities)
-
-sum_stats_f<-sum_stats
-
 # Mean and CI95 ####
-x<-log(sum_stats_f$modalities)
+x<-log(sum_stats$modalities)
 round(mean(x),2) ## MEAN Lambda
 sem<-sd(x)/sqrt(length(x)) # SE
 round(c(mean(x)-2*sem,mean(x)+2*sem),2) # CI95
@@ -116,34 +110,34 @@ rm(x)
 
 # Regressions ####
 par(mfrow=c(1,2))
-visreg(lm(shape.yule~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)")
-visreg(lm(shape.pda~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)")
+visreg(lm(shape.yule~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)")
+visreg(lm(shape.pda~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)")
 
-summary(lm(shape.yule~log(tree.max.age), data=sum_stats_f))
-summary(lm(shape.pda~log(tree.max.age), data=sum_stats_f))
+summary(lm(shape.yule~log(tree.max.age), data=sum_stats))
+summary(lm(shape.pda~log(tree.max.age), data=sum_stats))
 
 par(mfrow=c(1,2))
-visreg(lm(log(n_cherries)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Cherry branches")
-visreg(lm(log(outer_branches)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Outer branches")
+visreg(lm(log(n_cherries)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Ln Cherry branches")
+visreg(lm(log(outer_branches)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Ln Outer branches")
 
-summary(lm(log(n_cherries)~log(tree.max.age), data=sum_stats_f))
-summary(lm(log(outer_branches)~log(tree.max.age), data=sum_stats_f))
+summary(lm(log(n_cherries)~log(tree.max.age), data=sum_stats))
+summary(lm(log(outer_branches)~log(tree.max.age), data=sum_stats))
 
 par(mfrow=c(2,2))
-visreg(lm(log(principal_eigenvalue)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Principal eigenvalue")
-visreg(lm(log(asymmetry+min(asymmetry)+1)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Asymmetry")
-visreg(lm(log(peakedness)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Peakedness")
-visreg(lm(log(modalities)~log(tree.max.age), data=sum_stats_f), xlab= "Ln Clade age (My)", ylab= "Ln Modalities")
+visreg(lm(log(principal_eigenvalue)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Ln Principal eigenvalue")
+visreg(lm(log(asymmetry+min(asymmetry)+1)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Ln Asymmetry")
+visreg(lm(log(peakedness)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Ln Peakedness")
+visreg(lm(log(modalities)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Ln Modalities")
 
-summary(lm(log(principal_eigenvalue)~log(tree.max.age), data=sum_stats_f))
-summary(lm(log(asymmetry+min(asymmetry)+1)~log(tree.max.age), data=sum_stats_f))
-summary(lm(log(peakedness)~log(tree.max.age), data=sum_stats_f))
-summary(lm(log(modalities)~log(tree.max.age), data=sum_stats_f))
+summary(lm(log(principal_eigenvalue)~log(tree.max.age), data=sum_stats))
+summary(lm(log(asymmetry+min(asymmetry)+1)~log(tree.max.age), data=sum_stats))
+summary(lm(log(peakedness)~log(tree.max.age), data=sum_stats))
+summary(lm(log(modalities)~log(tree.max.age), data=sum_stats))
 
 # Correlation matrix ####
 par(mfrow=c(1,1))
 # propertCorrM
-M<-psych::lowerCor(sum_stats_f,digits=2, method = "spearman")
+M<-psych::lowerCor(sum_stats,digits=2, method = "spearman")
 # mat : is a matrix of data
 # ... : further arguments to pass to the native R cor.test function
 cor.mtest <- function(mat, ...) {
@@ -161,7 +155,7 @@ cor.mtest <- function(mat, ...) {
   p.mat
 }
 # matrix of the p-value of the correlation
-p.mat <- cor.mtest(sum_stats_f)
+p.mat <- cor.mtest(sum_stats)
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name = "RdYlBu"),  
                    type="upper", order="hclust", 
@@ -175,14 +169,14 @@ corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name
 library(plotly)
 #express<-expression(paste("Ln mean ", lambda, " (species ", Myr^-1,")"),sep=" ")
 
-plot_ly(sum_stats_f, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
+plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
         type = "scatter3d", mode = "lines+markers",
         line = list(color= "#EA3770", width = 4, dash = 'dash'),
         marker = list(symbol = 'circle', sizemode = 'area', 
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "Squamates",
+    title = "T",
     scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
                   yaxis = list(title = "Asymmetry"),
                   zaxis = list(title = "Peakedness"))

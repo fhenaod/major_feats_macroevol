@@ -176,7 +176,7 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedne
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "T",
+    title = "Title",
     scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
                   yaxis = list(title = "Asymmetry"),
                   zaxis = list(title = "Peakedness"))

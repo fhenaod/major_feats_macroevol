@@ -1,6 +1,7 @@
 library(phytools)
 library(parallel)
 
+# Pure-birth simulated trees ####
 ntips<-c(100, 1000, 10000, 50000, 100000)
 strees<-mcmapply(pbtree, n = ntips, scale = 1 , SIMPLIFY = F, mc.cores = 10)
 saveRDS(strees, "strees.rds")
@@ -53,20 +54,47 @@ s1k_sl_stat$taxon<-"s1k"
 s10k_sl_stat<-readRDS("Slicing/simtrees/s10k/s10k_sum_stats.rds")
 s10k_sl_stat$taxon<-"s10k"
 
-s50k_sl_stat<-readRDS("Slicing/simtrees/s50k/")
-s100k_sl_stat<-readRDS("Slicing/simtrees/s100k/")
-
 sum_stats<-rbind(s100_sl_stat, s1k_sl_stat, s10k_sl_stat)
 
+# Birth-death simulated trees, age conditioned ####
+# Birds tree used as example
+sum_stats<-readRDS("Slicing/simtrees/bd_bird_simtrees/bd_sim_sum_stats.rds")
+sum_stats$taxon<-"bd_sim"
+sum_stats$rel_age<-sum_stats$tree.max.age/113.25
+
+#Add empirical bird tree stats
+sum_stats<-rbind(bird_sl_stat,sum_stats)
+sum_stats$taxon<-as.factor(sum_stats$taxon)
+# Phylospace graph ####
 library(plotly)
 plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
         type = "scatter3d", mode = "markers",
-        marker = list(symbol = 'circle', sizemode = 'area', 
-                      color = ~tree.max.age, size = ~ntips,
+        marker = list(symbol = ~taxon , sizemode = 'area',  symbols = c("circle", "diamond"),
+                      color = ~rel_age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "Sim Trees",
+    title = "Bird",
     scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
                   yaxis = list(title = "Asymmetry"),
                   zaxis = list(title = "Peakedness"))
   )
+
+
+
+plot_ly(data = sum_stats,
+        x = ~log(principal_eigenvalue), y  = ~asymmetry, z = ~peakedness,
+        type='scatter3d',mode = 'markers', symbol = ~taxon,  symbols = c("diamond", "circle"),
+        size = ~ntips, sizemode = 'area') %>%
+  add_markers(marker = list(
+    color = ~ rel_age, colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
+  
+  layout(
+    title = "Bird",
+    scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
+                  yaxis = list(title = "Asymmetry"),
+                  zaxis = list(title = "Peakedness"))
+  ) 
+
+
+ 
+

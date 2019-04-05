@@ -95,6 +95,3 @@ plot_ly(data = sum_stats,
                   zaxis = list(title = "Peakedness"))
   ) 
 
-
- 
-

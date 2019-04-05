@@ -11,7 +11,7 @@ pars<-list(birth_rate_factor = lambda,
 
 bd_sim_tr<-list()
 t<-c()
-for(i in 1:100){
+for(i in 1:1000){
   t<-generate_random_tree(pars, max_time = age)$tree
   if (!is.null(t)){
     if (Ntip(t) >= 4) bd_sim_tr[[i]]<-t

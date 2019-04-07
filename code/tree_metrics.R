@@ -1,4 +1,6 @@
 library(ape)
+library(parallel)
+ts<-pbtree(1, n=30, nsim = 5)
 
 tree_metrics=function(tt){
   ntips<-c()
@@ -16,8 +18,9 @@ tree_metrics=function(tt){
   }  
   return(trees.metrics)
 }
-tree_metrics_sum<-round(tree_metrics(bird.sl),2)
+tree_metrics_sum<-round(tree_metrics(ts),2)
 
 source('code/get_DR.R')
-trees_dr<-sapply(bird.sl,get_DR)
+trees_dr<-sapply(ts,get_DR)
+trees_dr<-mcmapply(get_DR, ts, mc.cores = 2)
 trees_mean_dr<-sapply(trees_dr,mean)

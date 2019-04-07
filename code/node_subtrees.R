@@ -1,6 +1,6 @@
 library(phytools)
 library(parallel)
-seed_tre<-e.trees[[4]]
+seed_tre<-read.tree("data_megaPhylos/tree_S2018.cr.bi_.txt")
 
 orders<-unique(seed_tre$node.label)[grep("ales",unique(seed_tre$node.label))] # orders
 orders<-orders[-13]

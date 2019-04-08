@@ -81,5 +81,6 @@ imbalance.metrics<-data.frame(shape.yule,colles.yule,p.coless.t.y.less,p.coless.
   return(imbalance.metrics)
 }
 
-imbalance.metrics<-imbalance_metrics(bird.sl,10)
+imbalance.metrics<-imbalance_metrics(ts,10)
+imbalance.metrics<-mcmapply(imbalance_metrics(e.trees = ts, n.mc = 10), mc.cores = 3, SIMPLIFY = T)
 round(imbalance.metrics,3)

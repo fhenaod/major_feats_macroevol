@@ -65,6 +65,7 @@ sum_stats$rel_age<-sum_stats$tree.max.age/113.25
 #Add empirical bird tree stats
 sum_stats<-rbind(bird_sl_stat,sum_stats)
 sum_stats$taxon<-as.factor(sum_stats$taxon)
+
 # Phylospace graph ####
 library(plotly)
 plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,

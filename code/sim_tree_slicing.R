@@ -63,36 +63,47 @@ sum_stats$taxon<-"bd_sim"
 sum_stats$rel_age<-sum_stats$tree.max.age/113.25
 
 #Add empirical bird tree stats
-sum_stats<-rbind(bird_sl_stat,sum_stats)
-sum_stats$taxon<-as.factor(sum_stats$taxon)
+sum_stats<-rbind(sum_stats,bird_sl_stat)
 
 # Phylospace graph ####
 library(plotly)
-plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
-        type = "scatter3d", mode = "markers",
-        marker = list(symbol = ~taxon , sizemode = 'area',  symbols = c("circle", "diamond"),
-                      color = ~rel_age, size = ~ntips,
-                      colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
-  layout(
-    title = "Bird",
-    scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
-                  yaxis = list(title = "Asymmetry"),
-                  zaxis = list(title = "Peakedness"))
-  )
-
-
-
 plot_ly(data = sum_stats,
-        x = ~log(principal_eigenvalue), y  = ~asymmetry, z = ~peakedness,
-        type='scatter3d',mode = 'markers', symbol = ~taxon,  symbols = c("diamond", "circle"),
-        size = ~ntips, sizemode = 'area') %>%
-  add_markers(marker = list(
-    color = ~ rel_age, colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
+        x = ~log(principal_eigenvalue[1:1018]), y  = ~asymmetry[1:1018], z = ~peakedness[1:1018],
+        type='scatter3d', mode = 'markers', name = 'Simulated', 
+        marker = list(symbol = 'circle', sizemode = 'area', size = ~ntips, 
+                      color = ~rel_age, opacity = 0.7, 
+                      colorbar = list(title = 'Relative age (Myr)', thickness = 15), colorscale='Viridis',
+                      reversescale = T)) %>%
   
+  add_trace(x = ~log(principal_eigenvalue[1019:1040]), y  = ~asymmetry[1019:1040], z = ~peakedness[1019:1040], 
+            mode = 'lines+markers', name = 'Empirical', 
+            line = list(color= "#EA3770", width = 4),
+            marker = list(symbol = 'diamond', sizemode = 'area', size = ~ntips, 
+                          color = ~rel_age)) %>%
   layout(
     title = "Bird",
-    scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
-                  yaxis = list(title = "Asymmetry"),
-                  zaxis = list(title = "Peakedness"))
+    scene = list(xaxis = list(title = "λ*"),
+                 yaxis = list(title = "ψ"),
+                 zaxis = list(title = "η")),
+    legend = list(orientation = 'h')
   ) 
 
+# No age
+plot_ly(data = sum_stats,
+        x = ~log(principal_eigenvalue[1:1018]), y  = ~asymmetry[1:1018], z = ~peakedness[1:1018],
+        type='scatter3d', mode = 'markers', name = 'Simulated', 
+        marker = list(symbol = 'circle', sizemode = 'area', size = ~ntips, 
+                      color = '#2ca02c', opacity = 0.7)) %>%
+  
+  add_trace(x = ~log(principal_eigenvalue[1019:1040]), y  = ~asymmetry[1019:1040], z = ~peakedness[1019:1040], 
+            mode = 'lines+markers', name = 'Empirical', 
+            line = list(color= "#EA3770", width = 4),
+            marker = list(symbol = 'diamond', sizemode = 'area', size = ~ntips, 
+                          color = '#ff7f0e')) %>%
+  layout(
+    title = "Bird",
+    scene = list(xaxis = list(title = "λ*"),
+                 yaxis = list(title = "ψ"),
+                 zaxis = list(title = "η")),
+    legend = list(orientation = 'h')
+  ) 

@@ -1,4 +1,5 @@
 library(apTreeshape)
+library(parallel)
 
 d<-dir("data_megaPhylos/")
 t<-grep("tree_",d)
@@ -31,7 +32,10 @@ imbalance_metrics=function(e.trees,n.mc){
   p.lt.pda<-c()
   
   imbalance_metrics<-c()
-  for (i in 1:length(e.trees)){
+  if (length(e.trees) == 1) {e.trees<-list(e.trees=e.trees)
+  } else 
+  {
+    for (i in 1:length(e.trees)){
     tr<-e.trees[[i]]
     
     if (length(tr$tip.label)<= 4) {
@@ -77,10 +81,10 @@ imbalance_metrics=function(e.trees,n.mc){
 imbalance.metrics<-data.frame(shape.yule,colles.yule,p.coless.t.y.less,p.coless.t.y.great,sackin.yule,
   p.lt.yule,shape.pda,colles.pda,p.coless.t.pda.less,p.coless.t.pda.great,sackin.pda,p.lt.pda)
   }
+    }
   
   return(imbalance.metrics)
 }
 
 imbalance.metrics<-imbalance_metrics(ts,10)
-imbalance.metrics<-mcmapply(imbalance_metrics(e.trees = ts, n.mc = 10), mc.cores = 3, SIMPLIFY = T)
-round(imbalance.metrics,3)
+imbalance.metrics<-mclapply(list(ts), function(x) imbalance_metrics(x, 100), mc.cores=3)[[1]]

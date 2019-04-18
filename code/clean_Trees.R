@@ -30,6 +30,9 @@ is.ultrametric(R2018)
 write.tree(R2018,file=paste0(destination.path,"tree_R2018.cr_.txt"))
 
 S2018<-read.tree(paste0(source.path,"tree_S2018_.tre"))
+S2018<-drop.tip(S2018, S2018$tip.label[grep("Phyllites", S2018$tip.label)]) # drop fossil species
+S2018_spp<-unique(S2018$node.label)[grep("_",unique(S2018$node.label))]
+
 plot(S2018,cex=.6, show.tip.label = F,no.margin = T)
 S2018<-castor:::extend_tree_to_height(S2018)$tree
 is.ultrametric(S2018)

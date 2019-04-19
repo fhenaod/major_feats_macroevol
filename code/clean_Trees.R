@@ -5,6 +5,7 @@ library(castor)
 
 source.path<-"megaphylos_raw/"
 destination.path<-"data_megaPhylos/"
+source('code/remove_duplicates.R')
 
 J2012<-read.tree(paste0(source.path,"tree_J2012_.txt"))
 plot(J2012,cex=.6, show.tip.label = F,no.margin = T)
@@ -32,7 +33,7 @@ write.tree(R2018,file=paste0(destination.path,"tree_R2018.cr_.txt"))
 S2018<-read.tree(paste0(source.path,"tree_S2018_.tre"))
 S2018<-drop.tip(S2018, S2018$tip.label[grep("Phyllites", S2018$tip.label)]) # drop fossil species
 S2018_spp<-unique(S2018$node.label)[grep("_",unique(S2018$node.label))]
-
+S2018<-remove_duplicates(S2018, S2018_spp)
 plot(S2018,cex=.6, show.tip.label = F,no.margin = T)
 S2018<-castor:::extend_tree_to_height(S2018)$tree
 is.ultrametric(S2018)

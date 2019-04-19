@@ -7,8 +7,3 @@ remove_duplicates=function(phylo, names_list){
 }
 return(new_tre)
 }
-
-tn<-remove_duplicates(S2018, S2018_spp)
-Ntip(S2018)
-Ntip(tn)
-

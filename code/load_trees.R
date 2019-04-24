@@ -1,0 +1,20 @@
+library(ape)
+
+J2012<-read.tree("data_megaPhylos/tree_J2012_.txt")
+J2018<-read.tree("data_megaPhylos/tree_J2018.cr.pr.bi_.txt")
+R2018<-read.tree("data_megaPhylos/tree_R2018.cr_.txt")
+S2018<-read.tree("data_megaPhylos/tree_S2018.cr.bi_.txt")
+ST2018<-read.tree("data_megaPhylos/tree_ST2018.tr.cr_.txt")
+T2016<-read.tree("data_megaPhylos/tree_T2016.cr.pr.bi_.txt")
+TE2016<-read.tree("data_megaPhylos/tree_TE2016.cr_.txt")
+V2019<-read.tree("data_megaPhylos/tree_V2019.cr_.txt")
+
+# Node named
+J2012_nd<-read.tree("data_megaPhylos/tree_J2012_.txt")
+J2018_nd<-read.tree("data_megaPhylos/tree_J2018.cr.pr.bi_.txt")
+R2018_nd<-read.tree("data_megaPhylos/tree_R2018.cr_.txt")
+S2018_nd<-read.tree("data_megaPhylos/tree_S2018.cr.bi_.txt")
+ST2018_nd<-read.tree("data_megaPhylos/tree_ST2018.tr.cr_.txt")
+T2016_nd<-read.tree("data_megaPhylos/tree_T2016.cr.pr.bi_.txt")
+TE2016_nd<-read.tree("data_megaPhylos/tree_TE2016.cr_.txt")
+V2019_nd<-read.tree("data_megaPhylos/tree_V2019.cr_.txt")

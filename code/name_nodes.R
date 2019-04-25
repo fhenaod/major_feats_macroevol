@@ -28,22 +28,8 @@ name_genus_nodes=function(tree,names2nodes){
   return(tree)
 }
 tre_g_noded<-name_genus_nodes(tree, genera)
-# get taxonomy based on genus names ####
-get_taxonomy_df=function(genera, database){
-  m<-matrix(data=NA, nrow = length(genera), ncol = 6)
-  colnames(m)<-c("kingdom", "phylum", "class", "order", "family", "genus")
-  for(i in 1:length(genera)){
-    cla<-classification(genera[i], db = database)[[1]][1:6,1]
-    m[i,]<-cla
-  }
-  m<-data.frame(m)
-  return(m)
-}
-m<-get_taxonomy_df(genera, database = 'gbif')
-summary(m)
-write.csv(m,"taxonomy/chon_tax.csv")
 
-# Name higher rank nodes ####
+# Name higher rank nodes based on taxonomy table ####
 m<-read.csv("taxonomy/chon_tax.csv", header = T, row.names = 1)
 name_htaxa_nodes=function(tree, m){
   fams<-unique(m$family)

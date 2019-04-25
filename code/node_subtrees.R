@@ -1,8 +1,7 @@
 library(phytools)
 library(parallel)
 
-
-# Subseting trees by node labels #####
+# Subseting trees by node labels
 classes<-unique(tree$node.label)[grep("ales",unique(tree$node.label))] # Class
 
 orders<-unique(tree$node.label)[grep("ales",unique(tree$node.label))] # Order

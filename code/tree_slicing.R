@@ -26,7 +26,8 @@ slice_tree_ages<-function(tree, ages2cut){
 
 data.frame(tree_names, 
            tips=sapply(e.trees,ape::Ntip),
-           trees=c("bird","amphibia","fish", "seed", "chondrichthyes","squamata", "fern", "agaricomycetes"))
+           trees=c("bird","amphibia","fish", "seed", "chondrichthyes","squamata", "fern", "agaricomycetes"),
+           slices=c(22,62,73,65,75,38,95,88))
 
 ages2cut<-seq(from=4, to=max(branching.times(e.trees[[1]])), by=5)
 bird.sl<-slice_tree_ages(e.trees[[1]],ages2cut[1:length(ages2cut)])

@@ -1,4 +1,6 @@
 library(rotl)
+library(taxonlookup)
+
 # get genus names ####
 names_sp<-strsplit(tree$tip.label, "_")
 get_genus=function(names_sp){
@@ -9,6 +11,7 @@ get_genus=function(names_sp){
   return(query)
 }
 genera<-unique(get_genus(names_sp))
+genera<-sort(genera)[33:length(genera)] ## with Fungi
 
 # get taxonomy based on genus names, automatic ####
 query_seq<-seq_along(genera)
@@ -34,8 +37,15 @@ get_tax_df=function(query_split, context_name){
   df<-df[,c(4,1,2,3)]
   return(df)
 }
-tree_taxonomy<-get_tax_df(query_split, context_name = "Amphibians")
-write.csv(tree_taxonomy,"taxonomy/amph_tax.csv")
+tree_taxonomy<-get_tax_df(query_split, context_name = "Ferns")
+write.csv(tree_taxonomy,"taxonomy/fern_tax.csv")
+
+## Seed Plants
+look_tab<-lookup_table(genera)
+tax<-get_taxonomy_df(unique(look_tab$order)[-6], database = 'gbif')
+
+tax[order(tax$class),]
+write.csv(look_tab,"taxonomy/seed_tax.csv")
 
 # get taxonomy based on genus names, interactive ####
 get_taxonomy_df=function(genera, database){

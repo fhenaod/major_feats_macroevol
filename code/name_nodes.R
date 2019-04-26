@@ -19,7 +19,7 @@ name_genus_nodes=function(tree,names2nodes){
   for(i in 1:length(names2nodes)){
     tips<-tree$tip.label[grep(names2nodes[i], tree$tip.label)]
     if(length(tips)!=1){
-      mrca_node<-getMRCA(tree,tip = tips)
+      mrca_node<-getMRCA(tree, tip = tips)
       tree$node.label[mrca_node-Ntip(tree)]<-names2nodes[i]
     } else {
       

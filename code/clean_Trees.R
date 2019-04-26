@@ -33,13 +33,18 @@ write.tree(R2018,file=paste0(destination.path,"tree_R2018.cr_.txt"))
 S2018<-read.tree(paste0(source.path,"tree_S2018_.tre"))
 S2018<-drop.tip(S2018, S2018$tip.label[grep("Phyllites", S2018$tip.label)]) # drop fossil species
 S2018_spp<-unique(S2018$node.label)[grep("_",unique(S2018$node.label))]
-S2018<-remove_duplicates(S2018, S2018_spp)
+S2018<-remove_duplicates(S2018, S2018_spp) ## runned in cluster
+S2018<-read.tree(paste0(source.path,"tree_S2018.pr._.txt")) 
+S2018<-drop.tip(S2018, c(grep("Homaliopsis", S2018$tip.label),
+                         grep("Neuroloma", S2018$tip.label),
+                         grep("Stroemia", S2018$tip.label), 
+                         grep("Elharveya", S2018$tip.label) ))
 plot(S2018,cex=.6, show.tip.label = F,no.margin = T)
-S2018<-castor:::extend_tree_to_height(S2018)$tree
-is.ultrametric(S2018)
 S2018<-multi2di(S2018)
 is.binary(S2018)
-write.tree(S2018,file=paste0(destination.path,"tree_S2018.cr.bi_.txt"))
+S2018<-castor:::extend_tree_to_height(S2018)$tree
+is.ultrametric(S2018)
+write.tree(S2018,file=paste0(destination.path,"tree_S2018.cr.pr.bi_.txt"))
 
 ST2018<-read.nexus(paste0(source.path,"tree_ST2018_.nex"))
 plot(ST2018,cex=.6, show.tip.label = F,no.margin = T)
@@ -66,13 +71,23 @@ is.ultrametric(T2016)
 write.tree(T2016,file=paste0(destination.path,"tree_T2016.cr.pr.bi_.txt"))
 
 TE2016<-read.nexus(paste0(source.path,"tree_TE2016_.nex"))
-plot(T2016,cex=.6, show.tip.label = F,no.margin = T)
+plot(TE2016,cex=.6, show.tip.label = F,no.margin = T)
+nodelabels(frame="none",cex=.8, col = "red")
+TE2016<-extract.clade(TE2016, 4038)
 TE2016<-phangorn::nnls.tree(cophenetic(TE2016),TE2016,rooted=TRUE)
 is.ultrametric(TE2016)
-write.tree(TE2016,file=paste0(destination.path,"tree_TE2016.cr_.txt"))
+write.tree(TE2016,file=paste0(destination.path,"tree_TE2016.cr.pr_.txt"))
 
 V2019<-read.tree(paste0(source.path,"tree_V2019_.tree"))
 plot(T2016,cex=.6, show.tip.label = F,no.margin = T)
+V2019<-drop.tip(V2019, c(grep("Bullera", V2019$tip.label),
+                         grep("Cryptococcus", V2019$tip.label),
+                         grep("Dacrymyces", V2019$tip.label), 
+                         grep("Laeticorticium", V2019$tip.label),
+                         grep("Trichosporon", V2019$tip.label),
+                         grep("Trimorphomyces", V2019$tip.label),
+                         grep("Tsuchiyaea", V2019$tip.label),
+                         grep("Udeniomyces", V2019$tip.label) ))
 V2019<-phangorn::nnls.tree(cophenetic(V2019),V2019,rooted=TRUE)
 is.ultrametric(V2019)
-write.tree(V2019,file=paste0(destination.path,"tree_V2019.cr_.txt"))
+write.tree(V2019,file=paste0(destination.path,"tree_V2019.cr.pr_.txt"))

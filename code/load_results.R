@@ -32,5 +32,20 @@ squa_sl_stat<-readRDS("Slicing/squa/output/squa_sum_stats.rds")
 squa_sl_stat$taxon<-rep("Squamata", dim(squa_sl_stat)[1])
 squa_sl_stat$rel_age<-squa_sl_stat$tree.max.age/189.9633
 
+## Add ML beta spliting estimates
+amph_beta<-readRDS("Slicing/ml_beta/amph/amph_ml_beta.rds")
+bird_beta<-readRDS("Slicing/ml_beta/bird/bird_ml_beta.rds")
+chon_beta<-readRDS("Slicing/ml_beta/chon/chon_ml_beta.rds")
+fern_beta<-readRDS("Slicing/ml_beta/fern/fern_ml_beta.rds")
+fish_beta<-readRDS("Slicing/ml_beta/fish/fish_ml_beta.rds")
+squa_beta<-readRDS("Slicing/ml_beta/squa/squa_ml_beta.rds")
+
+amph_sl_stat<-cbind(amph_sl_stat, amph_beta)
+bird_sl_stat<-cbind(bird_sl_stat, bird_beta)
+chon_sl_stat<-cbind(chon_sl_stat, chon_beta)
+fern_sl_stat<-cbind(fern_sl_stat, fern_beta)
+fish_sl_stat<-cbind(fish_sl_stat, fish_beta)
+squa_sl_stat<-cbind(squa_sl_stat, squa_beta)
+
 sum_stats<-rbind(agar_sl_stat, amph_sl_stat, bird_sl_stat, chon_sl_stat, fern_sl_stat, fish_sl_stat, seed_sl_stat, squa_sl_stat)
 head(sum_stats)

@@ -33,6 +33,7 @@ squa_sl_stat$taxon<-rep("Squamata", dim(squa_sl_stat)[1])
 squa_sl_stat$rel_age<-squa_sl_stat$tree.max.age/189.9633
 
 ## Add ML beta spliting estimates
+agar_beta<-readRDS("Slicing/ml_beta/agar/agar_ml_beta.rds")
 amph_beta<-readRDS("Slicing/ml_beta/amph/amph_ml_beta.rds")
 bird_beta<-readRDS("Slicing/ml_beta/bird/bird_ml_beta.rds")
 chon_beta<-readRDS("Slicing/ml_beta/chon/chon_ml_beta.rds")
@@ -40,6 +41,7 @@ fern_beta<-readRDS("Slicing/ml_beta/fern/fern_ml_beta.rds")
 fish_beta<-readRDS("Slicing/ml_beta/fish/fish_ml_beta.rds")
 squa_beta<-readRDS("Slicing/ml_beta/squa/squa_ml_beta.rds")
 
+agar_sl_stat<-cbind(agar_sl_stat, agar_beta)
 amph_sl_stat<-cbind(amph_sl_stat, amph_beta)
 bird_sl_stat<-cbind(bird_sl_stat, bird_beta)
 chon_sl_stat<-cbind(chon_sl_stat, chon_beta)

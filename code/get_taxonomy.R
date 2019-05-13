@@ -1,5 +1,6 @@
 library(rotl)
 library(taxonlookup)
+library(taxize)
 
 # get genus names ####
 names_sp<-strsplit(tree$tip.label, "_")
@@ -42,7 +43,7 @@ write.csv(tree_taxonomy,"taxonomy/fern_tax.csv")
 
 ## Seed Plants
 look_tab<-lookup_table(genera)
-tax<-get_taxonomy_df(unique(look_tab$order)[-6], database = 'gbif')
+tax<-get_taxonomy_df(unique(look_tab$order)[-5], database = 'gbif')
 
 tax[order(tax$class),]
 write.csv(look_tab,"taxonomy/seed_tax.csv")

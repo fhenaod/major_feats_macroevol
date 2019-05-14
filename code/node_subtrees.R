@@ -1,14 +1,20 @@
 library(phytools)
 library(parallel)
 
-# Subseting trees by node labels
-classes<-unique(tree$node.label)[grep("ales",unique(tree$node.label))] # Class
+tree<-tre_noded
 
-orders<-unique(tree$node.label)[grep("ales",unique(tree$node.label))] # Order
-orders<-orders[-13]
+# Subseting trees by node labels
+classes<-unique(tree$node.label)[grep("",unique(tree$node.label))] # Class
+
+orders<-unique(tree$node.label)[grep("",unique(tree$node.label))] # Order
+orders<-c("Anura", "Caudata", "Gymnophiona") # Squamates
 
 families<-unique(tree$node.label)[grep("ceae",unique(tree$node.label))] # Family
-families<-families[-9]
 
-seed_ord<-mclapply(orders, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
-saveRDS(seed_ords, "node_subtrees/seed_ord_trees.rds")
+# extract and save clades ####
+sampl_clas<-mclapply(classes, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
+sampl_ords<-mclapply(orders, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
+sampl_fams<-mclapply(families, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
+saveRDS(sampl_clas, "rank_sampling/_clas_trees.rds")
+saveRDS(sampl_ords, "rank_sampling/_ords_trees.rds")
+saveRDS(sampl_fams, "rank_sampling/_fams_trees.rds")

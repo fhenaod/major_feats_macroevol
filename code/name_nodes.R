@@ -30,7 +30,7 @@ name_genus_nodes=function(tree,names2nodes){
 tre_g_noded<-name_genus_nodes(tree, genera)
 
 # Name higher rank nodes based on taxonomy table ####
-m<-read.csv("taxonomy/chon_tax.csv", header = T, row.names = 1)
+m<-read.csv("taxonomy/_tax.csv", header = T, row.names = 1)
 name_htaxa_nodes=function(tree, m){
   fams<-unique(m$family)
   for(i in 1:length(fams)){
@@ -62,3 +62,5 @@ name_htaxa_nodes=function(tree, m){
   return(tree)
 }
 tre_noded<-name_htaxa_nodes(tre_g_noded, m)
+
+saveRDS(tre_noded,"data_megaPhylos/_noded_tre.rds")

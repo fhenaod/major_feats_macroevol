@@ -1,4 +1,4 @@
-library(ape)
+library(phytools)
 library(parallel)
 ts<-pbtree(1, n=30, nsim = 5)
 

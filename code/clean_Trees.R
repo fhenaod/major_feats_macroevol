@@ -42,6 +42,8 @@ S2018<-drop.tip(S2018, c(grep("Homaliopsis", S2018$tip.label),
 plot(S2018,cex=.6, show.tip.label = F,no.margin = T)
 S2018<-multi2di(S2018)
 is.binary(S2018)
+min(S2018$edge.length)
+S2018$edge.length[S2018$edge.length<=0] <-1e-6
 S2018<-castor:::extend_tree_to_height(S2018)$tree
 is.ultrametric(S2018)
 write.tree(S2018,file=paste0(destination.path,"tree_S2018.cr.pr.bi_.txt"))

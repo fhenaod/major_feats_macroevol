@@ -8,7 +8,6 @@ mrca_node<-getMRCA(sub_tr, tip =  c(23, 25))
 sub_tr$node.label[mrca_node-Ntip(sub_tr)]
 
 
-
 my_tree <- rtree(10)
 my_tree$node.label <- paste0("node", seq(1:9))
 plot(my_tree, show.node.label = T)

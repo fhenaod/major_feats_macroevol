@@ -8,14 +8,16 @@ library(visreg)
 
 # Shape hists ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(shape.yule)),color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(shape.yule))$shape.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 25), y=c(0, 15)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x = c(min(subset(sum_stats, !is.na(shape.yule))$shape.yule), max(subset(sum_stats, !is.na(shape.yule))$shape.yule)),
+                                  y = c(0, 5)), aes(x, y)) 
 
 hh2<-ggplot(sum_stats, aes(x=shape.pda)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(shape.pda)),color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(shape.pda))$shape.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Shape (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-25, 5), y=c(0, 15)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x = c(min(subset(sum_stats, !is.na(shape.pda))$shape.pda), max(subset(sum_stats, !is.na(shape.pda))$shape.pda)), 
+                                  y = c(0, 5)), aes(x, y)) 
 
 ggarrange(hh1, hh2,   
           labels = c("A", "B"),
@@ -23,38 +25,41 @@ ggarrange(hh1, hh2,
 
 # Colles & Sackin hists ####
 hh3<-ggplot(sum_stats, aes(x=colles.yule)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(colles.yule)),color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(colles.yule))$colles.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-2, 12), y=c(0, 15)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-2, 15), y=c(0, 10)), aes(x, y)) 
 
 hh4<-ggplot(sum_stats, aes(x=sackin.yule)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(sackin.yule)),color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(sackin.yule))$sackin.yule)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Sackin Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-2, 12), y=c(0, 15)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(-2, 15), y=c(0, 10)), aes(x, y)) 
 
 hh5<-ggplot(sum_stats, aes(x=colles.pda)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(colles.pda)),color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(colles.pda))$colles.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Colles Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 8)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 10)), aes(x, y)) 
 
 hh6<-ggplot(sum_stats, aes(x=sackin.pda)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(sackin.pda)),color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(sackin.pda))$sackin.pda)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Sackin Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 8)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 10)), aes(x, y)) 
 
 ggarrange(hh3, hh4, hh5, hh6,   
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
 # (Aldous) Beta  ####
-hh1.1<-ggplot(sum_stats, aes(x=beta)) + geom_histogram(color="darkblue", fill="white") + 
+hh1.1<-ggplot(sum_stats, aes(x=beta)) + geom_histogram(color="darkblue", fill="white") +  
+  geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(beta))$beta)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Beta", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-3, 9), y=c(0, 25)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(min(subset(sum_stats, !is.na(beta))$beta), max(subset(sum_stats, !is.na(beta))$beta)),
+                                  y=c(0, 20)), aes(x, y)) 
 
 hh2.1<-ggplot(subset(sum_stats, !is.na(beta)), aes(x=log(tree.max.age), y = beta)) +
   geom_point(size=1, shape = 1, color = "darkblue") + 
   labs(title="", x="Ln Clade age (Myr)", y = "Beta") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(2, 7), y=c(-3, 8)), aes(x, y)) 
+  geom_rangeframe(data=data.frame(x=c(log(min(subset(sum_stats, !is.na(beta))$tree.max.age)), log(max(subset(sum_stats, !is.na(beta))$tree.max.age))),
+                                  y=c(min(subset(sum_stats, !is.na(beta))$beta), max(subset(sum_stats, !is.na(beta))$beta))), aes(x, y)) 
 
 ggarrange(hh1.1, hh2.1,   
           labels = c("A", "B"),
@@ -84,31 +89,30 @@ ggarrange(hh7, hh8,
 
 # Prin. eigenvalue, asymmetry, peakedness and modalities hists ####
 hh9<-ggplot(sum_stats, aes(x=log(principal_eigenvalue))) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(log(principal_eigenvalue))),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Log Principal eigenvalue", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(2, 16), y=c(0, 5)), aes(x, y)) 
+  geom_vline(aes(xintercept = mean(log(subset(sum_stats, !is.na(principal_eigenvalue))$principal_eigenvalue))), color="red", linetype="dashed", size=1) +
+  labs(title = "", x = "Log Principal eigenvalue", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x = c(log(min(subset(sum_stats, !is.na(principal_eigenvalue))$principal_eigenvalue)), log(max(subset(sum_stats, !is.na(principal_eigenvalue))$principal_eigenvalue))), 
+                                  y = c(0, 10)), aes(x, y)) 
 
 hh10<-ggplot(sum_stats, aes(x=asymmetry)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(asymmetry)),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Asymmetry", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(-1, 4), y=c(0, 10)), aes(x, y)) 
+  geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(asymmetry))$asymmetry)), color="red", linetype="dashed", size=1) +
+  labs(title = "", x = "Asymmetry", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x = c((min(subset(sum_stats, !is.na(asymmetry))$asymmetry)), (max(subset(sum_stats, !is.na(asymmetry))$asymmetry))), 
+                                  y = c(0, 10)), aes(x, y)) 
 
 hh11<-ggplot(sum_stats, aes(x=peakedness)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(peakedness)),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Peakedness", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 16), y=c(0, 15)), aes(x, y)) 
+  geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(peakedness))$peakedness)),color="red", linetype="dashed", size=1) +
+  labs(title = "", x = "Peakedness", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x = c((min(subset(sum_stats, !is.na(peakedness))$peakedness)), (max(subset(sum_stats, !is.na(peakedness))$peakedness))),
+                                  y = c(0, 10)), aes(x, y)) 
 
-hh12<-ggplot(sum_stats, aes(x=modalities)) + geom_histogram(color="darkblue", fill="white") + 
-  geom_vline(aes(xintercept= mean(modalities)),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(1, 8350), y=c(0, 100)), aes(x, y)) 
+hh12<-ggplot(sum_stats, aes(x=log(modalities))) + geom_histogram(color="darkblue", fill="white") +
+  geom_vline(aes(xintercept = mean(log(subset(sum_stats, !is.na(modalities))$modalities))),color="red", linetype="dashed", size=1) +
+  labs(title = "", x = "Log Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x = c(log(min(subset(sum_stats, !is.na(modalities))$modalities)), log(max(subset(sum_stats, !is.na(modalities))$modalities))),
+                                  y = c(0, 10)), aes(x, y)) 
 
-hh13<-ggplot(sum_stats, aes(x=log(modalities))) + geom_histogram(color="darkblue", fill="white") +
-  geom_vline(aes(xintercept= mean(log(modalities))),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Log Modalities", y = "Count") + theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 7), y=c(0, 15)), aes(x, y)) 
-
-ggarrange(hh9, hh10, hh11, hh13,   
+ggarrange(hh9, hh10, hh11, hh12,   
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
@@ -145,17 +149,19 @@ summary(lm(log(n_cherries)~log(tree.max.age), data=sum_stats))
 summary(lm(log(outer_branches)~log(tree.max.age), data=sum_stats))
 
 # BRANCH LENGTHS
-hh14<-ggplot(sum_stats, aes(x=log(tree.max.age), y = br.len_mean)) +
-  geom_point(size=1, shape = 1, color = "darkblue") + 
-  labs(title="", x="Ln Clade age (Myr)", y = "Mean branch length") + 
+hh14<-ggplot(sum_stats, aes(x = log(tree.max.age), y = br.len_mean)) +
+  geom_point(size = 1, shape = 1, color = "darkblue") + 
+  labs(title = "", x = "Ln Clade age (Myr)", y = "Mean branch length") + 
   theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 6), y=c(0, 30)), aes(x, y)) 
+  geom_rangeframe(data = data.frame(x = c(log(min(sum_stats$tree.max.age)), log(max(sum_stats$tree.max.age))), 
+                                  y = c(min(sum_stats$br.len_mean), max(sum_stats$br.len_mean))), aes(x, y)) 
 
-hh15<-ggplot(sum_stats, aes(x=log(tree.max.age), y = br.t_mean)) +
-  geom_point(size=1, shape = 1, color = "darkblue") + 
-  labs(title="", x="Ln Clade age (Myr)", y = "Mean branch times") + 
+hh15<-ggplot(sum_stats, aes(x = log(tree.max.age), y = br.t_mean)) +
+  geom_point(size = 1, shape = 1, color = "darkblue") + 
+  labs(title = "", x = "Ln Clade age (Myr)", y = "Mean branch times") + 
   theme_tufte(base_family = "Helvetica") + 
-  geom_rangeframe(data=data.frame(x=c(0, 6), y=c(0, 40)), aes(x, y)) 
+  geom_rangeframe(data = data.frame(x = c(log(min(sum_stats$tree.max.age)), log(max(sum_stats$tree.max.age))),
+                                  y = c(min(sum_stats$br.t_mean), max(sum_stats$br.t_mean))), aes(x, y)) 
 
 ggarrange(hh14, hh15,   
           labels = c("A", "B"),
@@ -176,7 +182,7 @@ summary(lm(log(modalities)~log(tree.max.age), data=sum_stats))
 # Correlation matrix ####
 par(mfrow=c(1,1))
 # propertCorrM
-M<-psych::lowerCor(sum_stats[,-23],digits = 2, method = "spearman")
+M<-psych::lowerCor(sum_stats,digits = 2, method = "spearman")
 # mat : is a matrix of data
 # ... : further arguments to pass to the native R cor.test function
 cor.mtest <- function(mat, ...) {
@@ -194,7 +200,7 @@ cor.mtest <- function(mat, ...) {
   p.mat
 }
 # matrix of the p-value of the correlation
-p.mat <- cor.mtest(sum_stats[,-23])
+p.mat <- cor.mtest(sum_stats)
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name = "RdYlBu"),  
                    type="upper", order="hclust", 
@@ -214,8 +220,21 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedne
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "Seed",
-    scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
-                  yaxis = list(title = "Asymmetry"),
-                  zaxis = list(title = "Peakedness"))
+    title = "Polypodiopsida",
+    scene = list( xaxis = list(title = "λ*"),
+                  yaxis = list(title = "ψ"),
+                  zaxis = list(title = "η"))
     )
+
+
+plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
+        type = "scatter3d", mode = "markers",
+        marker = list(symbol = 'circle', sizemode = 'area', 
+                      color = ~tree.max.age, size = ~ntips,
+                      colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
+  layout(
+    title = "All clades",
+    scene = list( xaxis = list(title = "λ*"),
+                  yaxis = list(title = "ψ"),
+                  zaxis = list(title = "η"))
+  )

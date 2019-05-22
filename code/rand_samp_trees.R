@@ -1,6 +1,5 @@
 library(phytools)
 library(castor)
-t<-pbtree(n = 30, b = 1.3, scale = 10, extant.only = T)
 
 random_tree_samp=function(t, t_height, n_samps){
   l_trees<-list()
@@ -25,5 +24,12 @@ random_tree_samp=function(t, t_height, n_samps){
   return(l_trees)
 }
 
-rand_trees<-random_tree_samp(t, t_height = 6, n_samps = 100)
-plot(rand_trees)
+rand_trees<-random_tree_samp(J2012, t_height = 5, n_samps = 200)
+rand_trees<-plyr::compact(rand_trees)
+rand_trees<-rand_trees[sapply(rand_trees, function(x) Ntip(x) >=4)]
+nt<-sapply(rand_trees, Ntip)
+length(which(nt>=4))
+saveRDS(rand_trees, "self_sim/bird_5.rds")
+
+par(mfrow=c(3,3))
+sapply(sample(rand_trees,9), plot, cex = 1, no.margin = TRUE, root.edge = T)

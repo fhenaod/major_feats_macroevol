@@ -67,7 +67,6 @@ sum_stats<-rbind(agar_sl_stat, amph_sl_stat, bird_sl_stat, chon_sl_stat, fern_sl
                  , squa_sl_stat)
 head(sum_stats)
 
-
 # RANKS ####
 
 agar_fams_stats<-readRDS("rank_sampling/agar_fams/output/agar_fams_sum_stats.rds")

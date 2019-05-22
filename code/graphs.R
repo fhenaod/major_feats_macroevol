@@ -239,8 +239,6 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedne
                   zaxis = list(title = "η"))
   )
 
-
-
 ## ALL clades ####
 
 # Shape
@@ -274,28 +272,38 @@ g4<-ggplot(sum_stats, aes(x = (rel_age), y = sackin.pda, color = taxon, shape = 
 
 # All clades DR vs. imbalance
 g1<-ggplot(sum_stats, aes(x = (colles.yule), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
-  geom_point() + labs(title = "", x = "Colles (Yule)", y = "DR") + geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+  geom_point() + labs(title = "", x = "Colles (Yule)", y = "DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g2<-ggplot(sum_stats, aes(x = (sackin.yule), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
-  geom_point() + labs(title = "", x = "Sackin (Yule)", y = "DR") + geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+  geom_point() + labs(title = "", x = "Sackin (Yule)", y = "DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g3<-ggplot(sum_stats, aes(x = (colles.pda), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
-  geom_point() + labs(title = "", x = "Colles (PDA)", y = "DR") + geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+  geom_point() + labs(title = "", x = "Colles (PDA)", y = "DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g4<-ggplot(sum_stats, aes(x = (sackin.pda), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
-  geom_point() + labs(title = "", x = "Sackin (PDA)", y = "DR") + geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+  geom_point() + labs(title = "", x = "Sackin (PDA)", y = "DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 
 # RPANDA
-g1<-ggplot(sum_stats, aes(x = (tree.max.age), y = log(principal_eigenvalue), color = taxon, shape = taxon)) +
+g1<-ggplot(sum_stats, aes(x = log(tree.max.age), y = log(principal_eigenvalue), color = taxon, shape = taxon)) +
   geom_point() + labs(title = "", x = "", y = "Log λ*") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
-g2<-ggplot(sum_stats, aes(x = (tree.max.age), y = asymmetry, color = taxon, shape = taxon)) +
+g2<-ggplot(sum_stats, aes(x = log(tree.max.age), y = asymmetry, color = taxon, shape = taxon)) +
   geom_point() + labs(title = "", x = "", y = "ψ") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
-g3<-ggplot(sum_stats, aes(x = (tree.max.age), y = log(peakedness), color = taxon, shape = taxon)) +
+g3<-ggplot(sum_stats, aes(x = log(tree.max.age), y = log(peakedness), color = taxon, shape = taxon)) +
   geom_point() + labs(title = "", x = "Ln Clade age (Myr)", y = "Log η") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
-g4<-ggplot(sum_stats, aes(x = (tree.max.age), y = log(modalities), color = taxon, shape = taxon)) +
+g4<-ggplot(sum_stats, aes(x = log(tree.max.age), y = log(modalities), color = taxon, shape = taxon)) +
   geom_point() + labs(title = "", x = "Ln Clade age (Myr)", y = "Log Modalities") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 
 g1<-ggplot(sum_stats, aes(x = (rel_age), y = log(principal_eigenvalue), color = taxon, shape = taxon)) + geom_point() + labs(title = "", x = "", y = "Log λ*") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g2<-ggplot(sum_stats, aes(x = (rel_age), y = asymmetry, color = taxon, shape = taxon)) + geom_point() + labs(title = "", x = "", y = "ψ") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
-g3<-ggplot(sum_stats, aes(x = (rel_age), y = peakedness, color = taxon, shape = taxon)) + geom_point() + labs(title = "", x = "Relative clade age", y = "Ln η") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
-g4<-ggplot(sum_stats, aes(x = (rel_age), y = modalities, color = taxon, shape = taxon)) + geom_point() + labs(title = "", x = "Relative clade age", y = "Ln Modalities") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+g3<-ggplot(sum_stats, aes(x = (rel_age), y = log(peakedness), color = taxon, shape = taxon)) + geom_point() + labs(title = "", x = "Relative clade age", y = "Ln η") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+g4<-ggplot(sum_stats, aes(x = (rel_age), y = log(modalities), color = taxon, shape = taxon)) + geom_point() + labs(title = "", x = "Relative clade age", y = "Ln Modalities") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+
+# vs. DR
+g1<-ggplot(sum_stats, aes(x = log(trees_mean_dr), y = log(principal_eigenvalue), color = taxon, shape = taxon)) +
+  geom_point() + labs(title = "", x = "", y = "Log λ*") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+g2<-ggplot(sum_stats, aes(x = log(trees_mean_dr), y = asymmetry, color = taxon, shape = taxon)) +
+  geom_point() + labs(title = "", x = "", y = "ψ") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+g3<-ggplot(sum_stats, aes(x = log(trees_mean_dr), y = log(peakedness), color = taxon, shape = taxon)) +
+  geom_point() + labs(title = "", x = "Ln DR", y = "Log η") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+g4<-ggplot(sum_stats, aes(x = log(trees_mean_dr), y = log(modalities), color = taxon, shape = taxon)) +
+  geom_point() + labs(title = "", x = "Ln DR", y = "Log Modalities") + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 
 ggarrange(g1, g2, g3, g4,    
           labels = c("A", "B", "C", "D"),

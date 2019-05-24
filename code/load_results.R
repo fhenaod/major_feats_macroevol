@@ -242,7 +242,7 @@ sum_stats<-rbind( bird_5, bird_10, bird_20, bird_30, bird_40, bird_50
                  ,fish_5, fish_10, fish_20, fish_30, fish_40, fish_50
                  ,chon_5, chon_10, chon_20, chon_30, chon_40, chon_50
                  ,squa_5, squa_10, squa_20, squa_30, squa_40, squa_50
-                 #,fern_5, fern_10, fern_20, fern_30, fern_40, fern_50
-                 #,agar_5, agar_10, agar_20, agar_30, agar_40, agar_50
+                 ,fern_5, fern_10, fern_20, fern_30, fern_40, fern_50
+                 ,agar_5, agar_10, agar_20, agar_30, agar_40, agar_50
                 )
 

@@ -239,6 +239,69 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedne
                   zaxis = list(title = "η"))
   )
 
+# Violin plots #####
+vpp<-ggplot(sum_stats, aes(x = taxon, y = trees_mean_dr, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "Scales", y = "DR") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp<-ggplot(sum_stats, aes(x = taxon, y = ln_dr, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "Scales", y = "Ln DR") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp1<-ggplot(sum_stats, aes(x = taxon, y = gamma.stat, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "Scales", y = "Gamma statistic") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp2<-ggplot(sum_stats, aes(x = taxon, y = beta, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "Scales", y = "Beta") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+
+ggarrange(vpp, vp, vp1, vp2,    
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2)
+
+vp3<-ggplot(sum_stats, aes(x = taxon, y = shape.yule, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Shape (Yule)") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp4<-ggplot(sum_stats, aes(x = taxon, y = shape.pda, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Shape (PDA)") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+
+ggarrange(vp3, vp4,    
+          labels = c("A", "B", "C", "D"),
+          ncol = 2)
+
+vp5<-ggplot(sum_stats, aes(x = taxon, y = colles.pda, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Colles (PDA)") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp6<-ggplot(sum_stats, aes(x = taxon, y = sackin.pda, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Sackin (PDA)") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp7<-ggplot(sum_stats, aes(x = taxon, y = colles.yule, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Colles (Yule)") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp8<-ggplot(sum_stats, aes(x = taxon, y = sackin.yule, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Sackin (Yule)") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+
+ggarrange(vp5, vp6, vp7, vp8,    
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2)
+
+vp9<-ggplot(sum_stats, aes(x = taxon, y = log(principal_eigenvalue), fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Ln λ") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp10<-ggplot(sum_stats, aes(x = taxon, y = asymmetry, fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "ψ") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp11<-ggplot(sum_stats, aes(x = taxon, y = log(peakedness), fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Ln η") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+vp12<-ggplot(sum_stats, aes(x = taxon, y = log(modalities), fill = taxon)) + geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Ln Modalities") + 
+  scale_fill_brewer(palette = "Dark2") + theme_minimal() + theme(legend.position = "none")
+
+ggarrange(vp9, vp10, vp11, vp12,    
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2)
+
 ## ALL clades ####
 
 # Shape

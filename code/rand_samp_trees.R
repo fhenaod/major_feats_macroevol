@@ -1,6 +1,17 @@
 library(phytools)
 library(castor)
 
+## sim trees from bird empirical parameters
+age<-113.25
+lambda<-round(exp((-0.53356*log(age))+0.29817),3)
+mu<-round(exp((-0.5257*log(age))-0.5016),3)
+
+pars<-list(birth_rate_factor = lambda,
+           death_rate_factor = mu)
+
+bd_sim_tr<-generate_random_tree(pars, max_time = age)$tree
+
+# function to randomly re-sample trees from a megatree based on age 
 random_tree_samp=function(t, t_height, n_samps){
   l_trees<-list()
   ed<-t$edge
@@ -24,12 +35,12 @@ random_tree_samp=function(t, t_height, n_samps){
   return(l_trees)
 }
 
-rand_trees<-random_tree_samp(J2012, t_height = 5, n_samps = 200)
+rand_trees<-random_tree_samp(bd_sim_tr, t_height = 50, n_samps = 150)
 rand_trees<-plyr::compact(rand_trees)
 rand_trees<-rand_trees[sapply(rand_trees, function(x) Ntip(x) >=4)]
 nt<-sapply(rand_trees, Ntip)
 length(which(nt>=4))
-saveRDS(rand_trees, "self_sim/bird_5.rds")
+saveRDS(rand_trees, "self_sim/sim_bird_50_trees.rds")
 
 par(mfrow=c(3,3))
 sapply(sample(rand_trees,9), plot, cex = 1, no.margin = TRUE, root.edge = T)

@@ -5,6 +5,7 @@ library(ggpubr)
 library(cowplot)
 library(ggthemes)
 library(visreg)
+library(plotly)
 
 # Shape hists ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
@@ -211,7 +212,6 @@ corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name
                    # hide correlation coefficient on the principal diagonal
                    diag=FALSE, mar = c(0.06,0.06,0.06,0.06))
 # 3D-plot ####
-library(plotly)
 #express<-expression(paste("Ln mean ", lambda, " (species ", Myr^-1,")"),sep=" ")
 plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
         type = "scatter3d", mode = "lines+markers",
@@ -227,14 +227,14 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedne
     )
 
 
-plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
+plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedness),
         type = "scatter3d", mode = "markers",
         marker = list(symbol = 'circle', sizemode = 'area', 
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
     title = "All clades",
-    scene = list( xaxis = list(title = "λ*"),
+    scene = list( xaxis = list(title = "Ln λ*"),
                   yaxis = list(title = "ψ"),
                   zaxis = list(title = "η"))
   )
@@ -351,11 +351,11 @@ g4<-ggplot(sum_stats, aes(x = (rel_age), y = sackin.pda, color = taxon, shape = 
 g1<-ggplot(sum_stats, aes(x = (colles.yule), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
   geom_point() + labs(title = "", x = "Colles (Yule)", y = "Ln DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g2<-ggplot(sum_stats, aes(x = (sackin.yule), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
-  geom_point() + labs(title = "", x = "Sackin (Yule)", y = "Ln DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+  geom_point() + labs(title = "", x = "Sackin (Yule)", y = "") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g3<-ggplot(sum_stats, aes(x = (colles.pda), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
   geom_point() + labs(title = "", x = "Colles (PDA)", y = "Ln DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 g4<-ggplot(sum_stats, aes(x = (sackin.pda), y = log(trees_mean_dr), color = taxon, shape = taxon)) +
-  geom_point() + labs(title = "", x = "Sackin (PDA)", y = "Ln DR") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
+  geom_point() + labs(title = "", x = "Sackin (PDA)", y = "") + geom_smooth(method=lm, se=FALSE) + scale_color_brewer(palette="Dark2") + theme_minimal() + theme(legend.position = "none")
 
 # RPANDA
 g1<-ggplot(sum_stats, aes(x = log(tree.max.age), y = log(principal_eigenvalue), color = taxon, shape = taxon)) +

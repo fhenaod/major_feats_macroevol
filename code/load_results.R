@@ -248,17 +248,17 @@ sum_stats<-rbind( bird_5, bird_10, bird_20, bird_30, bird_40, bird_50
                 )
 
 # Simulated tree from empirican bird parameters
-sim_bird_5<-readRDS("self_sim/sim_bird/sim_5/output/sim_bird_5_sum_stats.rds")
+sim_bird_5<-readRDS("self_sim/sim_bird/sim_bird_5/output/sim_bird_5_sum_stats.rds")
 sim_bird_5$taxon<-rep("sim_bird_5", dim(sim_bird_5)[1])
-sim_bird_10<-readRDS("self_sim/sim_bird/sim_10/output/sim_bird_10_sum_stats.rds")
+sim_bird_10<-readRDS("self_sim/sim_bird/sim_bird_10/output/sim_bird_10_sum_stats.rds")
 sim_bird_10$taxon<-rep("sim_bird_10", dim(sim_bird_10)[1])
-sim_bird_20<-readRDS("self_sim/sim_bird/sim_20/output/sim_bird_20_sum_stats.rds")
+sim_bird_20<-readRDS("self_sim/sim_bird/sim_bird_20/output/sim_bird_20_sum_stats.rds")
 sim_bird_20$taxon<-rep("sim_bird_20", dim(sim_bird_20)[1])
-sim_bird_30<-readRDS("self_sim/sim_bird/sim_30/output/sim_bird_30_sum_stats.rds")
+sim_bird_30<-readRDS("self_sim/sim_bird/sim_bird_30/output/sim_bird_30_sum_stats.rds")
 sim_bird_30$taxon<-rep("sim_bird_30", dim(sim_bird_30)[1])
-sim_bird_40<-readRDS("self_sim/sim_bird/sim_40/output/sim_bird_40_sum_stats.rds")
+sim_bird_40<-readRDS("self_sim/sim_bird/sim_bird_40/output/sim_bird_40_sum_stats.rds")
 sim_bird_40$taxon<-rep("sim_bird_40", dim(sim_bird_40)[1])
-sim_bird_50<-readRDS("self_sim/sim_bird/sim_50/output/sim_bird_50_sum_stats.rds")
+sim_bird_50<-readRDS("self_sim/sim_bird/sim_bird_50/output/sim_bird_50_sum_stats.rds")
 sim_bird_50$taxon<-rep("sim_bird_50", dim(sim_bird_50)[1])
 
 sum_stats<-rbind( sim_bird_5, sim_bird_10, sim_bird_20, sim_bird_30, sim_bird_40, sim_bird_50

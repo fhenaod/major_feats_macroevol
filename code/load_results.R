@@ -144,7 +144,6 @@ sum_stats<-rbind(agar_fams_stats, agar_ords_stats,
                  )
 head(sum_stats)
 
-
 # SELF-SIMILAR ####
 # Empirical trees
 bird_5<-readRDS("self_sim/bird/bird_5/output/bird_5_sum_stats.rds")
@@ -246,6 +245,7 @@ sum_stats<-rbind( bird_5, bird_10, bird_20, bird_30, bird_40, bird_50
                  ,fern_5, fern_10, fern_20, fern_30, fern_40, fern_50
                  ,agar_5, agar_10, agar_20, agar_30, agar_40, agar_50
                 )
+sum_stats<-do.call(data.frame,lapply(sum_stats, function(x) replace(x, is.infinite(x),NA)))
 
 # Simulated tree from empirican bird parameters
 sim_bird_5<-readRDS("self_sim/sim_bird/sim_bird_5/output/sim_bird_5_sum_stats.rds")

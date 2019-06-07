@@ -146,6 +146,115 @@ head(sum_stats)
 
 # SELF-SIMILAR ####
 # Empirical trees
+bird_5<-readRDS("self_sim/bird/bird_5_sum_stats.rds")
+bird_5$orig_brake_age_f<-readRDS("self_sim/bird/bird_5_brake_ages.rds")
+bird_5$taxon<-rep("bird_5", dim(bird_5)[1])
+bird_10<-readRDS("self_sim/bird/bird_10_sum_stats.rds")
+bird_10$orig_brake_age_f<-readRDS("self_sim/bird/bird_10_brake_ages.rds")
+bird_10$taxon<-rep("bird_10", dim(bird_10)[1])
+bird_20<-readRDS("self_sim/bird/bird_20_sum_stats.rds")
+bird_20$orig_brake_age_f<-readRDS("self_sim/bird/bird_20_brake_ages.rds")
+bird_20$taxon<-rep("bird_20", dim(bird_20)[1])
+bird_30<-readRDS("self_sim/bird/bird_30_sum_stats.rds")
+bird_30$orig_brake_age_f<-readRDS("self_sim/bird/bird_30_brake_ages.rds")
+bird_30$taxon<-rep("bird_30", dim(bird_30)[1])
+bird_40<-readRDS("self_sim/bird/bird_40_sum_stats.rds")
+bird_40$orig_brake_age_f<-readRDS("self_sim/bird/bird_40_brake_ages.rds")
+bird_40$taxon<-rep("bird_40", dim(bird_40)[1])
+bird_50<-readRDS("self_sim/bird/bird_50_sum_stats.rds")
+bird_50$orig_brake_age_f<-readRDS("self_sim/bird/bird_50_brake_ages.rds")
+bird_50$taxon<-rep("bird_50", dim(bird_50)[1])
+
+agar_5<-readRDS("self_sim/agar/agar_5_sum_stats.rds")
+agar_5$taxon<-rep("agar_5", dim(agar_5)[1])
+agar_10<-readRDS("self_sim/agar/agar_10_sum_stats.rds")
+agar_10$taxon<-rep("agar_10", dim(agar_10)[1])
+agar_20<-readRDS("self_sim/agar/agar_20_sum_stats.rds")
+agar_20$taxon<-rep("agar_20", dim(agar_20)[1])
+agar_30<-readRDS("self_sim/agar/agar_30_sum_stats.rds")
+agar_30$taxon<-rep("agar_30", dim(agar_30)[1])
+agar_40<-readRDS("self_sim/agar/agar_40_sum_stats.rds")
+agar_40$taxon<-rep("agar_40", dim(agar_40)[1])
+agar_50<-readRDS("self_sim/agar/agar_50_sum_stats.rds")
+agar_50$taxon<-rep("agar_50", dim(agar_50)[1])
+
+amph_5<-readRDS("self_sim/amph/amph_5_sum_stats.rds")
+amph_5$taxon<-rep("amph_5", dim(amph_5)[1])
+amph_10<-readRDS("self_sim/amph/amph_10_sum_stats.rds")
+amph_10$taxon<-rep("amph_10", dim(amph_10)[1])
+amph_20<-readRDS("self_sim/amph/amph_20_sum_stats.rds")
+amph_20$taxon<-rep("amph_20", dim(amph_20)[1])
+amph_30<-readRDS("self_sim/amph/amph_30_sum_stats.rds")
+amph_30$taxon<-rep("amph_30", dim(amph_30)[1])
+amph_40<-readRDS("self_sim/amph/amph_40_sum_stats.rds")
+amph_40$taxon<-rep("amph_40", dim(amph_40)[1])
+amph_50<-readRDS("self_sim/amph/amph_50_sum_stats.rds")
+amph_50$taxon<-rep("amph_50", dim(amph_50)[1])
+
+chon_5<-readRDS("self_sim/chon/chon_5_sum_stats.rds")
+chon_5$taxon<-rep("chon_5", dim(chon_5)[1])
+chon_10<-readRDS("self_sim/chon/chon_10_sum_stats.rds")
+chon_10$taxon<-rep("chon_10", dim(chon_10)[1])
+chon_20<-readRDS("self_sim/chon/chon_20_sum_stats.rds")
+chon_20$taxon<-rep("chon_20", dim(chon_20)[1])
+chon_30<-readRDS("self_sim/chon/chon_30_sum_stats.rds")
+chon_30$taxon<-rep("chon_30", dim(chon_30)[1])
+chon_40<-readRDS("self_sim/chon/chon_40_sum_stats.rds")
+chon_40$taxon<-rep("chon_40", dim(chon_40)[1])
+chon_50<-readRDS("self_sim/chon/chon_50_sum_stats.rds")
+chon_50$taxon<-rep("chon_50", dim(chon_50)[1])
+
+fern_5<-readRDS("self_sim/fern/fern_5_sum_stats.rds")
+fern_5$taxon<-rep("fern_5", dim(fern_5)[1])
+fern_10<-readRDS("self_sim/fern/fern_10_sum_stats.rds")
+fern_10$taxon<-rep("fern_10", dim(fern_10)[1])
+fern_20<-readRDS("self_sim/fern/fern_20_sum_stats.rds")
+fern_20$taxon<-rep("fern_20", dim(fern_20)[1])
+fern_30<-readRDS("self_sim/fern/fern_30_sum_stats.rds")
+fern_30$taxon<-rep("fern_30", dim(fern_30)[1])
+fern_40<-readRDS("self_sim/fern/fern_40_sum_stats.rds")
+fern_40$taxon<-rep("fern_40", dim(fern_40)[1])
+fern_50<-readRDS("self_sim/fern/fern_50_sum_stats.rds")
+fern_50$taxon<-rep("fern_50", dim(fern_50)[1])
+
+fish_5<-readRDS("self_sim/fish/fish_5_sum_stats.rds")
+fish_5$taxon<-rep("fish_5", dim(fish_5)[1])
+fish_10<-readRDS("self_sim/fish/fish_10_sum_stats.rds")
+fish_10$taxon<-rep("fish_10", dim(fish_10)[1])
+fish_20<-readRDS("self_sim/fish/fish_20_sum_stats.rds")
+fish_20$taxon<-rep("fish_20", dim(fish_20)[1])
+fish_30<-readRDS("self_sim/fish/fish_30_sum_stats.rds")
+fish_30$taxon<-rep("fish_30", dim(fish_30)[1])
+fish_40<-readRDS("self_sim/fish/fish_40_sum_stats.rds")
+fish_40$taxon<-rep("fish_40", dim(fish_40)[1])
+fish_50<-readRDS("self_sim/fish/fish_50_sum_stats.rds")
+fish_50$taxon<-rep("fish_50", dim(fish_50)[1])
+
+squa_5<-readRDS("self_sim/squa/squa_5_sum_stats.rds")
+squa_5$taxon<-rep("squa_5", dim(squa_5)[1])
+squa_10<-readRDS("self_sim/squa/squa_10_sum_stats.rds")
+squa_10$taxon<-rep("squa_10", dim(squa_10)[1])
+squa_20<-readRDS("self_sim/squa/squa_20_sum_stats.rds")
+squa_20$taxon<-rep("squa_20", dim(squa_20)[1])
+squa_30<-readRDS("self_sim/squa/squa_30_sum_stats.rds")
+squa_30$taxon<-rep("squa_30", dim(squa_30)[1])
+squa_40<-readRDS("self_sim/squa/squa_40_sum_stats.rds")
+squa_40$taxon<-rep("squa_40", dim(squa_40)[1])
+squa_50<-readRDS("self_sim/squa/squa_50_sum_stats.rds")
+squa_50$taxon<-rep("squa_50", dim(squa_50)[1])
+
+sum_stats<-rbind( bird_5, bird_10, bird_20, bird_30, bird_40, bird_50
+                  ,amph_5, amph_10, amph_20, amph_30, amph_40, amph_50
+                  ,fish_5, fish_10, fish_20, fish_30, fish_40, fish_50
+                  #,chon_5
+                  , chon_10, chon_20, chon_30, chon_40, chon_50
+                  ,squa_5, squa_10, squa_20, squa_30, squa_40, squa_50
+                  ,fern_5, fern_10, fern_20, fern_30, fern_40, fern_50
+                  ,agar_5, agar_10, agar_20, agar_30, agar_40, agar_50
+)
+sum_stats<-do.call(data.frame,lapply(sum_stats, function(x) replace(x, is.infinite(x),NA)))
+
+# Empi.trees root.edge add 
 bird_5<-readRDS("self_sim/bird/bird_5/output/bird_5_sum_stats.rds")
 bird_5$taxon<-rep("bird_5", dim(bird_5)[1])
 bird_10<-readRDS("self_sim/bird/bird_10/output/bird_10_sum_stats.rds")
@@ -236,16 +345,6 @@ agar_40<-readRDS("self_sim/agar/agar_40/output/agar_40_sum_stats.rds")
 agar_40$taxon<-rep("agar_40", dim(agar_40)[1])
 agar_50<-readRDS("self_sim/agar/agar_50/output/agar_50_sum_stats.rds")
 agar_50$taxon<-rep("agar_50", dim(agar_50)[1])
-
-sum_stats<-rbind( bird_5, bird_10, bird_20, bird_30, bird_40, bird_50
-                 ,amph_5, amph_10, amph_20, amph_30, amph_40, amph_50
-                 ,fish_5, fish_10, fish_20, fish_30, fish_40, fish_50
-                 ,chon_5, chon_10, chon_20, chon_30, chon_40, chon_50
-                 ,squa_5, squa_10, squa_20, squa_30, squa_40, squa_50
-                 ,fern_5, fern_10, fern_20, fern_30, fern_40, fern_50
-                 ,agar_5, agar_10, agar_20, agar_30, agar_40, agar_50
-                )
-sum_stats<-do.call(data.frame,lapply(sum_stats, function(x) replace(x, is.infinite(x),NA)))
 
 # Simulated tree from empirican bird parameters
 sim_bird_5<-readRDS("self_sim/sim_bird/sim_bird_5/output/sim_bird_5_sum_stats.rds")

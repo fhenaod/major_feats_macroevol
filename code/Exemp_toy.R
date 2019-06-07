@@ -17,3 +17,8 @@ plot(my_tree, show.node.label = T)
 nodelabels(frame = "none", col = "red", adj = c(1.1,-0.4))
 mrca_node <-getMRCA(my_tree, tip = c("t1", "t2"))
 my_tree$node.label[mrca_node-Ntip(my_tree)]
+
+tr <- rtree(30)
+ch <- rcoal(30)
+plot(tr,"p", show.tip.label = F, FALSE, root.edge = T)
+axisPhylo(1, las = 1)

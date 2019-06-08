@@ -39,7 +39,7 @@ random_tree_samp=function(t, t_height, n_samps){
   return(list(l_trees, t_brake_age))
 }
 
-rand_trees_raw<-random_tree_samp(bd_sim_tr, t_height = 5, n_samps = 1900)
+rand_trees_raw<-random_tree_samp(bd_sim_tr, t_height = 50, n_samps = 200)
 rand_trees<-plyr::compact(rand_trees_raw[[1]])
 orig_brake_age<-rand_trees_raw[[2]][!is.na(rand_trees_raw[[2]])]
 
@@ -48,7 +48,7 @@ orig_brake_age_f<-orig_brake_age[sapply(rand_trees, function(x) Ntip(x) >= 4)]
   
 nt<-sapply(rand_trees_f, Ntip)
 length(which(nt >= 4))
-saveRDS(rand_trees_f, "self_sim/chon_10_trees.rds")
+saveRDS(rand_trees_f, "self_sim/sim_bird_50_trees.rds")
 saveRDS(orig_brake_age_f, "self_sim/chon_5_brake_ages.rds")
 
 par(mfrow = c(3,3))

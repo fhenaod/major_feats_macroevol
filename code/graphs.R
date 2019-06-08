@@ -234,7 +234,7 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedn
                       color = ~tree.max.age, size = ~ntips,
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
-    title = "All clades",
+    title = "",
     scene = list( xaxis = list(title = "Ln λ*"),
                   yaxis = list(title = "ψ"),
                   zaxis = list(title = "η"))
@@ -245,9 +245,9 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedn
         type = "scatter3d", mode = "markers",
         marker = list(symbol = 'circle', sizemode = 'area', 
                       color = ~orig_brake_age_f, size = ~ntips,
-                      colorbar = list(title = 'Brake point age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
+                      colorbar = list(title = 'Brake point age (Myr)'), colorscale = 'Viridis', reversescale = T)) %>%
   layout(
-    title = "All clades",
+    title = "",
     scene = list( xaxis = list(title = "Ln λ*"),
                   yaxis = list(title = "ψ"),
                   zaxis = list(title = "η"))

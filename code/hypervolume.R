@@ -383,6 +383,10 @@ sim_bird_50_vol<-filter(sum_stats, taxon == "sim_bird_50") %>%
   mutate(principal_eigenvalue = log(principal_eigenvalue),asymmetry = asymmetry, peakedness = log(peakedness)) %>% 
   expectation_convex(check.memory = F)
 
+all_sim_vol<-select(sum_stats, principal_eigenvalue, asymmetry, peakedness) %>% 
+  mutate(principal_eigenvalue = log(principal_eigenvalue),asymmetry = asymmetry, peakedness = log(peakedness)) %>% 
+  expectation_convex(check.memory = F)
+
 sim_bird_vol<-data.frame(sim_bird_5_vol@Volume, sim_bird_10_vol@Volume, sim_bird_20_vol@Volume, sim_bird_30_vol@Volume, sim_bird_40_vol@Volume, sim_bird_50_vol@Volume)
 
 

@@ -254,7 +254,7 @@ sum_stats<-rbind( bird_5, bird_10, bird_20, bird_30, bird_40, bird_50
 )
 sum_stats<-do.call(data.frame,lapply(sum_stats, function(x) replace(x, is.infinite(x),NA)))
 
-# Empi.trees root.edge add 
+# Empi.trees root.edge appended 
 bird_5<-readRDS("self_sim/bird/bird_5/output/bird_5_sum_stats.rds")
 bird_5$taxon<-rep("bird_5", dim(bird_5)[1])
 bird_10<-readRDS("self_sim/bird/bird_10/output/bird_10_sum_stats.rds")

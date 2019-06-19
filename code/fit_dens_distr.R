@@ -1,6 +1,23 @@
 library(fitdistrplus)
 library(actuar)
+library(ggplot2)
+library(ggpubr)
 
+# Density plots ####
+d1<-ggplot(sum_stats, aes(x = shape.yule)) + geom_histogram(aes(y = ..density..), colour = "darkblue", fill = "white") + 
+  geom_density(alpha = .2, fill = "#FF6666") + labs(title="", x = "Shape (Yule)", y = "Density") + 
+  theme_tufte(base_family = "Helvetica") + geom_rangeframe(data=data.frame(x = c(0, 30),
+                                                                           y = c(0, .25)), aes(x, y)) 
+d2<-ggplot(sum_stats, aes(x = shape.pda)) + geom_histogram(aes(y = ..density..), colour = "darkblue", fill = "white") + 
+  geom_density(alpha = .2, fill = "#FF6666") + labs(title="", x = "Shape (PDA)", y = "Density") + 
+  theme_tufte(base_family = "Helvetica") + geom_rangeframe(data=data.frame(x = c(-30, 10),
+                                                                           y = c(0, .3)), aes(x, y)) 
+
+ggarrange(d1, 2,   
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+
+# Distribution fitting ####
 plotdist(subset(sum_stats, !is.na(shape.yule))$shape.yule, histo = TRUE, demp = TRUE)
 plotdist(subset(sum_stats, !is.na(shape.pda))$shape.pda, histo = TRUE, demp = TRUE)
 plotdist(subset(sum_stats, !is.na(gamma.stat))$gamma.stat, histo = TRUE, demp = TRUE)
@@ -32,7 +49,8 @@ par(mfrow = c(1,1))
 cdfcomp(list(fit_b, fit_g, fit_B), xlogscale = TRUE, ylogscale = TRUE,
         legendtext = c("Beta", "Gamma", "Burr"), lwd = 2)
 plot.legend<-c("Beta", "Gamma", "Burr")
-denscomp(list(fit_b, fit_g, fit_B), legendtext = plot.legend, xlab = "Shape (Yule)", ylab = "Count", main = "")
+dcomp<-denscomp(list(fit_b, fit_g, fit_B), legendtext = plot.legend, xlab = "Shape (Yule)", ylab = "Count", main = "", plotstyle = "ggplot")
+dcomp + ggplot2::theme_minimal()
 
 par(mfrow = c(2,2))
 plot.legend<-c("Beta", "Gamma", "Burr")

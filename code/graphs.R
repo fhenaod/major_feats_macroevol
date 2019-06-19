@@ -25,10 +25,10 @@ ggarrange(hh1, hh2,
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 
-# Coless & Sackin hists ####
+# Colless & Sackin hists ####
 hh3<-ggplot(sum_stats, aes(x=colles.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(colles.yule))$colles.yule)),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Coless Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  labs(title="", x="Colless Index (Yule)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(-2, 15), y=c(0, 10)), aes(x, y)) 
 
 hh4<-ggplot(sum_stats, aes(x=sackin.yule)) + geom_histogram(color="darkblue", fill="white") + 
@@ -38,7 +38,7 @@ hh4<-ggplot(sum_stats, aes(x=sackin.yule)) + geom_histogram(color="darkblue", fi
 
 hh5<-ggplot(sum_stats, aes(x=colles.pda)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(colles.pda))$colles.pda)),color="red", linetype="dashed", size=1) +
-  labs(title="", x="Coless Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  labs(title="", x="Colless Index (PDA)", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x=c(0, 2), y=c(0, 10)), aes(x, y)) 
 
 hh6<-ggplot(sum_stats, aes(x=sackin.pda)) + geom_histogram(color="darkblue", fill="white") + 
@@ -125,13 +125,31 @@ sem<-sd(x)/sqrt(length(x)) # SE
 round(c(mean(x)-2*sem,mean(x)+2*sem),2) # CI95
 rm(x)
 
+# DR & Gamma-stat hist
+hh13<-ggplot(sum_stats, aes(x=ln_dr)) + geom_histogram(color="darkblue", fill="white") + 
+  #geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(ln_dr))$ln_dr)),color="red", linetype="dashed", size=1) +
+  labs(title="", x="DR", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x = c(-5, 0),
+                                  y = c(0, 50)), aes(x, y)) 
+
+hh14<-ggplot(sum_stats, aes(x=gamma.stat)) + geom_histogram(color="darkblue", fill="white") + 
+  #geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(gamma.stat))$gamma.stat)),color="red", linetype="dashed", size=1) +
+  labs(title="", x="Gamma statistic", y = "Count") + theme_tufte(base_family = "Helvetica") + 
+  geom_rangeframe(data=data.frame(x = c(-60, 30), 
+                                  y = c(0, 250)), aes(x, y)) 
+
+ggarrange(hh13, hh14,   
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+
+
 # Regressions Vs. Age ####
 
 # IMBALANCE
 par(mfrow=c(2,2))
-visreg(lm((colles.yule)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Coless Index (Yule)")
+visreg(lm((colles.yule)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Colless Index (Yule)")
 visreg(lm((sackin.yule)~log(tree.max.age), data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Sackin Index (Yule)")
-visreg(lm((colles.pda)~log(tree.max.age),  data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Coless Index (PDA)")
+visreg(lm((colles.pda)~log(tree.max.age),  data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Colless Index (PDA)")
 visreg(lm((sackin.pda)~log(tree.max.age),  data=sum_stats), xlab= "Ln Clade age (My)", ylab= "Sackin Index (PDA)")
 
 # SHAPE
@@ -235,17 +253,17 @@ plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedn
                       colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
   layout(
     title = "",
-    scene = list( xaxis = list(title = "Ln λ*"),
-                  yaxis = list(title = "ψ"),
-                  zaxis = list(title = "η"))
+    scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
+                  yaxis = list(title = "Skewness"),
+                  zaxis = list(title = "Peak height"))
   )
 
-# Brake point age
+# Break point age
 plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedness),
         type = "scatter3d", mode = "markers",
         marker = list(symbol = 'circle', sizemode = 'area', 
                       color = ~orig_brake_age_f, size = ~ntips,
-                      colorbar = list(title = 'Brake point age (Myr)'), colorscale = 'Viridis', reversescale = T)) %>%
+                      colorbar = list(title = 'Break point age (Myr)'), colorscale = 'Viridis', reversescale = T)) %>%
   layout(
     title = "",
     scene = list( xaxis = list(title = "Ln λ*"),
@@ -294,7 +312,7 @@ ggarrange(vp3, vp4,
           ncol = 2)
 
 vp5<-ggplot(sum_stats, aes(x = taxon, y = colles.pda, fill = taxon)) + geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Coless (PDA)") + 
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Colless (PDA)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp6<-ggplot(sum_stats, aes(x = taxon, y = sackin.pda, fill = taxon)) + geom_violin(trim = FALSE) +
@@ -302,7 +320,7 @@ vp6<-ggplot(sum_stats, aes(x = taxon, y = sackin.pda, fill = taxon)) + geom_viol
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp7<-ggplot(sum_stats, aes(x = taxon, y = colles.yule, fill = taxon)) + geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Coless (Yule)") + 
+  geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Colless (Yule)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp8<-ggplot(sum_stats, aes(x = taxon, y = sackin.yule, fill = taxon)) + geom_violin(trim = FALSE) +
@@ -337,7 +355,7 @@ ggarrange(vp9, vp10, vp11, vp12,
 
 ## ALL clades ####
 
-# Shape
+# Shape vs Absolute Age
 gg1<-ggplot(sum_stats, aes(x = (tree.max.age), y = shape.yule, color = taxon)) +
   geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Ln Clade age (Myr)", y = "Shape (Yule)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
@@ -348,39 +366,95 @@ gg2<-ggplot(sum_stats, aes(x = (tree.max.age), y = shape.pda, color = taxon)) +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
   theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE)
 
-gg1<-ggplot(sum_stats, aes(x = (rel_age), y = shape.yule, color = taxon)) + geom_point() + labs(title = "", x = "Relative clade age", y = "Shape (Yule)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
-gg2<-ggplot(sum_stats, aes(x = (rel_age), y = shape.pda,  color = taxon)) + geom_point() + labs(title = "", x = "Relative clade age", y = "Shape (PDA)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
+# Shape vs Relative age
+gg1<-ggplot(sum_stats, aes(x = (rel_age), y = shape.yule, color = taxon)) + 
+  geom_point(size = .9) + labs(title = "", x = "Relative age", y = "Shape (Yule)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none")
+gg2<-ggplot(sum_stats, aes(x = (rel_age), y = shape.pda,  color = taxon)) + 
+  geom_point(size = .9) + labs(title = "", x = "Relative age", y = "Shape (PDA)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme()
 
 ggarrange(gg1, gg2,   
           labels = c("A", "B"),
           ncol = 2)
 
-# Imbalance vs Age
-g1<-ggplot(sum_stats, aes(x = (tree.max.age), y = colles.yule, color = taxon)) +
-  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Coless (Yule)") + 
+# Shape vs tree size
+ggg1<-ggplot(sum_stats, aes(x = log(ntips), y = shape.yule, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Ln Tree size", y = "Shape (Yule)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
-  theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE)
+  theme_minimal() + theme(legend.position = "none") #+ geom_smooth(method=lm, se=FALSE)
+
+ggg2<-ggplot(sum_stats, aes(x = (ntips), y = shape.pda, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Tree size", y = "Shape (PDA)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
+  theme_minimal() + theme(legend.position = "none") #+ geom_smooth(method=lm, se=FALSE)
+
+ggarrange(ggg1, ggg2,   
+          labels = c("A", "B"),
+          ncol = 2)
+
+# Colless/Sackin vs Age
+g1<-ggplot(sum_stats, aes(x = (tree.max.age), y = colles.yule, color = taxon)) +
+  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Colless (Yule)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=lm, se=FALSE)
 g2<-ggplot(sum_stats, aes(x = (tree.max.age), y = sackin.yule, color = taxon)) +
   geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Sackin (Yule)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
-  theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE)
+  theme_minimal() + theme(legend.position = "none") #+ geom_smooth(method=lm, se=FALSE)
 g3<-ggplot(sum_stats, aes(x = (tree.max.age), y = colles.pda, color = taxon)) +
-  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Ln Clade age (Myr)", y = "Coless (PDA)") + 
+  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Ln Clade age (Myr)", y = "Colless (PDA)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
-  theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE)
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=lm, se=FALSE)
 g4<-ggplot(sum_stats, aes(x = (tree.max.age), y = sackin.pda, color = taxon)) +
   geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Ln Clade age (Myr)", y = "Sackin (PDA)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
-  theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE)
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=lm, se=FALSE)
 
-g1<-ggplot(sum_stats, aes(x = (rel_age), y = colles.yule, color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Coless (Yule)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
+# Colless/Sackin vs Relative age
+g1<-ggplot(sum_stats, aes(x = (rel_age), y = colles.yule, color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Colless (Yule)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
 g2<-ggplot(sum_stats, aes(x = (rel_age), y = sackin.yule, color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Sackin (Yule)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
-g3<-ggplot(sum_stats, aes(x = (rel_age), y = colles.pda, color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Relative clade age", y = "Coless (PDA)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
+g3<-ggplot(sum_stats, aes(x = (rel_age), y = colles.pda, color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Relative clade age", y = "Colless (PDA)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
 g4<-ggplot(sum_stats, aes(x = (rel_age), y = sackin.pda, color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Relative clade age", y = "Sackin (PDA)") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
 
-# All clades DR vs. imbalance
+# Beta vs Relative age/Tree size
+gp1<-ggplot(sum_stats, aes(x = (rel_age), y = log(beta+2.5), color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Relative age", y = "Ln Beta + 2.5") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=lm, se=FALSE)
+
+gp2<-ggplot(sum_stats, aes(x = log(ntips), y = log(beta+2.5), color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Ln Tree size", y = "Ln Beta + 2.5") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme()# + geom_smooth(method=lm, se=FALSE)
+
+ggarrange(gp1, gp2,   
+          labels = c("A", "B"),
+          ncol = 2)
+
+# Colless/Sackin vs Tree size
+g1<-ggplot(sum_stats, aes(x = (ntips), y = colles.yule, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "", y = "Colless (Yule)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none") # + geom_smooth(method=loess, se=FALSE)
+g2<-ggplot(sum_stats, aes(x = (ntips), y = sackin.yule, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "", y = "Sackin (Yule)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=loess, se=FALSE)
+g3<-ggplot(sum_stats, aes(x = (ntips), y = colles.pda, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Tree size", y = "Colless (PDA)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=loess, se=FALSE)
+g4<-ggplot(sum_stats, aes(x = (ntips), y = sackin.pda, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Tree size", y = "Sackin (PDA)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=loess, se=FALSE)
+
+# DR vs. Colless/Sackin
 g1<-ggplot(sum_stats, aes(x = (colles.yule), y = log(trees_mean_dr), color = taxon)) +
-  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Coless (Yule)", y = "Ln DR") +
+  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Colless (Yule)", y = "Ln DR") +
   geom_smooth(method=lm, se=FALSE) + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none") + ylim(min(sum_stats$ln_dr, na.rm = T),3)
 g2<-ggplot(sum_stats, aes(x = (sackin.yule), y = log(trees_mean_dr), color = taxon)) +
@@ -388,7 +462,7 @@ g2<-ggplot(sum_stats, aes(x = (sackin.yule), y = log(trees_mean_dr), color = tax
   geom_smooth(method=lm, se=FALSE) + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none") + ylim(min(sum_stats$ln_dr, na.rm = T),3)
 g3<-ggplot(sum_stats, aes(x = (colles.pda), y = log(trees_mean_dr), color = taxon)) +
-  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Coless (PDA)", y = "Ln DR") +
+  geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Colless (PDA)", y = "Ln DR") +
   geom_smooth(method=lm, se=FALSE) + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none") + ylim(min(sum_stats$ln_dr, na.rm = T),3)
 g4<-ggplot(sum_stats, aes(x = (sackin.pda), y = log(trees_mean_dr), color = taxon)) +
@@ -396,8 +470,20 @@ g4<-ggplot(sum_stats, aes(x = (sackin.pda), y = log(trees_mean_dr), color = taxo
   geom_smooth(method=lm, se=FALSE) + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none") + ylim(min(sum_stats$ln_dr, na.rm = T),3)
 
-# RPANDA
-# vs. age
+# DR vs. Beta
+gpp1<-ggplot(sum_stats, aes(x = ln_dr, y = log(beta+2.5), color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Ln DR", y = "Ln Beta + 2.5") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none") + ylim(min(sum_stats$ln_dr, na.rm = T),3) # + geom_smooth(method=lm, se=FALSE)
+gpp2<-ggplot(sum_stats, aes(x = (gamma.stat+50), y = log(trees_mean_dr), color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Gamma statistic", y = "") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + theme(legend.position = "none") + ylim(min(sum_stats$ln_dr, na.rm = T),3) # + geom_smooth(method=lm, se=FALSE)
+
+ggarrange(gpp1, gpp2,   
+          labels = c("A", "B"),
+          ncol = 2)
+
+# RPANDA vs. age
 g1<-ggplot(sum_stats, aes(x = log(tree.max.age), y = log(principal_eigenvalue), color = taxon)) +
   geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Log λ*") +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
@@ -420,7 +506,7 @@ g2<-ggplot(sum_stats, aes(x = (rel_age), y = asymmetry, color = taxon)) + geom_p
 g3<-ggplot(sum_stats, aes(x = (rel_age), y = log(peakedness), color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Relative clade age", y = "Ln η") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
 g4<-ggplot(sum_stats, aes(x = (rel_age), y = log(modalities), color = taxon)) + geom_point(size = .9, alpha=1/2) + labs(title = "", x = "Relative clade age", y = "Ln Modalities") + scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + theme(legend.position = "none")
 
-# vs. brake_point_age
+# RPANDA vs. brake_point_age
 g1<-ggplot(sum_stats, aes(x = log(orig_brake_age_f), y = log(principal_eigenvalue), color = taxon)) +
   geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Log λ*") +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
@@ -438,7 +524,7 @@ g4<-ggplot(sum_stats, aes(x = log(orig_brake_age_f), y = log(modalities), color 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE, size = .7)
 
-# vs. DR
+# RPANDA vs. DR
 g1<-ggplot(sum_stats, aes(x = log(trees_mean_dr), y = log(principal_eigenvalue), color = taxon)) +
   geom_point(size = .9, alpha=1/2) + labs(title = "", x = "", y = "Ln λ*") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 

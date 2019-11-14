@@ -5,8 +5,8 @@ library(animation)
 library(RColorBrewer)
 
 # addalpha()
-addalpha <- function(colors, alpha=1.0) {
-  r <- col2rgb(colors, alpha=T)
+addalpha <- function(colors, alpha = 1.0) {
+  r <- col2rgb(colors, alpha = T)
   # Apply alpha
   r[4,] <- alpha*255
   r <- r/255.0
@@ -14,16 +14,16 @@ addalpha <- function(colors, alpha=1.0) {
 }
 
 # colorRampPaletteAlpha()
-colorRampPaletteAlpha <- function(colors, n=32, interpolate='linear') {
+colorRampPaletteAlpha <- function(colors, n = 32, interpolate='linear') {
   # Create the color ramp normally
   cr <- colorRampPalette(colors, interpolate=interpolate)(n)
   # Find the alpha channel
-  a <- col2rgb(colors, alpha=T)[4,]
+  a <- col2rgb(colors, alpha = T)[4,]
   # Interpolate
-  if (interpolate=='linear') {
-    l <- approx(a, n=n)
+  if (interpolate == 'linear') {
+    l <- approx(a, n = n)
   } else {
-    l <- spline(a, n=n)
+    l <- spline(a, n = n)
   }
   l$y[l$y > 255] <- 255 # Clamp if spline is > 255
   cr <- addalpha(cr, l$y/255.0)
@@ -33,7 +33,7 @@ colorRampPaletteAlpha <- function(colors, n=32, interpolate='linear') {
 rotate <-360
 par(xpd = TRUE)
 cols<-colorRampPalette(brewer.pal(11,"Spectral"))(100)
-pal<-addalpha(cols,.7)
+pal<-addalpha(cols,.5)
 
 saveGIF({
   
@@ -46,9 +46,9 @@ saveGIF({
               log(sum_stats$peakedness),  
               colvar = sum_stats$tree.max.age,
               col = pal,
-              xlab = "Ln Principal eigenvalue", 
-              ylab = "Asymmetry",
-              zlab = "Ln Peakedness",
+              xlab = "Expansion", 
+              ylab = "Tippiness",
+              zlab = "Branch length heterogeneity",
               clab = "Clade age (Myr)",
               theta = rotate,
               phi = 30,
@@ -57,4 +57,7 @@ saveGIF({
               bty = "b2",
               add = FALSE)
   }
-}, interval = 0.1, movie.name = "Rot3dPlot.gif", ani.width = 800, ani.height = 600)
+}, interval = 0.1, movie.name = "slicing_3d.gif", ani.width = 800, ani.height = 600)
+
+# Save ggplot at high resolution
+ggsave("Rplot.png", width = 20, height = 20, units = "cm", dpi = 320)

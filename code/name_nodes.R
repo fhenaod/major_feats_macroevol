@@ -15,7 +15,7 @@ get_genus=function(names_sp){
 genera<-unique(get_genus(names_sp))
 
 # Name genera nodes ####
-name_genus_nodes=function(tree,names2nodes){
+name_genus_nodes=function(tree, names2nodes){
   for(i in 1:length(names2nodes)){
     tips<-tree$tip.label[grep(names2nodes[i], tree$tip.label)]
     if(length(tips)!=1){
@@ -28,6 +28,41 @@ name_genus_nodes=function(tree,names2nodes){
   return(tree)
 }
 tre_g_noded<-name_genus_nodes(tree, genera)
+
+# Name higher rank nodes on a genus tree, based on taxonomy table ####
+m<-read.csv("taxonomy/_tax.csv", header = T, row.names = 1)
+name_htaxa_nod_gen_tip=function(tree, m){
+  fams<-unique(m$family)
+  for(i in 1:length(fams)){
+    fam_g<-as.character(m[grep(fams[i],m$family),]$genus)
+    if(length(fam_g)<=2) {next()}
+    mrca_node<-get_mrca_of_set(tree, fam_g)
+    if(mrca_node!=1) {
+      tree$node.label[mrca_node-Ntip(tree)]<-as.character(fams[i])
+    } 
+  }
+  
+  ords<-unique(m$order)
+  for(j in 1:length(ords)){
+    ord_f<-as.character(m[grep(ords[j],m$order),]$family)
+    mrca_node<-get_mrca_of_set(tree, ord_f)
+    if(mrca_node!=1) {
+      tree$node.label[mrca_node-Ntip(tree)]<-as.character(ords[j])
+    } 
+  }
+  
+  clas<-unique(m$class)
+  for(k in 1:length(ords)){
+    cla_o<-as.character(m[grep(clas[k],m$class),]$order)
+    mrca_node<-get_mrca_of_set(tree, cla_o)
+    if(mrca_node!=1) {
+      tree$node.label[mrca_node-Ntip(tree)]<-as.character(clas[k])
+    } 
+  }
+  
+  return(tree)
+}
+tre_noded<-name_htaxa_nod_gen_tip(tre_g_noded, m)
 
 # Name higher rank nodes based on taxonomy table ####
 m<-read.csv("taxonomy/_tax.csv", header = T, row.names = 1)

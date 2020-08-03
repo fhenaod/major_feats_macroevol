@@ -2,6 +2,7 @@ library(geiger)
 library(phytools)
 library(rncl)
 library(castor)
+library(dplyr)
 
 source.path<-"megaphylos_raw/"
 destination.path<-"data_megaPhylos/"
@@ -80,6 +81,15 @@ TE2016<-phangorn::nnls.tree(cophenetic(TE2016),TE2016,rooted=TRUE)
 is.ultrametric(TE2016)
 write.tree(TE2016,file=paste0(destination.path,"tree_TE2016.cr.pr_.txt"))
 
+U2019 <- read.nexus(paste0(source.path, "tree_U2019_.nex"))
+plot(U2019, cex=.6, show.tip.label = F, no.margin = T)
+U2019 <- drop.tip(U2019, "_Anolis_carolinensis")
+is.binary(U2019)
+U2019 <- phangorn::nnls.tree(cophenetic(U2019), U2019, rooted = TRUE)
+is.ultrametric(U2019)
+write.tree(U2019, file = 
+             paste0(destination.path,"tree_U2019.cr.pr_.txt"))
+
 V2019<-read.tree(paste0(source.path,"tree_V2019_.tree"))
 plot(T2016,cex=.6, show.tip.label = F,no.margin = T)
 V2019<-drop.tip(V2019, c(grep("Bullera", V2019$tip.label),
@@ -93,3 +103,82 @@ V2019<-drop.tip(V2019, c(grep("Bullera", V2019$tip.label),
 V2019<-phangorn::nnls.tree(cophenetic(V2019),V2019,rooted=TRUE)
 is.ultrametric(V2019)
 write.tree(V2019,file=paste0(destination.path,"tree_V2019.cr.pr_.txt"))
+
+# 1k trees ####
+
+d <- dir("1k_trees/")
+
+# amphibia
+trees <- read.nexus("1k_trees/amphibia_1k_trees/output.nex")
+
+t2t <- lapply(trees, function(x) drop.tip(x, "Homo_sapiens"))
+sapply(t2t, is.rooted) %>% table()
+sapply(t2t, is.binary) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
+
+for( i in 1:length(t2t)){
+  t2t[[i]] <- phangorn::nnls.tree(cophenetic(t2t[[i]]), 
+                                    t2t[[i]], rooted = TRUE)
+}
+sapply(trees, is.ultrametric) %>% table()
+saveRDS(t2t, file = "data_megaPhylos/amph_trees_clean.rds")
+
+# mammals
+trees <- read.nexus("1k_trees/mammal_1k_trees/output.nex")
+
+t2t <- lapply(trees, function(x) drop.tip(x, "_Anolis_carolinensis"))
+sapply(t2t, is.rooted) %>% table()
+sapply(t2t, is.binary) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
+
+for( i in 1:length(t2t)){
+  t2t[[i]] <- phangorn::nnls.tree(cophenetic(t2t[[i]]), 
+                                  t2t[[i]], rooted = TRUE)
+}
+sapply(trees, is.ultrametric) %>% table()
+saveRDS(t2t, file = "data_megaPhylos/mamm_trees_clean.rds")
+
+# sharks
+trees <- read.nexus("1k_trees/sharks_1k_trees/output.nex")
+
+t2t <- lapply(trees, function(x) drop.tip(x, ""))
+sapply(t2t, is.rooted) %>% table()
+sapply(t2t, is.binary) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
+
+for( i in 1:length(t2t)){
+  if(is.ultrametric(t2t[[i]])) {} else {
+    t2t[[i]] <- phangorn::nnls.tree(cophenetic(t2t[[i]]), 
+                                    t2t[[i]], rooted = TRUE)
+  }
+}
+sapply(t2t, is.ultrametric) %>% table()
+saveRDS(t2t, file = "data_megaPhylos/shark_trees_clean.rds")
+
+# bird erick
+trees <- read.nexus("1k_trees/bird_erick_1k_trees/output.nex")
+
+t2t <- lapply(trees, function(x) drop.tip(x, ""))
+sapply(t2t, is.rooted) %>% table()
+sapply(t2t, is.binary) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
+
+saveRDS(t2t, file = "data_megaPhylos/bird_erick_clean.rds")
+
+# bird hack
+trees <- read.nexus("1k_trees/bird_hacke_1k_trees/output.nex")
+
+t2t <- lapply(trees, function(x) drop.tip(x, ""))
+sapply(t2t, is.rooted) %>% table()
+sapply(t2t, is.binary) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
+
+saveRDS(t2t, file = "data_megaPhylos/bird_hack_clean.rds")
+
+# fungi
+
+tip2rem <- lapply(c("Bullera", "Cryptococcus", "Dacrymyces", 
+                    "Laeticorticium", "Trichosporon", "Trimorphomyces", 
+                    "Tsuchiyaea", "Udeniomyces"), 
+                  function(x) grep(x, V2019$tip.label)) %>% unlist()
+

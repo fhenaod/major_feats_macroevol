@@ -105,7 +105,6 @@ is.ultrametric(V2019)
 write.tree(V2019,file=paste0(destination.path,"tree_V2019.cr.pr_.txt"))
 
 # 1k trees ####
-
 d <- dir("1k_trees/")
 
 # amphibia
@@ -116,11 +115,11 @@ sapply(t2t, is.rooted) %>% table()
 sapply(t2t, is.binary) %>% table()
 sapply(t2t, is.ultrametric) %>% table()
 
-for( i in 1:length(t2t)){
+for(i in 1:length(t2t)){
   t2t[[i]] <- phangorn::nnls.tree(cophenetic(t2t[[i]]), 
                                     t2t[[i]], rooted = TRUE)
 }
-sapply(trees, is.ultrametric) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
 saveRDS(t2t, file = "data_megaPhylos/amph_trees_clean.rds")
 
 # mammals
@@ -131,11 +130,11 @@ sapply(t2t, is.rooted) %>% table()
 sapply(t2t, is.binary) %>% table()
 sapply(t2t, is.ultrametric) %>% table()
 
-for( i in 1:length(t2t)){
+for(i in 1:length(t2t)){
   t2t[[i]] <- phangorn::nnls.tree(cophenetic(t2t[[i]]), 
                                   t2t[[i]], rooted = TRUE)
 }
-sapply(trees, is.ultrametric) %>% table()
+sapply(t2t, is.ultrametric) %>% table()
 saveRDS(t2t, file = "data_megaPhylos/mamm_trees_clean.rds")
 
 # sharks
@@ -181,4 +180,3 @@ tip2rem <- lapply(c("Bullera", "Cryptococcus", "Dacrymyces",
                     "Laeticorticium", "Trichosporon", "Trimorphomyces", 
                     "Tsuchiyaea", "Udeniomyces"), 
                   function(x) grep(x, V2019$tip.label)) %>% unlist()
-

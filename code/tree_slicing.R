@@ -45,13 +45,18 @@ squa.sl<-slice_tree_ages(e.trees[[6]],ages2cut[1:length(ages2cut)])
 ages2cut<-seq(from=4, to=max(branching.times(e.trees[[7]])), by=5) # 86
 fern.sl<-slice_tree_ages(e.trees[[7]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[8]])), by=5) # 88
-agar.sl<-slice_tree_ages(e.trees[[8]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[8]])), by=5) # 36
+mamm.sl<-slice_tree_ages(e.trees[[8]],ages2cut[1:length(ages2cut)])
+
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[9]])), by=5) # 88
+agar.sl<-slice_tree_ages(e.trees[[9]],ages2cut[1:length(ages2cut)])
 
 data.frame(tree_names, 
            tips=sapply(e.trees,ape::Ntip),
-           trees=c("bird","amphibia","fish", "seed", "chondrichthyes","squamata", "fern", "agaricomycetes"),
-           slices=c(22, 62, 73, 65, 75, 38, 86, 88))
+           trees=c("bird","amphibia","fish", "seed", 
+                   "chondrichthyes","squamata", "fern", 
+                   "mammals", "agaricomycetes"),
+           slices=c(22, 62, 73, 65, 75, 38, 86, 36, 88))
 
 saveRDS(amph.sl,"Slicing/sliced_trees/amph.sl.rds")
 saveRDS(bird.sl,"Slicing/sliced_trees/bird.sl.rds")
@@ -60,6 +65,7 @@ saveRDS(fern.sl,"Slicing/sliced_trees/fern.sl.rds")
 saveRDS(fish.sl,"Slicing/sliced_trees/fish.sl.rds")
 saveRDS(seed.sl,"Slicing/sliced_trees/seed.sl.rds")
 saveRDS(squa.sl,"Slicing/sliced_trees/squa.sl.rds")
+saveRDS(mamm.sl,"Slicing/sliced_trees/mamm.sl.rds")
 saveRDS(agar.sl,"Slicing/sliced_trees/agar.sl.rds")
 
 amph.sl<-readRDS("Slicing/sliced_trees/amph.sl.rds")
@@ -69,4 +75,5 @@ fern.sl<-readRDS("Slicing/sliced_trees/fern.sl.rds")
 fish.sl<-readRDS("Slicing/sliced_trees/fish.sl.rds")
 seed.sl<-readRDS("Slicing/sliced_trees/seed.sl.rds")
 squa.sl<-readRDS("Slicing/sliced_trees/squa.sl.rds")
+mamm.sl<-readRDS("Slicing/sliced_trees/mamm.sl.rds")
 agar.sl<-readRDS("Slicing/sliced_trees/agar.sl.rds")

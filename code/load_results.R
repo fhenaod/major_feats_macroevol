@@ -24,6 +24,10 @@ fish_sl_stat<-readRDS("Slicing/fish/output/fish_sum_stats.rds")
 fish_sl_stat$taxon<-rep("Actinopterygii", dim(fish_sl_stat)[1])
 fish_sl_stat$rel_age<-fish_sl_stat$tree.max.age/368.0270
 
+mamm_sl_stat<-readRDS("Slicing/mamm/output/mamm_sum_stats.rds")
+mamm_sl_stat$taxon<-rep("Mammalia", dim(mamm_sl_stat)[1])
+mamm_sl_stat$rel_age<-mamm_sl_stat$tree.max.age/180.8472
+  
 seed_sl_stat<-readRDS("Slicing/seed/output/seed_sum_stats.rds")
 seed_sl_stat$taxon<-rep("Spermatophyta", dim(seed_sl_stat)[1])
 seed_sl_stat$rel_age<-seed_sl_stat$tree.max.age/325.0508
@@ -116,6 +120,14 @@ fish_fams_stats$taxon<-rep("fish_fams", dim(fish_fams_stats)[1])
 fish_ords_stats<-readRDS("rank_sampling/fish_ords/output/fish_ords_sum_stats.rds")
 fish_ords_stats$rel_age<-fish_ords_stats$tree.max.age/max(fish_ords_stats$tree.max.age)
 fish_ords_stats$taxon<-rep("fish_ords", dim(fish_ords_stats)[1])
+
+mamm_fams_stats<-readRDS("rank_sampling/mamm_fams/output/mamm_fams_sum_stats.rds")
+mamm_fams_stats$rel_age<-mamm_fams_stats$tree.max.age/max(mamm_fams_stats$tree.max.age)
+mamm_fams_stats$taxon<-rep("mamm_fams", dim(mamm_fams_stats)[1])
+
+mamm_ords_stats<-readRDS("rank_sampling/mamm_ords/output/mamm_ords_sum_stats.rds")
+mamm_ords_stats$rel_age<-mamm_ords_stats$tree.max.age/max(mamm_ords_stats$tree.max.age)
+mamm_ords_stats$taxon<-rep("mamm_ords", dim(mamm_ords_stats)[1])
 
 squa_fams_stats<-readRDS("rank_sampling/squa_fams/output/squa_fams_sum_stats.rds")
 squa_fams_stats$rel_age<-squa_fams_stats$tree.max.age/max(squa_fams_stats$tree.max.age)

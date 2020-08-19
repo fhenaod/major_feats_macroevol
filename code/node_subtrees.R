@@ -8,13 +8,28 @@ classes<-unique(tree$node.label)[grep("",unique(tree$node.label))] # Class
 
 orders<-unique(tree$node.label)[grep("",unique(tree$node.label))] # Order
 orders<-c("Anura", "Caudata", "Gymnophiona") # Squamates
+orders<-c("Monotremata", "Eulipotyphla", "Perissodactyla", "Artiodactyla", 
+          "Carnivora", "Pholidota", "Chiroptera", "Dermoptera", 
+          "Scandentia", "Primates", "Rodentia",  "Lagomorpha",      
+          "Cingulata", "Pilosa", "Sirenia",  "Proboscidea", 
+          "Hyracoidea", "Tubulidentata", "Macroscelidea", 
+          "Afrosoricida", "Paucituberculata", "Didelphimorphia", 
+          "Microbiotheria", "Notoryctemorphia", "Peramelemorphia", 
+          "Dasyuromorphia", "Diprotodontia" ) # Mammals
+orders <- tree$node.label[match(orders, tree$node.label)[!is.na(match(orders, tree$node.label))]]
 
-families<-unique(tree$node.label)[grep("ceae",unique(tree$node.label))] # Family
+families<-unique(tree$node.label)[grep("idae",unique(tree$node.label))] # Family
 
 # extract and save clades ####
 sampl_clas<-mclapply(classes, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
 sampl_ords<-mclapply(orders, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
+
+for(i in 1:length(orders)){
+  sampl_ords[[i]] <- extract.clade(tree, orders[[i]])
+}
+
 sampl_fams<-mclapply(families, function(x) extract.clade(phy = tree, node = x), mc.cores = 2)
+
 saveRDS(sampl_clas, "rank_sampling/_clas_trees.rds")
 saveRDS(sampl_ords, "rank_sampling/_ords_trees.rds")
 saveRDS(sampl_fams, "rank_sampling/_fams_trees.rds")

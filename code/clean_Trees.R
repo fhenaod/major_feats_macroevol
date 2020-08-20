@@ -32,15 +32,32 @@ is.ultrametric(R2018)
 write.tree(R2018,file=paste0(destination.path,"tree_R2018.cr_.txt"))
 
 S2018<-read.tree(paste0(source.path,"tree_S2018_.tre"))
-S2018<-drop.tip(S2018, S2018$tip.label[grep("Phyllites", S2018$tip.label)]) # drop fossil species
 S2018_spp<-unique(S2018$node.label)[grep("_",unique(S2018$node.label))]
 S2018<-remove_duplicates(S2018, S2018_spp) ## runned in cluster
 S2018<-read.tree(paste0(source.path,"tree_S2018.pr._.txt")) 
+S2018<-drop.tip(S2018, S2018$tip.label[grep(c("Phyllites"), S2018$tip.label)]) # drop fossil species
+S2018<-drop.tip(S2018, S2018$tip.label[grep(c("Baiera"), S2018$tip.label)]) # drop fossil species
+S2018<-drop.tip(S2018, S2018$tip.label[grep(c("Pterophyllus_gingko"), S2018$tip.label)]) # drop repeated ginkgo
+#S2018$tip.label <- gsub("_", " ", S2018$tip.label)
 S2018<-drop.tip(S2018, c(grep("Homaliopsis", S2018$tip.label),
                          grep("Neuroloma", S2018$tip.label),
                          grep("Stroemia", S2018$tip.label), 
                          grep("Elharveya", S2018$tip.label) ))
-plot(S2018,cex=.6, show.tip.label = F,no.margin = T)
+
+S2018 <- drop.tip(S2018, grep("[[:digit:]1234567890]", S2018$tip.label)) # tips with colection or reference numbers; most of them infra spp level
+S2018 <- drop.tip(S2018, grep("_var._", S2018$tip.label) ) # revome var.
+S2018 <- drop.tip(S2018, grep("_aff._", S2018$tip.label) ) # revome aff.
+S2018 <- drop.tip(S2018, grep("_cv._", S2018$tip.label)) # revome cv.
+S2018 <- drop.tip(S2018, grep("_sp._[[:upper:]]", S2018$tip.label)) # remove unknown sp. 
+S2018 <- drop.tip(S2018, grep("_cf._", S2018$tip.label)) # remove cf.
+S2018 <- drop.tip(S2018, grep("_subsp._", S2018$tip.label)) # remove subsp.
+S2018 <- drop.tip(S2018, grep("_f._", S2018$tip.label)) # remove f.
+S2018 <- drop.tip(S2018, grep("_v\\.", S2018$tip.label)) # remove v.
+S2018 <- drop.tip(S2018, grep("_ined._", S2018$tip.label)) # remove ined.
+S2018 <- drop.tip(S2018, grep("_nov._", S2018$tip.label)) # remove ined.
+S2018 <- drop.tip(S2018, grep("\\.__[[:upper:]]", S2018$tip.label)) # remove unknown sp
+S2018 <- drop.tip(S2018, grep("haplotype", S2018$tip.label)) # remove 
+plot(S2018, cex=.6, show.tip.label = F, no.margin = T)
 S2018<-multi2di(S2018)
 is.binary(S2018)
 min(S2018$edge.length)

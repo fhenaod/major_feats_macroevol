@@ -1,7 +1,7 @@
 library(phytools)
 library(castor)
 
-## sim trees from bird empirical parameters ####
+## sim tree from bird empirical parameters ####
 age<-113.25
 lambda<-round(exp((-0.53356*log(age))+0.29817),3)
 mu<-round(exp((-0.5257*log(age))-0.5016),3)
@@ -39,7 +39,7 @@ random_tree_samp=function(t, t_height, n_samps){
   return(list(l_trees, t_brake_age))
 }
 
-rand_trees_raw<-random_tree_samp(bd_sim_tr, t_height = 50, n_samps = 200)
+rand_trees_raw<-random_tree_samp(bd_sim_tr, t_height = 50, n_samps = 10)
 rand_trees<-plyr::compact(rand_trees_raw[[1]])
 orig_brake_age<-rand_trees_raw[[2]][!is.na(rand_trees_raw[[2]])]
 
@@ -48,8 +48,11 @@ orig_brake_age_f<-orig_brake_age[sapply(rand_trees, function(x) Ntip(x) >= 4)]
   
 nt<-sapply(rand_trees_f, Ntip)
 length(which(nt >= 4))
-saveRDS(rand_trees_f, "self_sim/sim_bird_50_trees.rds")
-saveRDS(orig_brake_age_f, "self_sim/chon_5_brake_ages.rds")
+
+clad <- "seed"
+saveRDS(rand_trees_f, paste0("self_sim/", clad,"_50_trees.rds"))
+saveRDS(orig_brake_age_f, paste0("self_sim/", clad, "_50_brake_ages.rds"))
 
 par(mfrow = c(3,3))
-sapply(sample(rand_trees,9), plot, cex = 1, no.margin = TRUE)
+sapply(sample(rand_trees, 9), plot, cex = .7, no.margin = TRUE)
+sapply(sample(rand_trees_f, 9), plot, cex = .7, no.margin = TRUE)

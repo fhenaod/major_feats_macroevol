@@ -151,6 +151,7 @@ sum_stats<-rbind(agar_fams_stats, agar_ords_stats,
                  chon_fams_stats, chon_ords_stats,
                  fern_fams_stats, fern_ords_stats,
                  fish_fams_stats, fish_ords_stats,
+                 mamm_fams_stats, mamm_ords_stats,
                  squa_fams_stats
                  #,seed_fams_stats, seed_ords_stats, seed_clas_stats
                  )

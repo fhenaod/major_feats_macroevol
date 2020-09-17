@@ -1,5 +1,4 @@
 library(phytools)
-library(parallel)
 library(taxize)
 library(castor)
 
@@ -13,11 +12,12 @@ get_genus=function(names_sp){
   return(query)
 }
 genera<-unique(get_genus(names_sp))
+tree$tip.label <- gsub("_", " ", tree$tip.label)
 
 # Name genera nodes ####
 name_genus_nodes=function(tree, names2nodes){
   for(i in 1:length(names2nodes)){
-    tips<-tree$tip.label[grep(names2nodes[i], tree$tip.label)]
+    tips<-tree$tip.label[grep(paste0("\\b", names2nodes[i] ,"\\b"), tree$tip.label)]
     if(length(tips)!=1){
       mrca_node<-getMRCA(tree, tip = tips)
       tree$node.label[mrca_node-Ntip(tree)]<-names2nodes[i]

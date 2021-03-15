@@ -1,17 +1,10 @@
 library(phytools)
 library(castor)
+library(tidyverse)
 
-## sim tree from bird empirical parameters ####
-age<-113.25
-lambda<-round(exp((-0.53356*log(age))+0.29817),3)
-mu<-round(exp((-0.5257*log(age))-0.5016),3)
+tree <- readRDS("data_megaPhylos/seed_noded_tre.rds")
 
-pars<-list(birth_rate_factor = lambda,
-           death_rate_factor = mu)
-
-bd_sim_tr<-generate_random_tree(pars, max_time = age)$tree
-
-# function to randomly re-sample trees from a megatree based on age ####
+# randomly sample trees from a megatree based on age with stem edge ####
 random_tree_samp=function(t, t_height, n_samps){
   l_trees<-list()
   t_brake_age<-c()
@@ -39,7 +32,7 @@ random_tree_samp=function(t, t_height, n_samps){
   return(list(l_trees, t_brake_age))
 }
 
-rand_trees_raw<-random_tree_samp(bd_sim_tr, t_height = 50, n_samps = 10)
+rand_trees_raw<-random_tree_samp(tree, t_height = 10, n_samps = 20)
 rand_trees<-plyr::compact(rand_trees_raw[[1]])
 orig_brake_age<-rand_trees_raw[[2]][!is.na(rand_trees_raw[[2]])]
 
@@ -56,3 +49,25 @@ saveRDS(orig_brake_age_f, paste0("self_sim/", clad, "_50_brake_ages.rds"))
 par(mfrow = c(3,3))
 sapply(sample(rand_trees, 9), plot, cex = .7, no.margin = TRUE)
 sapply(sample(rand_trees_f, 9), plot, cex = .7, no.margin = TRUE)
+
+
+# loop over
+clad <- "seed"
+ages2cut <- c(10, 20, 30, 40, 50)
+nsamps <- c(100, 80, 50, 30, 10)
+for(i in 1:length(ages2cut)){
+  rand_trees_raw<-random_tree_samp(tree, t_height = ages2cut[i], n_samps = nsamps[i])
+  rand_trees<-plyr::compact(rand_trees_raw[[1]])
+  orig_brake_age<-rand_trees_raw[[2]][!is.na(rand_trees_raw[[2]])]
+  
+  rand_trees_f<-rand_trees[sapply(rand_trees, function(x) Ntip(x) >= 4)]
+  orig_brake_age_f<-orig_brake_age[sapply(rand_trees, function(x) Ntip(x) >= 4)]
+  
+  nt<-sapply(rand_trees_f, Ntip)
+  length(which(nt >= 4))
+  
+  saveRDS(rand_trees_f, paste0(clad,"_",ages2cut[i],"_trees.rds"))
+  saveRDS(orig_brake_age_f, paste0(clad,"_",ages2cut[i],"_brake_ages.rds"))
+}
+
+

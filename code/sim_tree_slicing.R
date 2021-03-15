@@ -1,6 +1,16 @@
 library(phytools)
 library(parallel)
 
+## sim tree from bird empirical parameters ####
+age<-113.25
+lambda<-round(exp((-0.53356*log(age))+0.29817),3)
+mu<-round(exp((-0.5257*log(age))-0.5016),3)
+
+pars<-list(birth_rate_factor = lambda,
+           death_rate_factor = mu)
+
+bd_sim_tr<-generate_random_tree(pars, max_time = age)$tree
+
 # Pure-birth simulated trees ####
 ntips<-c(100, 1000, 10000, 50000, 100000)
 strees<-mcmapply(pbtree, n = ntips, scale = 1 , SIMPLIFY = F, mc.cores = 10)

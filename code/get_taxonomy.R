@@ -3,6 +3,8 @@ library(taxonlookup)
 library(taxize)
 library(dplyr)
 
+tree <- S2018 # select the tree 
+
 # get genus names ####
 names_sp<-strsplit(tree$tip.label, "_")
 get_genus=function(names_sp){
@@ -13,7 +15,7 @@ get_genus=function(names_sp){
   return(query)
 }
 genera<-unique(get_genus(names_sp))
-genera<-sort(genera)[33:length(genera)] ## with Fungi
+#genera<-sort(genera)[33:length(genera)] ## with Fungi
 
 # get taxonomy based on genus names, automatic ####
 query_seq<-seq_along(genera)
@@ -39,29 +41,30 @@ get_tax_df=function(query_split, context_name){
   df<-df[,c(4,1,2,3)]
   return(df)
 }
-tree_taxonomy<-get_tax_df(query_split, context_name = "Ferns")
-write.csv(tree_taxonomy,"taxonomy/fern_tax.csv")
-
-## Seed Plants
-look_tab<-lookup_table(genera)
-tax<-get_taxonomy_df(unique(look_tab$order)[-5], database = 'gbif')
-tax<-tax[,1:4]
-tax_unif<-left_join(look_tab, tax, by = "order")
-tax_unif<-tax_unif[,-4]
-tax_unif<-tax_unif[,c(1,2,3,6,5,4)]
-write.csv(tax_unif,"taxonomy/seed_tax.csv")
+tree_taxonomy<-get_tax_df(query_split, context_name = "Seed plants")
+write.csv(tree_taxonomy,"taxonomy/mamm_tax.csv")
 
 # get taxonomy based on genus names, interactive ####
-get_taxonomy_df=function(genera, database){
+get_taxonomy_df=function(genera, database, nrows){
   m<-matrix(data=NA, nrow = length(genera), ncol = 6)
   colnames(m)<-c("kingdom", "phylum", "class", "order", "family", "genus")
   for(i in 1:length(genera)){
-    cla<-classification(genera[i], db = database)[[1]][1:6,1]
+    cla<-classification(genera[i], db = database, rows = nrows)[[1]][1:6,1]
     m[i,]<-cla
   }
   m<-data.frame(m)
   return(m)
 }
-m<-get_taxonomy_df(genera, database = 'gbif')
+m<-get_taxonomy_df(sort(genera), database = 'gbif', nrows = NA)
 summary(m)
-write.csv(m,"taxonomy/chon_tax.csv")
+write.csv(m,"taxonomy/agar_tax.csv")
+
+## Seed Plants
+#look_tab<-lookup_table(genera)
+#tax<-get_taxonomy_df(unique(look_tab$genus)[-5], database = 'gbif')
+tax<-get_taxonomy_df(sort(genera), database = 'gbif')
+tax<-tax[,1:4]
+tax_unif<-left_join(look_tab, tax, by = "order")
+tax_unif<-tax_unif[,-4]
+tax_unif<-tax_unif[,c(1,2,3,6,5,4)]
+write.csv(tax_unif,"taxonomy/seed_tax.csv")

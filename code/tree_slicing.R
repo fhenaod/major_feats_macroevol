@@ -24,39 +24,43 @@ slice_tree_ages<-function(tree, ages2cut){
   return(cutted.trees)
 }
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[1]])), by=5) # 22
-bird.sl<-slice_tree_ages(e.trees[[1]],ages2cut[1:length(ages2cut)])
+l = 1
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 65
+seed.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[2]])), by=5) # 62
-amph.sl<-slice_tree_ages(e.trees[[2]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 22
+bird.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[3]])), by=5) # 73
-fish.sl<-slice_tree_ages(e.trees[[3]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 62
+amph.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[4]])), by=5) # 65
-seed.sl<-slice_tree_ages(e.trees[[4]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 73
+fish.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[5]])), by=5) # 75
-chon.sl<-slice_tree_ages(e.trees[[5]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 65
+seed.sl2<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[6]])), by=5) # 38
-squa.sl<-slice_tree_ages(e.trees[[6]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 75
+chon.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[7]])), by=5) # 86
-fern.sl<-slice_tree_ages(e.trees[[7]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 38
+squa.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[8]])), by=5) # 36
-mamm.sl<-slice_tree_ages(e.trees[[8]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 86
+fern.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
-ages2cut<-seq(from=4, to=max(branching.times(e.trees[[9]])), by=5) # 88
-agar.sl<-slice_tree_ages(e.trees[[9]],ages2cut[1:length(ages2cut)])
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 36
+mamm.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
+
+ages2cut<-seq(from=4, to=max(branching.times(e.trees[[l]])), by=5) # 88
+agar.sl<-slice_tree_ages(e.trees[[l]],ages2cut[1:length(ages2cut)])
 
 data.frame(tree_names, 
            tips=sapply(e.trees,ape::Ntip),
-           trees=c("bird","amphibia","fish", "seed", 
-                   "chondrichthyes","squamata", "fern", 
-                   "mammals", "agaricomycetes"),
-           slices=c(22, 62, 73, 65, 75, 38, 86, 36, 88))
+           trees=tree_names,
+           slices=c(length(seed.sl), length(bird.sl), length(amph.sl), length(fish.sl),
+                    length(seed.sl2), length(chon.sl), length(squa.sl), length(fern.sl),
+                    length(mamm.sl), length(agar.sl)) )
 
 saveRDS(amph.sl,"Slicing/sliced_trees/amph.sl.rds")
 saveRDS(bird.sl,"Slicing/sliced_trees/bird.sl.rds")

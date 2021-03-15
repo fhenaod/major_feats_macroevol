@@ -8,6 +8,54 @@ library(visreg)
 library(plotly)
 library(scales)
 
+# results dataframes
+sl_sum_stats   # sliced concensus trees
+rank_sum_stats # rank sampling consensus trees
+fract_sum_node # self-similar sampling by nodes consensus trees
+fract_sum_edg  # self-similar sampling by edges consensus trees
+
+all_1k_sum     # 1000 posterior trees 
+all_10_slic    # sliced 10 posterior trees
+all_10_rank    # rank sampled 10 posterior trees
+all_10_rando   # self-similar sampled 10 posterior trees
+
+sum_stats <- all_10_rank
+
+# General exploratory ####
+# basic plots and paired correlations among all variables
+# does not work with fract_sum_edg
+
+# hist facet plots
+sum_stats %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+  facet_wrap(~ key, scales = "free") +
+  geom_histogram()
+
+# density facet plots
+sum_stats %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+  facet_wrap(~ key, scales = "free") +
+  geom_density()
+
+# correlation facet matrix
+sum_stats %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  PerformanceAnalytics::chart.Correlation(histogram = TRUE, 
+                                          pch = 19, cex = .5)
+
 # Shape hists ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
   geom_vline(aes(xintercept = mean(subset(sum_stats, !is.na(shape.yule))$shape.yule)),color="red", linetype="dashed", size=1) +
@@ -142,8 +190,7 @@ ggarrange(hh13, hh14,
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 
-
-# Regressions Vs. Age ####
+# vis-regressions Vs. Age ####
 
 # IMBALANCE
 par(mfrow=c(2,2))
@@ -202,7 +249,12 @@ summary(lm(log(modalities)~log(tree.max.age), data=sum_stats))
 # Correlation matrix ####
 par(mfrow=c(1,1))
 # propertCorrM
-M<-psych::lowerCor(sum_stats[1:28],digits = 2, method = "spearman")
+M <- df2plot %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  psych::lowerCor(digits = 2, method = "spearman")
 # mat : is a matrix of data
 # ... : further arguments to pass to the native R cor.test function
 cor.mtest <- function(mat, ...) {
@@ -220,55 +272,91 @@ cor.mtest <- function(mat, ...) {
   p.mat
 }
 # matrix of the p-value of the correlation
-p.mat <- cor.mtest(sum_stats[1:28])
+p.mat <- df2plot %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  cor.mtest()
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name = "RdYlBu"),  
                    type="upper", order="hclust", 
-                   addCoef.col = "black", number.cex = .6,  # Coefficient of correlation, size
-                   tl.col="black", tl.srt=45, tl.cex = .6,  #Text label color, rotation, size
+                   addCoef.col = "black", number.cex = .5,  # Coefficient of correlation, size
+                   tl.col="black", tl.srt=45, tl.cex = .5,  #Text label color, rotation, size
                    # Combine with significance
                    p.mat = p.mat, sig.level = 0.05, insig = "blank", 
                    # hide correlation coefficient on the principal diagonal
                    diag=FALSE, mar = c(0.06,0.06,0.06,0.06))
+
 # 3D-plot ####
-#express<-expression(paste("Ln mean ", lambda, " (species ", Myr^-1,")"),sep=" ")
-plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~peakedness,
-        type = "scatter3d", mode = "lines+markers",
-        line = list(color= "#EA3770", width = 4, dash = 'dash'),
-        marker = list(symbol = 'circle', sizemode = 'area', 
-                      color = ~tree.max.age, size = ~ntips,
-                      colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
+
+# Yule: shape and imbalance
+plot_ly(sum_stats, 
+        x = ~(shape.yule), y = ~colles.yule, z = ~(sackin.yule),
+        type = "scatter3d", mode = "markers",
+        symbol = ~taxon, 
+        symbols = c('circle', 'square', 'diamond', 'x'), 
+        sizemode = 'area', 
+        color = ~tree.max.age, #size = ~ntips,
+        colorbar = list(title = 'Clade age (Myr)'), colorscale = 'Viridis', reversescale = T) %>%
   layout(
-    title = "Polypodiopsida",
-    scene = list( xaxis = list(title = "λ*"),
-                  yaxis = list(title = "ψ"),
-                  zaxis = list(title = "η"))
-    )
+    title = "",
+    scene = list( xaxis = list(title = "Shape (Yule)"),
+                  yaxis = list(title = "Colles (Yule)"),
+                  zaxis = list(title = "Sackin (Yule)"))
+  )
 
+# PDA: shape and imbalance
+plot_ly(sum_stats, 
+        x = ~(shape.pda), y = ~colles.pda, z = ~(sackin.pda),
+        type = "scatter3d", mode = "markers",
+        symbol = ~taxon, 
+        symbols = c('circle', 'square', 'diamond', 'x'), 
+        sizemode = 'area', 
+        color = ~tree.max.age, #size = ~ntips,
+        colorbar = list(title = 'Clade age (Myr)'), colorscale = 'Viridis', reversescale = T) %>%
+  layout(
+    title = "",
+    scene = list( xaxis = list(title = "Shape (PDA)"),
+                  yaxis = list(title = "Colles (PDA)"),
+                  zaxis = list(title = "Sackin (PDA)"))
+  )
 
+# RPANDA letters axis-names, node: markers different form symbols
 plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedness),
         type = "scatter3d", mode = "markers",
-        marker = list(symbol = 'circle', sizemode = 'area', 
-                      color = ~tree.max.age, size = ~ntips,
-                      colorbar = list(title = 'Clade age (Myr)'), colorscale='Viridis', reversescale = T)) %>%
+        symbol = ~taxon, 
+        symbols = c('circle', 'square', 'diamond', 'x', 'o', '.'), 
+        sizemode = 'area', 
+        color = ~tree.max.age, size = ~ntips,
+        #color = ~orig_brake_age_f, #size = ~ntips,
+        #color = ~or_brake_age_f, size = ~ntips,
+        colorbar = list(title = 'Clade age (Myr)'), colorscale = 'Viridis', reversescale = T) %>%
   layout(
     title = "",
     scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
                   yaxis = list(title = "Skewness"),
                   zaxis = list(title = "Peak height"))
   )
-
-# Break point age
-plot_ly(sum_stats, x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~(peakedness),
-        type = "scatter3d", mode = "markers",
-        marker = list(symbol = 'circle', sizemode = 'area', 
-                      color = ~orig_brake_age_f, size = ~ntips,
-                      colorbar = list(title = 'Break point age (Myr)'), colorscale = 'Viridis', reversescale = T)) %>%
+  
+# RPANDA filter and sample
+#filter(sum_stats, taxon == "shark") %>% 
+group_by(sum_stats, s_age) %>% sample_n(200, replace = F) %>%   
+  plot_ly(x = ~log(principal_eigenvalue), y = ~asymmetry, z = ~log(peakedness),
+          type = "scatter3d", mode = "markers",
+          symbol = ~taxon, 
+          symbols = c('circle', 'square', 'diamond', 'x', 'o', '.'), 
+          sizemode = 'area', 
+          color = ~tree.max.age, size = ~ntips,
+          #color = ~orig_brake_age_f, #size = ~ntips,
+          #color = ~or_brake_age_f, size = ~ntips,
+          colorbar = list(title = 'Clade age (Myr)'), 
+          colorscale = 'Viridis', reversescale = T) %>%
   layout(
     title = "",
-    scene = list( xaxis = list(title = "Ln λ*"),
-                  yaxis = list(title = "ψ"),
-                  zaxis = list(title = "η"))
+    scene = list( xaxis = list(title = "Ln Principal eigenvalue"),
+                  yaxis = list(title = "Skewness"),
+                  zaxis = list(title = "Ln Peak height"))
   )
 
 # Violin plots #####
@@ -353,7 +441,7 @@ ggarrange(vp9, vp10, vp11, vp12,
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
-## ALL clades ####
+# regression ggplots #### 
 
 # Shape vs Absolute Age
 gg1<-ggplot(sum_stats, aes(x = (tree.max.age), y = shape.yule, color = taxon)) +
@@ -366,17 +454,21 @@ gg2<-ggplot(sum_stats, aes(x = (tree.max.age), y = shape.pda, color = taxon)) +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
   theme_minimal() + theme(legend.position = "none") + geom_smooth(method=lm, se=FALSE)
 
+ggarrange(gg1, gg2,   
+          labels = c("A", "B"),
+          ncol = 2)
+
 # Shape vs Relative age
-gg1<-ggplot(sum_stats, aes(x = (rel_age), y = shape.yule, color = taxon)) + 
+gg1.r<-ggplot(sum_stats, aes(x = (rel_age), y = shape.yule, color = taxon)) + 
   geom_point(size = .9) + labs(title = "", x = "Relative age", y = "Shape (Yule)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none")
-gg2<-ggplot(sum_stats, aes(x = (rel_age), y = shape.pda,  color = taxon)) + 
+gg2.r<-ggplot(sum_stats, aes(x = (rel_age), y = shape.pda,  color = taxon)) + 
   geom_point(size = .9) + labs(title = "", x = "Relative age", y = "Shape (PDA)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme()
 
-ggarrange(gg1, gg2,   
+ggarrange(gg1.r, gg2.r,   
           labels = c("A", "B"),
           ncol = 2)
 
@@ -386,8 +478,8 @@ ggg1<-ggplot(sum_stats, aes(x = log(ntips), y = shape.yule, color = taxon)) +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
   theme_minimal() + theme(legend.position = "none") #+ geom_smooth(method=lm, se=FALSE)
 
-ggg2<-ggplot(sum_stats, aes(x = (ntips), y = shape.pda, color = taxon)) +
-  geom_point(size = .9) + labs(title = "", x = "Tree size", y = "Shape (PDA)") + 
+ggg2<-ggplot(sum_stats, aes(x = log(ntips), y = shape.pda, color = taxon)) +
+  geom_point(size = .9) + labs(title = "", x = "Ln Tree size", y = "Shape (PDA)") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
   theme_minimal() + theme(legend.position = "none") #+ geom_smooth(method=lm, se=FALSE)
 
@@ -545,3 +637,43 @@ g4<-ggplot(sum_stats, aes(x = log(trees_mean_dr), y = log(modalities), color = t
 ggarrange(g1, g2, g3, g4,    
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
+
+
+# fractal sun edg plots ####
+barplot(table(fract_sum_edg$s_age))
+boxplot(fract_sum_edg$orig_brake_age_f ~ fract_sum_edg$s_age)
+hist(fract_sum_edg$orig_brake_age_f)
+plot(fract_sum_edg$tree.max.age, fract_sum_edg$orig_brake_age_f)
+boxplot(fract_sum_edg$tree.max.age ~ fract_sum_edg$s_age)
+
+fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% 
+  ggplot(aes(x = s_age, y = log(principal_eigenvalue))) + 
+  geom_violin(trim = FALSE) + theme_minimal() + 
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% summarize(n()) 
+fract_sum_edg %>% ggplot(aes(x = tree.max.age)) + 
+  geom_histogram()
+
+fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% 
+  ggplot(aes(x = orig_brake_age_f, y = log(principal_eigenvalue), color = s_age)) + 
+  geom_point() + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(fract_sum_edg$s_age)))) + 
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% 
+  ggplot(aes(x = orig_brake_age_f, y = ln_dr, color = s_age)) + 
+  geom_point() + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(fract_sum_edg$s_age)))) + 
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_edg %>% group_by(s_age) %>% sample_n(100, replace = F) 
+df2plot %>% group_by(s_age) %>% summarize(n())
+hist(df2plot$orig_brake_age_f)
+boxplot(df2plot$orig_brake_age_f ~ df2plot$s_age)

@@ -145,11 +145,22 @@ write.tree(U2019, file =
              paste0(destination.path,"tree_U2019.cr.pr_.txt"))
 
 V2019<-read.tree(paste0(source.path,"tree_V2019_.tree"))
-plot(T2016,cex=.6, show.tip.label = F,no.margin = T)
+V2019$tip.label <- stringr::str_to_title(V2019$tip.label)
+plot(T2016, cex = .6, show.tip.label = F,no.margin = T)
 V2019<-drop.tip(V2019, c(grep("Bullera", V2019$tip.label), grep("Cryptococcus", V2019$tip.label),
                          grep("Dacrymyces", V2019$tip.label), grep("Laeticorticium", V2019$tip.label),
                          grep("Trichosporon", V2019$tip.label), grep("Trimorphomyces", V2019$tip.label),
-                         grep("Tsuchiyaea", V2019$tip.label), grep("Udeniomyces", V2019$tip.label) ))
+                         grep("Tsuchiyaea", V2019$tip.label), grep("Udeniomyces", V2019$tip.label),
+                         grep("Calocera", V2019$tip.label), grep("Cerinomyces", V2019$tip.label),
+                         grep("Dacryopinax", V2019$tip.label), grep("Ditiola", V2019$tip.label),
+                         grep("Femsjonia", V2019$tip.label), grep("Guepiniopsis", V2019$tip.label),
+                         grep("Tremella", V2019$tip.label), grep("Asterotremella", V2019$tip.label),
+                         grep("Biatoropsis", V2019$tip.label), grep("Cystofilobasidium", V2019$tip.label),
+                         grep("Derxomyces", V2019$tip.label),  grep("Dioszegia", V2019$tip.label),
+                         grep("Fibulobasidium", V2019$tip.label), grep("Filobasidiella", V2019$tip.label),
+                         grep("Guehomyces", V2019$tip.label), grep("Sirobasidium", V2019$tip.label),
+                         grep("Syzygospora", V2019$tip.label)
+                         )) # non-agaricomycetes 
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("_sp$", V2019$tip.label)])
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("_sp_", V2019$tip.label)])
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("_sp[[:digit:]]", V2019$tip.label)])
@@ -161,16 +172,23 @@ V2019<-drop.tip(V2019,  V2019$tip.label[grep("_var._", V2019$tip.label)])
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("_aff._", V2019$tip.label)])
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("_cf._", V2019$tip.label)])
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("_for_", V2019$tip.label)])
-V2019<-drop.tip(V2019,  V2019$tip.label[grep("^cyphelloid", V2019$tip.label)])
-V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Corneriellasp.Dennisiomyces", V2019$tip.label)])
-V2019<-drop.tip(V2019,  V2019$tip.label[grep("^DeconiCA", V2019$tip.label)])
-V2019<-drop.tip(V2019,  V2019$tip.label[grep("^FlAGelloscypha", V2019$tip.label)])
-V2019<-drop.tip(V2019,  V2019$tip.label[grep("^LepioTA", V2019$tip.label)])
+#V2019<-drop.tip(V2019,  V2019$tip.label[grep("^cyphelloid", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Corneriellasp.dennisiomyces", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Deconica_montana_psilocybe_montanakent_g", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("Flagelloscypha_sp._Ay571007", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("Flagelloscypha_japonica_gene_for_ab4559", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Lepiota_cffurfuraceipes", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Lepiota_affsubincarnata", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Lepiota_erminea_l._Alba_g0796_nl3095", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Lepiota_cingulum_aff_g0981_nl5409", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("Lepiota_ochraceoumbonata_g1054_murhula_c", V2019$tip.label)])
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("Lepiota_coprinoides_g0866_nguele_m._30", V2019$tip.label)])
 V2019<-drop.tip(V2019,  V2019$tip.label[grep("^Pacychytospora", V2019$tip.label)])
 V2019$tip.label[grep("^[[:digit:]1234567890]", V2019$tip.label)]<- 
-  paste0(sapply(strsplit(V2019$tip.label[grep("^[[:digit:]1234567890]", V2019$tip.label) ], "_"), '[', 3),
+  stringr::str_to_title(paste0(sapply(strsplit(V2019$tip.label[grep("^[[:digit:]1234567890]", V2019$tip.label) ], "_"), '[', 3),
          "_",
-         sapply(strsplit(V2019$tip.label[grep("^[[:digit:]1234567890]", V2019$tip.label) ], "_"), '[', 4))
+         sapply(strsplit(V2019$tip.label[grep("^[[:digit:]1234567890]", V2019$tip.label) ], "_"), '[', 4)))
+V2019<-drop.tip(V2019,  V2019$tip.label[grep("^C\\.", V2019$tip.label)])
 V2019<-phangorn::nnls.tree(cophenetic(V2019),V2019,rooted=TRUE)
 is.ultrametric(V2019)
 write.tree(V2019,file=paste0(destination.path,"tree_V2019.cr.pr_.txt"))

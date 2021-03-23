@@ -18,9 +18,13 @@ edgelabels(frame = "none", col = "darkgreen", cex = .8, adj = c(1,1.2))
 mrca_node <-getMRCA(my_tree, tip = c("t1", "t2"))
 my_tree$node.label[mrca_node-Ntip(my_tree)]
 
-ch <- rcoal(20)
-plot(ch,"p", show.tip.label = F, root.edge = T)
+ch <- pbtree(b = .7, d = .15, n = 20, scale = 100, extant.only = T)
+plot(ch,"p", show.tip.label = F, root.edge = T, no.margin = T)
 axisPhylo(1, las = 1)
-nodelabels(frame = "none", col = "blue")
+nodelabels(frame = "none", col = "red", cex = .7, adj = c(1,-0.5))
 nodelabels(ch$node.label, frame = "none", col = "red")
-edgelabels(ch$edge.length, frame = "none", col = "darkgreen", cex = .8, adj = c(1,-1.2))
+edgelabels(round(ch$edge.length,1), frame = "none", col = "darkgreen", 
+           cex = .7, adj = c(1,-1.2))
+edgelabels(frame = "none", col = "steelblue", cex = .8, adj = c(1,1.2))
+tiplabels(frame = "none", col = "blue", cex = .8)
+tiplabels(ch$tip.label, frame = "none", col = "purple", cex = .8, adj = c(-.3,1.1))

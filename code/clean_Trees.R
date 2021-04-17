@@ -72,6 +72,7 @@ S2018 <- drop.tip(S2018, grep("^x", S2018$tip.label)) # remove hybrids
 S2018 <- drop.tip(S2018, grep("×", S2018$tip.label)) # remove hybrids special charact
 S2018 <- drop.tip(S2018, grep("Goodyerinae", S2018$tip.label)) # remove subtribe
 S2018 <- drop.tip(S2018, grep("Hermogenodendron", S2018$tip.label)) #
+S2018 <- drop.tip(S2018, grep("Inobulbum", S2018$tip.label)) # remove orchidaceae section
 plot(S2018, cex=.6, show.tip.label = F, no.margin = T)
 S2018<-multi2di(S2018)
 is.binary(S2018)

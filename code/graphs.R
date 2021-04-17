@@ -19,7 +19,7 @@ all_10_slic    # sliced 10 posterior trees
 all_10_rank    # rank sampled 10 posterior trees
 all_10_rando   # self-similar sampled 10 posterior trees
 
-sum_stats <- all_10_rank
+sum_stats <- fract_sum_edg
 
 # General exploratory ####
 # basic plots and paired correlations among all variables
@@ -639,35 +639,67 @@ ggarrange(g1, g2, g3, g4,
           ncol = 2, nrow = 2)
 
 
-# fractal sun edg plots ####
-barplot(table(fract_sum_edg$s_age))
-boxplot(fract_sum_edg$orig_brake_age_f ~ fract_sum_edg$s_age)
+# fractal sum edg ####
 hist(fract_sum_edg$orig_brake_age_f)
-plot(fract_sum_edg$tree.max.age, fract_sum_edg$orig_brake_age_f)
+boxplot(fract_sum_edg$orig_brake_age_f ~ fract_sum_edg$s_age)
+
+plot(fract_sum_edg$orig_brake_age_f~fract_sum_edg$tree.max.age)
 boxplot(fract_sum_edg$tree.max.age ~ fract_sum_edg$s_age)
 
 fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% 
-  ggplot(aes(x = s_age, y = log(principal_eigenvalue))) + 
-  geom_violin(trim = FALSE) + theme_minimal() + 
-  geom_boxplot(width = 0.1, fill = "white") +
-  theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1)) +
-  facet_wrap(~ taxon, scales = "free")
-
-fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% summarize(n()) 
-fract_sum_edg %>% ggplot(aes(x = tree.max.age)) + 
-  geom_histogram()
-
-fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% 
-  ggplot(aes(x = orig_brake_age_f, y = log(principal_eigenvalue), color = s_age)) + 
-  geom_point() + theme_minimal() + 
+  ggplot(aes(x = log(orig_brake_age_f), y = ln_dr, color = s_age)) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(fract_sum_edg$s_age)))) + 
   theme(legend.position = "none", 
         axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
   facet_wrap(~ taxon, scales = "free")
 
-fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>% 
-  ggplot(aes(x = orig_brake_age_f, y = ln_dr, color = s_age)) + 
-  geom_point() + theme_minimal() + 
+fract_sum_edg %>% filter(ntips >= 20) %>%        
+  ggplot(aes(x = log(tree.max.age), y = log(principal_eigenvalue/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free") 
+
+fract_sum_edg %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = (asymmetry/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_edg %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = log(peakedness/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free") 
+
+### 
+fract_sum_edg %>% filter(ntips >= 20) %>%        
+  ggplot(aes(x = log(orig_brake_age_f), y = log(principal_eigenvalue/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free") 
+
+fract_sum_edg %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(orig_brake_age_f), y = (asymmetry/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_edg %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(orig_brake_age_f), y = log(peakedness/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_edg %>% filter(ntips >= 20) %>%
+  ggplot(aes(x = log(orig_brake_age_f), y = ln_dr)) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(fract_sum_edg$s_age)))) + 
   theme(legend.position = "none", 
         axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
@@ -675,5 +707,71 @@ fract_sum_edg %>% group_by(s_age) %>% sample_n(200, replace = F) %>%
 
 fract_sum_edg %>% group_by(s_age) %>% sample_n(100, replace = F) 
 df2plot %>% group_by(s_age) %>% summarize(n())
-hist(df2plot$orig_brake_age_f)
-boxplot(df2plot$orig_brake_age_f ~ df2plot$s_age)
+
+# fractal sum node ####
+fract_sum_node %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = (shape.yule))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_node %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = (colles.yule))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_node %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = (sackin.yule))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_node %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = log(principal_eigenvalue/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_node %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = (peakedness/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+fract_sum_node %>% filter(ntips >= 20) %>% 
+  ggplot(aes(x = log(tree.max.age), y = (asymmetry/ntips))) + 
+  geom_point() + theme_minimal() + geom_smooth(method = lm) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+
+# empirical ranks and aprox. same-age random ####
+rbind(
+  rank_sum_stats %>% mutate(type = "empirical") %>% 
+    select(ntips, tree.max.age, trees_mean_dr, 
+           shape.yule, colles.yule, sackin.yule,
+           shape.pda, colles.pda, sackin.pda,
+           principal_eigenvalue, asymmetry, peakedness,
+           taxon, rank, type),
+  
+  rank_rdm_sum %>% mutate(type = "random_age_rank") %>% 
+    select(ntips, tree.max.age, trees_mean_dr, 
+           shape.yule, colles.yule, sackin.yule, 
+           shape.pda, colles.pda, sackin.pda,
+           principal_eigenvalue, asymmetry, peakedness,
+           taxon, rank, type)
+) %>% filter(ntips >= 20) %>% filter(rank != "clas") %>%
+  #filter(rank != "ords" & rank != "amph") %>% 
+  ggplot(aes(x = rank, y = log(principal_eigenvalue), fill = type)) + 
+  geom_boxplot() + 
+  scale_color_brewer(palette = "Dark2") + 
+  theme_classic() + theme(legend.position = "none", 
+        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ taxon, scales = "free")
+

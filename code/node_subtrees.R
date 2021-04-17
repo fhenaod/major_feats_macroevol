@@ -1,7 +1,7 @@
 library(phytools)
 library(parallel)
 
-tre_noded <- readRDS("data_megaPhylos/fern_noded_tre.rds")
+tre_noded <- readRDS("data_megaPhylos/agar_noded_tre.rds")
 tree <- tre_noded
 
 # Subseting trees by node labels
@@ -42,7 +42,7 @@ rep_nods=function(trees, q2s){
   lts_ds
 }
 
-# prune down class
+# prune down class, remove other classes
 trees <- sampl_clas
 q2s <- "opsida$" # plants
 rep_nods(sampl_clas, q2s)
@@ -62,7 +62,7 @@ for(q in 1:length(trees)){
 sampl_clas <- trees
 rep_nods(sampl_clas, q2s) %>% table()
 
-# prune down orders
+# prune down orders, remove other orders
 trees <- sampl_ords
 #q2s <- "ormes" # changes acording to taxon
 q2s <- "ales$" # plants, ferns, fungi
@@ -111,8 +111,7 @@ for(q in 1:length(trees)){
 sampl_ords <- trees
 rep_nods(sampl_ords, q2s) %>% table()
 
-
-# prune down families
+# prune down families, remove other families
 trees <- sampl_fams
 #q2s <- "idae" # changes acording to taxon
 q2s <- "aceae" # plant and fungi
@@ -134,5 +133,6 @@ sampl_fams <- trees
 rep_nods(sampl_fams, q2s) %>% table()
 
 saveRDS(sampl_clas, "rank_sampling/fern_clas_trees.rds")
-saveRDS(sampl_ords, "rank_sampling/fern_ords_trees.rds")
-saveRDS(sampl_fams, "rank_sampling/fern_fams_trees.rds")
+saveRDS(sampl_ords, "rank_sampling/agar_ords_trees.rds")
+saveRDS(sampl_fams, "rank_sampling/agar_fams_trees.rds")
+

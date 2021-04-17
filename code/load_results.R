@@ -41,39 +41,38 @@ squa_sl_stat$taxon<-rep("Squamata", dim(squa_sl_stat)[1])
 squa_sl_stat$rel_age<-squa_sl_stat$tree.max.age/189.9633
 
 ## Add ML beta spliting estimates
-amph_beta<-readRDS("Slicing/ml_beta/amph/amph_ml_beta.rds")
-bird_beta<-readRDS("Slicing/ml_beta/bird/bird_ml_beta.rds")
-chon_beta<-readRDS("Slicing/ml_beta/chon/chon_ml_beta.rds")
-fish_beta<-readRDS("Slicing/ml_beta/fish/fish_ml_beta.rds")
-squa_beta<-readRDS("Slicing/ml_beta/squa/squa_ml_beta.rds")
-seed_beta<-readRDS("Slicing/ml_beta/seed/seed_ml_beta.rds")
+amph_beta <- readRDS("Slicing/ml_beta/amph/amph_ml_beta.rds")
+bird_beta <- readRDS("Slicing/ml_beta/bird/bird_ml_beta.rds")
+chon_beta <- readRDS("Slicing/ml_beta/chon/chon_ml_beta.rds")
+fish_beta <- readRDS("Slicing/ml_beta/fish/fish_ml_beta.rds")
+squa_beta <- readRDS("Slicing/ml_beta/squa/squa_ml_beta.rds")
+seed_beta <- readRDS("Slicing/ml_beta/seed/seed_ml_beta.rds")
 
-amph_sl_stat<-cbind(amph_sl_stat, amph_beta)
-bird_sl_stat<-cbind(bird_sl_stat, bird_beta)
-chon_sl_stat<-cbind(chon_sl_stat, chon_beta)
-fish_sl_stat<-cbind(fish_sl_stat, fish_beta)
-squa_sl_stat<-cbind(squa_sl_stat, squa_beta)
-seed_sl_stat<-cbind(seed_sl_stat, seed_beta)
+amph_sl_stat <- cbind(amph_sl_stat, amph_beta)
+bird_sl_stat <- cbind(bird_sl_stat, bird_beta)
+chon_sl_stat <- cbind(chon_sl_stat, chon_beta)
+fish_sl_stat <- cbind(fish_sl_stat, fish_beta)
+squa_sl_stat <- cbind(squa_sl_stat, squa_beta)
+seed_sl_stat <- cbind(seed_sl_stat, seed_beta)
 
 ## Add branch length/time means 
-amph_branch<-readRDS("Slicing/branch_stats/amph_branch_stats.rds")
-bird_branch<-readRDS("Slicing/branch_stats/bird_branch_stats.rds")
-chon_branch<-readRDS("Slicing/branch_stats/chon_branch_stats.rds")
-fish_branch<-readRDS("Slicing/branch_stats/fish_branch_stats.rds")
-squa_branch<-readRDS("Slicing/branch_stats/squa_branch_stats.rds")
-seed_branch<-readRDS("Slicing/branch_stats/seed_branch_stats.rds")
+amph_branch <- readRDS("Slicing/branch_stats/amph_branch_stats.rds")
+bird_branch <- readRDS("Slicing/branch_stats/bird_branch_stats.rds")
+chon_branch <- readRDS("Slicing/branch_stats/chon_branch_stats.rds")
+fish_branch <- readRDS("Slicing/branch_stats/fish_branch_stats.rds")
+squa_branch <- readRDS("Slicing/branch_stats/squa_branch_stats.rds")
+seed_branch <- readRDS("Slicing/branch_stats/seed_branch_stats.rds")
 
-amph_sl_stat<-cbind(amph_sl_stat, amph_branch)
-bird_sl_stat<-cbind(bird_sl_stat, bird_branch)
-chon_sl_stat<-cbind(chon_sl_stat, chon_branch)
-fish_sl_stat<-cbind(fish_sl_stat, fish_branch)
-squa_sl_stat<-cbind(squa_sl_stat, squa_branch)
-seed_sl_stat<-cbind(seed_sl_stat, seed_branch)
+amph_sl_stat <- cbind(amph_sl_stat, amph_branch)
+bird_sl_stat <- cbind(bird_sl_stat, bird_branch)
+chon_sl_stat <- cbind(chon_sl_stat, chon_branch)
+fish_sl_stat <- cbind(fish_sl_stat, fish_branch)
+squa_sl_stat <- cbind(squa_sl_stat, squa_branch)
+seed_sl_stat <- cbind(seed_sl_stat, seed_branch)
 
 sl_sum_stats<-rbind(agar_sl_stat, amph_sl_stat, bird_sl_stat, chon_sl_stat, fern_sl_stat, fish_sl_stat
                  #, seed_sl_stat
                  , squa_sl_stat, mamm_sl_stat)
-skim(sl_sum_stats)
 
 # RANKS ####
 agar_fams_stats<-readRDS("rank_sampling/agar_fams/output/agar_fams_sum_stats.rds")
@@ -116,7 +115,7 @@ fern_ords_stats<-readRDS("rank_sampling/fern_ords/output/fern_ords_sum_stats.rds
 fern_ords_stats$rel_age<-fern_ords_stats$tree.max.age/max(fern_ords_stats$tree.max.age)
 fern_ords_stats$taxon<-rep("fern_ords", dim(fern_ords_stats)[1])
 
-fern_clas_stats<-readRDS("rank_sampling/fern_class/output/fern_ords_sum_stats.rds")
+fern_clas_stats<-readRDS("rank_sampling/fern_clas/output/fern_ords_sum_stats.rds")
 fern_clas_stats$rel_age<-fern_clas_stats$tree.max.age/max(fern_clas_stats$tree.max.age)
 fern_clas_stats$taxon<-rep("fern_clas", dim(fern_clas_stats)[1])
 
@@ -152,18 +151,40 @@ seed_clas_stats<-readRDS("rank_sampling/seed_clas/output/seed_clas_sum_stats.rds
 seed_clas_stats$rel_age<-seed_clas_stats$tree.max.age/max(seed_clas_stats$tree.max.age)
 seed_clas_stats$taxon<-rep("seed_clas", dim(seed_clas_stats)[1])
 
-rank_sum_stats<-rbind(agar_fams_stats, agar_ords_stats,
-                 amph_fams_stats, amph_ords_stats,
-                 bird_fams_stats, bird_ords_stats,
-                 chon_fams_stats, chon_ords_stats,
-                 fern_fams_stats, fern_ords_stats,  fern_clas_stats,
-                 fish_fams_stats, fish_ords_stats,
-                 mamm_fams_stats, mamm_ords_stats,
-                 squa_fams_stats
+rank_sum_stats<-rbind(agar_fams_stats, agar_ords_stats, 
+                      amph_fams_stats, amph_ords_stats, 
+                      bird_fams_stats, bird_ords_stats, 
+                      chon_fams_stats, chon_ords_stats, 
+                      fern_fams_stats, fern_ords_stats, fern_clas_stats, 
+                      fish_fams_stats, fish_ords_stats, 
+                      mamm_fams_stats, mamm_ords_stats, 
+                      squa_fams_stats
                  #,seed_fams_stats, seed_ords_stats, seed_clas_stats
                  )
 rank_sum_stats$rank <- sapply(strsplit(rank_sum_stats$taxon, "_"), "[", 2)
 rank_sum_stats$taxon <- stringr::str_extract(rank_sum_stats$taxon, "[^_]+")
+
+## approximate-age-rank random trees
+agar_fams_rdm <- readRDS("rand_age_rank/output/agar_fams_rdm_trs.rds_sum.rds")
+agar_ords_rdm <- readRDS("rand_age_rank/output/agar_ords_rdm_trs.rds_sum.rds")
+amph_fams_rdm <- readRDS("rand_age_rank/output/amph_fams_rdm_trs.rds_sum.rds")
+bird_fams_rdm <- readRDS("rand_age_rank/output/bird_fams_rdm_trs.rds_sum.rds")
+bird_ords_rdm <- readRDS("rand_age_rank/output/bird_ords_rdm_trs.rds_sum.rds")
+chon_fams_rdm <- readRDS("rand_age_rank/output/chon_fams_rdm_trs.rds_sum.rds")
+chon_ords_rdm <- readRDS("rand_age_rank/output/chon_ords_rdm_trs.rds_sum.rds")
+fern_fams_rdm <- readRDS("rand_age_rank/output/fern_fams_rdm_trs.rds_sum.rds")
+fern_ords_rdm <- readRDS("rand_age_rank/output/fern_ords_rdm_trs.rds_sum.rds")
+fish_fams_rdm <- readRDS("rand_age_rank/output/fish_fams_rdm_trs.rds_sum.rds")
+fish_ords_rdm <- readRDS("rand_age_rank/output/fish_ords_rdm_trs.rds_sum.rds")
+mamm_fams_rdm <- readRDS("rand_age_rank/output/mamm_fams_rdm_trs.rds_sum.rds")
+mamm_ords_rdm <- readRDS("rand_age_rank/output/mamm_ords_rdm_trs.rds_sum.rds")
+squa_fams_rdm <- readRDS("rand_age_rank/output/squa_fams_rdm_trs.rds_sum.rds")
+
+rank_rdm_sum <- rbind(agar_fams_rdm, agar_ords_rdm, 
+                     amph_fams_rdm, bird_fams_rdm, bird_ords_rdm, 
+                     chon_fams_rdm, chon_ords_rdm, fern_fams_rdm, 
+                     fern_ords_rdm, fish_fams_rdm, fish_ords_rdm, 
+                     mamm_fams_rdm, mamm_ords_rdm, squa_fams_rdm)
 
 # SELF-SIMILAR ####
 # random age sampling root edge appended
@@ -404,10 +425,11 @@ squa_50n$taxon<-rep("squa_50", dim(squa_50n)[1])
 fract_sum_node <- rbind(agar_5n, agar_10n, agar_20n, agar_30n, agar_40n, agar_50n,
                         amph_5n, amph_10n, amph_20n, amph_30n, amph_40n, amph_50n,
                         bird_5n, bird_10n, bird_20n, bird_30n, bird_40n, bird_50n,
-                        chon_10n, chon_20n, chon_30n, chon_40n, chon_50n,
+                        chon_5n, chon_10n, chon_20n, chon_30n, chon_40n, chon_50n,
                         fern_5n, fern_10n, fern_20n, fern_30n, fern_40n, fern_50n,
                         fish_5n, fish_10n, fish_20n, fish_30n, fish_40n, fish_50n,
-                        #mamm_5n, mamm_10n, mamm_20n, mamm_30n, mamm_40n, mamm_50n,
+                        #mamm_5n, 
+                        mamm_10n, mamm_20n, mamm_30n, mamm_40n, mamm_50n,
                         squa_5n, squa_10n, squa_20n, squa_30n, squa_40n, squa_50n)
 fract_sum_node <- do.call(data.frame,lapply(fract_sum_node, function(x) replace(x, is.infinite(x),NA)))
 fract_sum_node$s_age <- paste0("ages_", sapply(strsplit(fract_sum_node$taxon, "_"), "[", 2))
@@ -427,8 +449,7 @@ sim_bird_40$taxon<-rep("sim_bird_40", dim(sim_bird_40)[1])
 sim_bird_50<-readRDS("self_sim/sim_bird/sim_bird_50_sum_stats.rds")
 sim_bird_50$taxon<-rep("sim_bird_50", dim(sim_bird_50)[1])
 
-sum_stats <- rbind(sim_bird_5, sim_bird_10, sim_bird_20, sim_bird_30, sim_bird_40, sim_bird_50)
-
+sim_bird_st <- rbind(sim_bird_5, sim_bird_10, sim_bird_20, sim_bird_30, sim_bird_40, sim_bird_50)
 
 ###
 ##### POSTERIOR TREES
@@ -444,26 +465,26 @@ mamm_1k_sum <- readRDS("1k_trees/output/mamm_sum_stats.rds")
 mamm_1k_sum$taxon <- "mamm"
 shar_1k_sum <- readRDS("1k_trees/output/shark_sum_stats.rds")
 shar_1k_sum$taxon <- "shar"
+#squa_1k_sum <- readRDS("1k_trees/output/squa_sum_stats.rds")
+#squa_1k_sum$taxon <- "squa"
 
 all_1k_sum <- rbind(amph_1k_sum, bird_1k_sum, mamm_1k_sum, shar_1k_sum)
 
 # slicing on 10 random trees from posterior
-all_10_slic <- readRDS("rand_post_tree/slicing_samp/output/all_taxa_res.rds")
+all_10_slic  <- readRDS("rand_post_tree/slicing_samp/output/all_taxa_res.rds")
 squa_10_slic <- readRDS("rand_post_tree/slicing_samp/output/squa_all_sum.rds")
-all_10_slic <- rbind(all_10_slic, squa_10_slic)
+all_10_slic  <- rbind(all_10_slic, squa_10_slic)
 all_10_slic$taxon <- stringr::str_extract(all_10_slic$n_tree, "[^_]+")
 
 # rank sampling on 10 random trees from posterior
 load_res_rds=function(path, clade, file_2l){
   final_tab <- c()
-  for(i in 1:length(dir(path_2l)[grep(clade, dir(path_2l))])){
-    temp_tab <- readRDS(paste0(path_2l, clade,i ,file_2l))
+  for(i in 1:length(dir(path)[grep(clade, dir(path))])){
+    temp_tab <- readRDS(paste0(path, clade, i, file_2l))
     final_tab <- rbind(final_tab, temp_tab)
   }
   final_tab
 }
-
-
 
 amph_10_rank <- load_res_rds("rand_post_tree/rank_samp/output/", "amph", "_sum_stats.rds")
 #bird_10_rank <- readRDS("rand_post_tree/rank_samp/output/")

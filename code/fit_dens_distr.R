@@ -1,24 +1,38 @@
 library(fitdistrplus)
 library(actuar)
+library(phytools)
 library(tidyverse)
 library(ggpubr)
 
-# branch lenghts #####
+# tree load #####
 e.trees <- henao_d_trs
 e_trees <- e.trees [sapply(e.trees, Ntip) > 20]
+#e_trees <- sim_b.1
+#e_trees <- sim_b.9
+e_trees <- sim_b.1d.05
+e_trees <- sim_b.7d.5
 
-# br_len hists
+# branch length histograms
 par(mfrow = c(3,3))
 for(i in 1:length(e_trees)){
   hist(e_trees[[i]]$edge.length, main = names(e_trees[i]), 
        xlab = "", ylab = "")
 }
 
-get_dist_mods=function(trees, min_tresh){
+# branch length distribution fit #####
+
+# fits Exponential, Log-Normal, Normal, Weibull distributions to tree branch lengths
+# can remove terminal tips and/or tips below a threshold
+get_dist_mods=function(trees, min_tresh, rem_t_tips){
   dens_res <- list()
   d_plots <- list()
   for(i in 1:length(trees)){
-    e_trees_m <- trees[[i]]$edge.length[trees[[i]]$edge.length > min_tresh]
+    if (rem_t_tips == T){
+      e_trees_m <- trees[[i]]$edge.length[-which(trees[[i]]$edge[,2]<=Ntip(trees[[i]]))]
+      e_trees_m <- e_trees_m[e_trees_m > min_tresh]
+    } else {
+      e_trees_m <- trees[[i]]$edge.length[trees[[i]]$edge.length > min_tresh]
+    }
     fit_e <-  fitdist(e_trees_m, "exp", method = "mle")
     fit_ln <- fitdist(e_trees_m, "lnorm", method = "mle")
     fit_n <-  fitdist(e_trees_m, "norm", method = "mle")
@@ -33,23 +47,47 @@ get_dist_mods=function(trees, min_tresh){
   dens_res
 }
 
-dens_res <- get_dist_mods(trees = e_trees, min_tresh = 0)
+# removing terminal branch lengths
+dens_res <- get_dist_mods(trees = e_trees, min_tresh = 0, rem_t_tips = F)
+
+# fits distributions just to terminal branches
+get_dist_mods_tips=function(trees, min_tresh){
+  dens_res <- list()
+  d_plots <- list()
+  for(i in 1:length(trees)){
+    e_trees_m <- trees[[i]]$edge.length[which(trees[[i]]$edge[,2]<=Ntip(trees[[i]]))]
+    e_trees_m <- trees[[i]]$edge.length[trees[[i]]$edge.length > min_tresh]
+    
+    fit_e <-  fitdist(e_trees_m, "exp", method = "mle")
+    fit_ln <- fitdist(e_trees_m, "lnorm", method = "mle")
+    fit_n <-  fitdist(e_trees_m, "norm", method = "mle")
+    fit_w <-  fitdist(e_trees_m, "weibull", method = "mle")
+    
+    sum_dist <- gofstat(list(fit_e, fit_ln, fit_n, fit_w), 
+                        fitnames = c("Exponential", "Log-Normal", "Normal", "Weibull"))
+    
+    dens_res[[i]] <- qpcR::akaike.weights(sum_dist$aic) %>% 
+      data.frame() %>% dplyr::arrange(desc(weights))
+  }
+  dens_res
+}
+dens_res <- get_dist_mods_tips(trees = e_trees, min_tresh = 0)
 
 tall_mod_tb <- as.data.frame(do.call(rbind, lapply(dens_res, rownames))) 
 colnames(tall_mod_tb) <- c("p1", "p2", "p3", "p4")
 
-#summary count table per place
+# summary count table per place
 gather(tall_mod_tb, value = model) %>% 
   group_by(model) %>% count(key) %>% arrange(key, desc(n))
 
-# plot   
+# summary stagered barplot   
 gather(tall_mod_tb, value = model) %>% 
   group_by(model) %>% 
   ggplot(aes(x = key, color = model, fill = model)) + 
   geom_bar(stat = "count") + theme_classic() + 
   labs(title = "trees > 20 tips", x = "Distribution place", y = "Count")
 
-# Figures as in Venditti et al. 2009
+# Figures as in Venditti et al. 2009 ####
 # 1a
 pg1 <- gather(tall_mod_tb, value = model) %>% 
   group_by(model, key) %>% count() %>% filter(key == "p1") %>% 
@@ -71,13 +109,14 @@ pg2 <- gather(tall_mod_tb, value = model) %>%
 
 ggarrange(pg1, pg2,
           ncol = 1, nrow = 2,
-          labels = c("a", "b"))
+          labels = c("A", "B"))
 
-### sensitivity analysis
+### sensitivity analysis ####
+#branch length min. and/or removing terminal branch lengths
 th_n <- seq(0.01, .5, .02)
 ls_mods <- list()
 for(j in 1:length(th_n)){
-  ls_mods[[j]] <- get_dist_mods(trees = e_trees, min_tresh = th_n[j])
+  ls_mods[[j]] <- get_dist_mods(trees = e_trees, min_tresh = th_n[j], rem_t_tips = T)
 }
 
 ls_mods %>% length()
@@ -87,13 +126,20 @@ for(w in 1:length(ls_mods)){
   temp_tab <- as.data.frame(do.call(rbind, lapply(ls_mods[[w]], rownames)))
   colnames(temp_tab) <- c("p1", "p2", "p3", "p4")
   temp_tab2 <- gather(temp_tab, value = model) %>% 
-    group_by(model) %>% count(key)
+    group_by(model) %>% count(key) %>% 
+    mutate(mod_k = paste(model, key, sep = "_")) %>% 
+    ungroup() %>% select(mod_k, n)
   
-  tabs_rest <- bind_cols(tabs_rest, temp_tab2$n)
+  if(w == 1){
+    tabs_rest <- temp_tab2
+  } else {
+    tabs_rest <- full_join(tabs_rest, temp_tab2, by = "mod_k")
+  }
 }
-tabs_rest2 <- bind_cols(temp_tab2$model, temp_tab2$key, tabs_rest)
+tabs_rest2 <-tabs_rest %>% separate(mod_k, c("model", "key"), sep = "_")
 colnames(tabs_rest2) <- c("model", "place", th_n)
 
+# line-plot first place vs threshold 
 tabs_rest2 %>% pivot_longer(cols = !model:place, 
                             names_to = "threshold",
                             values_to = "count") %>%
@@ -172,3 +218,17 @@ cdfcomp(list(fit_b, fit_g, fit_B), legendtext = plot.legend)
 qqcomp(list(fit_b, fit_g, fit_B), legendtext = plot.legend)
 ppcomp(list(fit_b, fit_g, fit_B), legendtext = plot.legend)
 
+
+e.trees <- henao_d_trs
+e_trees <- e.trees [sapply(e.trees, Ntip) > 20]
+
+sim_bd.9 <- list()
+for(i in 1:length(e_trees)){
+  sim_bd.9[[i]] <- TreeSim::sim.bd.taxa(n = sapply(e_trees, Ntip)[i],
+                                        numbsim = 1, lambda = 0.1, mu = 0)[[1]]
+}
+sim_b.1
+sim_b.9
+
+sim_b.1d.05
+sim_b.9d.1

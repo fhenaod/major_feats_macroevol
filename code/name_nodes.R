@@ -3,8 +3,8 @@ library(tidyverse)
 library(taxize)
 library(castor)
 
-tree <- TE2016 # select the tree  
-clad <- "fern"
+tree <- S2018 # select the tree  
+clad <- "seed"
   
 # get genus names ####
 names_sp<-strsplit(tree$tip.label, "_")
@@ -19,6 +19,7 @@ genera<-unique(get_genus(names_sp))
 tree$tip.label <- gsub("_", " ", tree$tip.label)
 
 # Name genera nodes, for non-monospecific genus ####
+# using tree's genus only
 name_genus_nodes=function(tree, names2nodes){
   for(i in 1:length(names2nodes)){
     tips<-tree$tip.label[grep(paste0("\\b", names2nodes[i] ,"\\b"), tree$tip.label)]
@@ -31,7 +32,28 @@ name_genus_nodes=function(tree, names2nodes){
   }
   return(tree)
 }
-tre_g_noded<-name_genus_nodes(tree, genera)
+
+# using taxonomy table
+m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T, row.names = 1)
+name_genus_nodes=function(tree, m){
+  tr_nam_tab <- data.frame(spp = tree$tip.label, 
+                           genus = stringr::str_to_title(get_genus(names_sp))) %>% 
+    left_join(m, by = c("genus"="genus"))
+  gens <- unique(tr_nam_tab$genus) %>% sort()
+  for(i in 1:length(gens)){
+    gen_t <- filter(tr_nam_tab, genus == gens[i]) %>% pull(spp)
+    if(length(gen_t)!=1){
+      mrca_node<-getMRCA(tree, tip = gen_t)
+      tree$node.label[mrca_node-Ntip(tree)]<-gens[i]
+    } else {
+    }
+  }
+  return(tree)
+}
+tre_g_noded<-name_genus_nodes(tree, m)
+
+plot(tre_g_noded, show.tip.label = F, no.margin = T, type = "fan")
+nodelabels(tre_g_noded$node.label, frame = "none", col = "red", cex = .65)
 
 # Name higher rank nodes on a genus-tip-tree, based on taxonomy table ####
 m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T, row.names = 1)
@@ -49,6 +71,7 @@ name_htaxa_nod_gen_tip=function(tree, m){
   ords<-unique(m$order)
   for(j in 1:length(ords)){
     ord_f<-as.character(m[grep(ords[j],m$order),]$family)
+    if(ord_f=="incertae_sedis") {next()}
     mrca_node<-get_mrca_of_set(tree, ord_f)
     if(mrca_node!=1) {
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(ords[j])
@@ -58,6 +81,7 @@ name_htaxa_nod_gen_tip=function(tree, m){
   clas<-unique(m$class)
   for(k in 1:length(ords)){
     cla_o<-as.character(m[grep(clas[k],m$class),]$order)
+    if(cla_o=="incertae_sedis") {next()}
     mrca_node<-get_mrca_of_set(tree, cla_o)
     if(mrca_node!=1) {
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(clas[k])
@@ -72,10 +96,11 @@ tre_noded <- name_htaxa_nod_gen_tip(tre_g_noded, m)
 m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T, row.names = 1)
 name_htaxa_nodes=function(tree, m){
   tr_nam_tab <- data.frame(spp = tree$tip.label, 
-                           genus = get_genus(names_sp)) %>% 
+                           genus = stringr::str_to_title(get_genus(names_sp))) %>% 
     left_join(m, by = c("genus"="genus"))
   
   fams<-unique(tr_nam_tab$family)
+  fams<-fams[-c(which(is.na(fams)), grep("incertae_sedis", fams))] %>% sort()
   for(i in 1:length(fams)){
     fam_t <- filter(tr_nam_tab, family == fams[i]) %>% pull(spp)
     if(length(fam_t)==1){next()}
@@ -86,6 +111,7 @@ name_htaxa_nodes=function(tree, m){
   }
   
   ords<-unique(tr_nam_tab$order)
+  ords<-ords[-c(which(is.na(ords)), grep("incertae_sedis", ords))] %>% sort()
   for(j in 1:length(ords)){
     ord_t<-filter(tr_nam_tab, order == ords[j]) %>% pull(spp)
     if(length(ord_t)==1){next()}
@@ -96,6 +122,7 @@ name_htaxa_nodes=function(tree, m){
   }
   
   clas<-unique(tr_nam_tab$class)
+  clas<-clas[-c(which(is.na(clas)), grep("incertae_sedis", clas))] %>% sort()
   for(k in 1:length(ords)){
     cla_t<-filter(tr_nam_tab, class == clas[k]) %>% pull(spp)
     mrca_node<-get_mrca_of_set(tree, cla_t)
@@ -103,7 +130,6 @@ name_htaxa_nodes=function(tree, m){
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(clas[k])
     } 
   }
-  
   return(tree)
 }
 tre_noded <- name_htaxa_nodes(tre_g_noded, m)

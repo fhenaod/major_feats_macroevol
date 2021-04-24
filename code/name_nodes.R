@@ -95,8 +95,8 @@ tre_noded <- name_htaxa_nod_gen_tip(tre_g_noded, m)
 m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T)
 name_htaxa_nodes=function(tree, m){
   tr_nam_tab <- data.frame(spp = tree$tip.label, 
-                           genus = stringr::str_to_title(get_genus(names_sp))) %>% 
-    left_join(m, by = c("genus"="genus"))
+                           genus = stringr::str_to_title(get_genus(names_sp))) 
+  tr_nam_tab <- left_join(tr_nam_tab, m, by = c("genus"="genus"))
   
   fams<-unique(tr_nam_tab$family)
   fams<-fams[-c(which(is.na(fams)), grep("incertae_sedis", fams))] %>% sort()
@@ -105,6 +105,7 @@ name_htaxa_nodes=function(tree, m){
     if(length(fam_t)==1){next()}
     mrca_node<-get_mrca_of_set(tree, fam_t)
     if(mrca_node!=1) {
+      if(mrca_node-Ntip(tree)<=0){next()}
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(fams[i])
     } 
   }
@@ -116,6 +117,7 @@ name_htaxa_nodes=function(tree, m){
     if(length(ord_t)==1){next()}
     mrca_node<-get_mrca_of_set(tree, ord_t)
     if(mrca_node!=1) {
+      if(mrca_node-Ntip(tree)<=0){next()}
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(ords[j])
     } 
   }
@@ -126,6 +128,7 @@ name_htaxa_nodes=function(tree, m){
     cla_t<-filter(tr_nam_tab, class == clas[k]) %>% pull(spp)
     mrca_node<-get_mrca_of_set(tree, cla_t)
     if(mrca_node!=1) {
+      if(mrca_node-Ntip(tree)<=0){next()}
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(clas[k])
     } 
   }
@@ -133,7 +136,7 @@ name_htaxa_nodes=function(tree, m){
 }
 tre_noded <- name_htaxa_nodes(tre_g_noded, m)
 
-plot(tre_noded, show.tip.label = F, no.margin = T, type = "fan")
+plot(tre_noded, show.tip.label = F, no.margin = T, type = "clad")
 nodelabels(tre_noded$node.label, frame = "none", col = "red", cex = .65)
 
 saveRDS(tre_noded, paste0("data_megaPhylos/", clad,"_noded_tre.rds"))

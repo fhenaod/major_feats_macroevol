@@ -1,6 +1,5 @@
 library(phytools)
 library(tidyverse)
-library(taxize)
 library(castor)
 
 tree <- S2018 # select the tree  
@@ -34,7 +33,7 @@ name_genus_nodes=function(tree, names2nodes){
 }
 
 # using taxonomy table
-m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T, row.names = 1)
+m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T)
 name_genus_nodes=function(tree, m){
   tr_nam_tab <- data.frame(spp = tree$tip.label, 
                            genus = stringr::str_to_title(get_genus(names_sp))) %>% 
@@ -56,7 +55,7 @@ plot(tre_g_noded, show.tip.label = F, no.margin = T, type = "fan")
 nodelabels(tre_g_noded$node.label, frame = "none", col = "red", cex = .65)
 
 # Name higher rank nodes on a genus-tip-tree, based on taxonomy table ####
-m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T, row.names = 1)
+m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T)
 name_htaxa_nod_gen_tip=function(tree, m){
   fams<-unique(m$family)
   for(i in 1:length(fams)){
@@ -81,7 +80,7 @@ name_htaxa_nod_gen_tip=function(tree, m){
   clas<-unique(m$class)
   for(k in 1:length(ords)){
     cla_o<-as.character(m[grep(clas[k],m$class),]$order)
-    if(cla_o=="incertae_sedis") {next()}
+    if(cla_o=="incertae_sedis" | is.na(cla_o)) {next()}
     mrca_node<-get_mrca_of_set(tree, cla_o)
     if(mrca_node!=1) {
       tree$node.label[mrca_node-Ntip(tree)]<-as.character(clas[k])
@@ -93,7 +92,7 @@ name_htaxa_nod_gen_tip=function(tree, m){
 tre_noded <- name_htaxa_nod_gen_tip(tre_g_noded, m)
 
 # Name higher rank nodes based on taxonomy table ####
-m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T, row.names = 1)
+m <- read.csv(paste0("taxonomy/", clad,"_tax.csv"), header = T)
 name_htaxa_nodes=function(tree, m){
   tr_nam_tab <- data.frame(spp = tree$tip.label, 
                            genus = stringr::str_to_title(get_genus(names_sp))) %>% 

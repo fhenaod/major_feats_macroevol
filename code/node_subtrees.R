@@ -1,7 +1,8 @@
 library(phytools)
 library(parallel)
+library(tidyverse)
 
-tre_noded <- readRDS("data_megaPhylos/agar_noded_tre.rds")
+tre_noded <- readRDS("data_megaPhylos/seed_noded_tre.rds")
 tree <- tre_noded
 
 # Subseting trees by node labels
@@ -132,7 +133,7 @@ for(q in 1:length(trees)){
 sampl_fams <- trees
 rep_nods(sampl_fams, q2s) %>% table()
 
-saveRDS(sampl_clas, "rank_sampling/fern_clas_trees.rds")
-saveRDS(sampl_ords, "rank_sampling/agar_ords_trees.rds")
-saveRDS(sampl_fams, "rank_sampling/agar_fams_trees.rds")
+saveRDS(sampl_clas, "rank_sampling/seed_clas_trees.rds")
+saveRDS(sampl_ords, "rank_sampling/seed_ords_trees.rds")
+saveRDS(sampl_fams, "rank_sampling/seed_fams_trees.rds")
 

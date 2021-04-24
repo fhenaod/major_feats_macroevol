@@ -73,6 +73,9 @@ S2018 <- drop.tip(S2018, grep("×", S2018$tip.label)) # remove hybrids special c
 S2018 <- drop.tip(S2018, grep("Goodyerinae", S2018$tip.label)) # remove subtribe
 S2018 <- drop.tip(S2018, grep("Hermogenodendron", S2018$tip.label)) #
 S2018 <- drop.tip(S2018, grep("Inobulbum", S2018$tip.label)) # remove orchidaceae section
+S2018 <- drop.tip(S2018, grep("Palissya_australis", S2018$tip.label)) # remove fossil
+S2018 <- drop.tip(S2018, grep("Cleopatra_candelabra", S2018$tip.label)) # remove fossil
+S2018 <- drop.tip(S2018, grep("Cyclostigma_australe", S2018$tip.label)) # remove fossil
 plot(S2018, cex=.6, show.tip.label = F, no.margin = T)
 S2018<-multi2di(S2018)
 is.binary(S2018)
@@ -97,12 +100,22 @@ GBOTB_sper <- drop.tip(GBOTB_sper, grep("_ined._", GBOTB_sper$tip.label)) # remo
 GBOTB_sper <- drop.tip(GBOTB_sper, grep("_nov._", GBOTB_sper$tip.label)) # remove ined.
 GBOTB_sper <- drop.tip(GBOTB_sper, grep("_X_", GBOTB_sper$tip.label)) # remove X hybrids
 GBOTB_sper <- drop.tip(GBOTB_sper, grep("\\.__[[:upper:]]", GBOTB_sper$tip.label)) # remove unknown sp
+GBOTB_sper <- drop.tip(GBOTB_sper, grep("_hybrid_", GBOTB_sper$tip.label)) # remove hybrids.
 GBOTB_sper <- drop.tip(GBOTB_sper, grep("[:.:]", GBOTB_sper$tip.label)) # remove unknown sp.
+GBOTB_sper <- drop.tip(GBOTB_sper, grep("^X_", GBOTB_sper$tip.label)) # remove hybrids
+GBOTB_sper$node.label <- drop.tip(GBOTB_sper, grep("^X_", GBOTB_sper$tip.label))
+GBOTB_sper$node.label[match(GBOTB_sper$node.label[grep("mrca", GBOTB_sper$node.label)],
+                            GBOTB_sper$node.label)] <- ""
+GBOTB_sper$node.label[match(GBOTB_sper$node.label[grep("rn.d8s.tre", GBOTB_sper$node.label)],
+                            GBOTB_sper$node.label)] <- ""
 is.binary(GBOTB_sper)
 GBOTB_sper<-multi2di(GBOTB_sper)
-is.ultrametric(GBOTB_sper)
+GBOTB_sper$edge.length[GBOTB_sper$edge.length<=0] <-1e-6
 min(GBOTB_sper$edge.length)
-write.tree(GBOTB_sper,file=paste0(destination.path,"tree_GBOTBsper.bi.pr._.txt"))
+GBOTB_sper<-castor:::extend_tree_to_height(GBOTB_sper)$tree
+is.ultrametric(GBOTB_sper)
+is.rooted(GBOTB_sper)
+write.tree(GBOTB_sper,file=paste0(destination.path,"tree_GBOTBsper.cr.bi.pr._.txt"))
 
 ST2018<-read.nexus(paste0(source.path,"tree_ST2018_.nex"))
 plot(ST2018,cex=.6, show.tip.label = F,no.margin = T)

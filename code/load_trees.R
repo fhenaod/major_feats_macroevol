@@ -20,7 +20,8 @@ names(e.trees) <- nams_trs
 J2012 <- read.tree("data_megaPhylos/tree_J2012_.txt")
 J2018 <- read.tree("data_megaPhylos/tree_J2018.cr.pr.bi_.txt")
 R2018 <- read.tree("data_megaPhylos/tree_R2018.cr_.txt")
-S2018 <- read.tree("data_megaPhylos/tree_S2018.cr.pr.bi_.txt")
+S2018 <- read.tree("data_megaPhylos/tree_S2018.cr.pr.bi_.txt") # Smith & Brown
+S2018 <- read.tree("data_megaPhylos/tree_GBOTBsper.cr.bi.pr._.txt") # GBOTB
 ST2018 <-read.tree("data_megaPhylos/tree_ST2018.tr.cr_.txt")
 T2016 <- read.tree("data_megaPhylos/tree_T2016.cr.pr.bi_.txt")
 TE2016<- read.tree("data_megaPhylos/tree_TE2016.cr.pr_.txt")
@@ -31,8 +32,8 @@ U2019 <- read.tree("data_megaPhylos/tree_U2019.cr.pr_.txt")
 bird_nd <- J2012_nd <- readRDS("data_megaPhylos/bird_noded_tre.rds")
 amph_nd <- J2018_nd <- readRDS("data_megaPhylos/amph_noded_tre.rds")
 fish_nd <- R2018_nd <- readRDS("data_megaPhylos/fish_noded_tre.rds")
-seed_nd <- S2018_nd <- readRDS("data_megaPhylos/seed_noded_tre.rds")
-chon_nd <- ST2018_nd<-readRDS("data_megaPhylos/chon_noded_tre.rds")
+seed_nd <- S2018_nd <- readRDS("data_megaPhylos/seed_noded_tre.rds") #GBOT tree
+chon_nd <- ST2018_nd<- readRDS("data_megaPhylos/chon_noded_tre.rds")
 squa_nd <- T2016_nd <- readRDS("data_megaPhylos/squa_noded_tre.rds")
 fern_nd <- TE2016_nd <-readRDS("data_megaPhylos/fern_noded_tre.rds")
 mamm_nd <- U2019_nd <- readRDS("data_megaPhylos/mamm_noded_tre.rds")

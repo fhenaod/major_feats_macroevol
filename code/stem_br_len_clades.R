@@ -55,6 +55,10 @@ nod_tre_ls <- list(agar_nd, amph_nd, bird_nd, chon_nd,
 names(nod_tre_ls) <- c("agar", "amph", "bird", "chon", 
                        "fern",  "fish", "mamm", "seed", "squa")
 
+nams_ranks <- c("Agaricomycetes", "Amphibia", "Aves", 
+                "Chondrichthyes", "Polypodiopsida", "Actinopterygii", 
+                "Mammalia", "Spermatophyta" ,"Squamata")
+
 # are stem branch lengths from named clades different from random trees ones?
 files <- dir("rand_age_rank/samp_trees/") # load random sample trees
 stem_len_rnd <- c()
@@ -80,14 +84,15 @@ for(a in 1:length(nod_tre_ls)){
   tr_tx_ls[[a]] <- edge_nam_nods(nod_tre_ls[[names(nod_tre_ls)[a]]]) %>% 
     mutate(type = "empirical") %>% 
     left_join(tax_trf(tax_lst[[a]]), by = ("taxon")) %>% 
+    filter(!is.na(rank)) %>%
     mutate(clade_nm = names(nod_tre_ls)[a])
 }
 names(tr_tx_ls) <- names(nod_tre_ls)
 
-select(tr_tx_ls[[5]], clade_nm, clade_rk = rank, ed.len, type) %>% 
+tr_tx_ls[[8]] %>% dplyr::select(clade_nm, clade_rk = rank, ed.len, type) %>% 
   filter(clade_rk != "genus", clade_rk != "class") %>%
   ggplot(aes(x = clade_rk, y = log(ed.len+1), fill = clade_rk)) + 
-  geom_violin() + theme_classic()
+  geom_violin() + theme_classic() + labs(subtitle = names(tr_tx_ls[8]))
 
 # histograms
 grp_ls4 <- vector('list', length(nod_tre_ls))
@@ -121,33 +126,53 @@ for(h in 1:length(grp_ls4)){
   
   grp_ls4.1[[h]] <- local({
     h <- h
-    mn_bl <- rbind(select(tr_tx_ls[[h]], clade_nm, clade_rk = rank, ed.len, type) %>% 
+    mn_bl <- rbind(dplyr::select(tr_tx_ls[[h]], clade_nm, clade_rk = rank, ed.len, type) %>% 
                      filter(!clade_rk %in% c("genus", "class")),
                    stem_len_rnd %>% filter(clade_nm == names(nod_tre_ls)[h]) %>% 
-                     select(clade_nm, clade_rk, ed.len = old.stem.len, type))
+                     dplyr::select(clade_nm, clade_rk, ed.len = old.stem.len, type))
+    
+    if(mn_bl$clade_nm[1] == "amph"){
+      mn_bl <- filter(mn_bl, clade_rk != "order")
+    }
     
     mn_bl <- group_by(mn_bl, type) %>% 
       filter(!(abs(ed.len - median(ed.len, na.rm = T)) > 2*sd(ed.len, na.rm = T))) %>%
       ungroup() # remove outliers by group
     
-    p1 <- ggplot(data.frame(mn_bl), aes(x = clade_rk, y = log(ed.len), fill = type)) + 
+    p1 <- ggplot(data.frame(mn_bl), aes(x = clade_rk, y = (ed.len), fill = type)) + 
       geom_boxplot() + 
       #stat_summary(fun.data = mean_sdl, mult = 1, geom = "pointrange", width = 0.01, color = "black") + 
-      scale_color_brewer(palette = "Dark2") +
+      scale_fill_manual(values = c("#335C67", "#D5A021", "#9E2A2B", "#28AFB0"), 
+                        name = "", labels = c("Empirical", "Random")) +
       #geom_vline(aes(xintercept = mean(edge_nam_nods(nod_tre_ls[[h]])$ed.len, na.rm = T)), color = "red", linetype = "dashed") +
-      labs(subtitle = paste0(names(nod_tre_ls)[h]), 
-           x = "Type", y = "Ln Branch length") + theme_classic() + theme(legend.position = "none")
+      scale_x_discrete(labels = c("family" = "Family", "order" = "Order")) +
+      labs(
+        #subtitle = paste0(nams_ranks[h]), 
+           x = "", y = "") + theme_classic() + theme(legend.position = "")
   })
   print(p1)
 }
 
+grp_ls4.1[[1]] <- grp_ls4.1[[1]] + annotation_custom(tax_pics[[nams_ranks[1]]], xmin = 2,  xmax = 2.5, ymin = 45, ymax = 55)
+grp_ls4.1[[2]] <- grp_ls4.1[[2]] + annotation_custom(tax_pics[[nams_ranks[2]]], xmin = 1.2,  xmax = 1.5, ymin = 80, ymax = 90) 
+grp_ls4.1[[3]] <- grp_ls4.1[[3]] + annotation_custom(tax_pics[[nams_ranks[3]]], xmin = 2,  xmax = 2.5, ymin = 25, ymax = 30)
+grp_ls4.1[[4]] <- grp_ls4.1[[4]] + annotation_custom(tax_pics[[nams_ranks[4]]], xmin = 2,  xmax = 2.5, ymin = 120, ymax = 140)
+grp_ls4.1[[5]] <- grp_ls4.1[[5]] + annotation_custom(tax_pics[[nams_ranks[5]]], xmin = 2,  xmax = 2.5, ymin = 145, ymax = 170)
+grp_ls4.1[[6]] <- grp_ls4.1[[6]] + annotation_custom(tax_pics[[nams_ranks[6]]], xmin = 2,  xmax = 2.5, ymin = 70, ymax = 80)
+grp_ls4.1[[7]] <- grp_ls4.1[[7]] + annotation_custom(tax_pics[[nams_ranks[7]]], xmin = 2,  xmax = 2.5, ymin = 40, ymax = 47)
+grp_ls4.1[[8]] <- grp_ls4.1[[8]] + annotation_custom(tax_pics[[nams_ranks[8]]], xmin = 2,  xmax = 2.8, ymin = 62, ymax = 82)
+grp_ls4.1[[9]] <- grp_ls4.1[[9]] + annotation_custom(tax_pics[[nams_ranks[9]]], xmin = 1.2,  xmax = 1.5, ymin = 50, ymax = 65)
+
 ggarrange(plotlist = grp_ls4.1,
-          ncol = 3, nrow = 3)
+          ncol = 3, nrow = 3) %>% 
+  annotate_figure(left = textGrob("Stem branch length (Myr)", rot = 90, vjust = 1, gp = gpar(cex = 1)) 
+                  #, bottom = textGrob("", gp = gpar(cex = 1))
+                  )
 
 # normality test
 mn_shp_rs <- list()
 for(w in 1:length(names(nod_tre_ls))){
-  temp_dfr <- rbind(select(tr_tx_ls[[w]], clade_nm, clade_rk = rank, ed.len, type) %>% 
+  temp_dfr <- rbind(dplyr::select(tr_tx_ls[[w]], clade_nm, clade_rk = rank, ed.len, type) %>% 
                       filter(!clade_rk %in% c("genus", "class")),
                     stem_len_rnd %>% filter(clade_nm == names(nod_tre_ls)[w]) %>% 
                       select(clade_nm, clade_rk, ed.len = old.stem.len, type))

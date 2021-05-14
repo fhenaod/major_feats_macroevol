@@ -40,13 +40,15 @@ squa_sl_stat<-readRDS("Slicing/squa/output/squa_sum_stats.rds")
 squa_sl_stat$taxon<-rep("Squamata", dim(squa_sl_stat)[1])
 squa_sl_stat$rel_age<-squa_sl_stat$tree.max.age/189.9633
 
-## Add ML beta spliting estimates
+## ML beta spliting estimates
 amph_beta <- readRDS("Slicing/ml_beta/amph/amph_ml_beta.rds")
 bird_beta <- readRDS("Slicing/ml_beta/bird/bird_ml_beta.rds")
 chon_beta <- readRDS("Slicing/ml_beta/chon/chon_ml_beta.rds")
 fish_beta <- readRDS("Slicing/ml_beta/fish/fish_ml_beta.rds")
 squa_beta <- readRDS("Slicing/ml_beta/squa/squa_ml_beta.rds")
-seed_beta <- readRDS("Slicing/ml_beta/seed/seed_ml_beta.rds")
+seed_beta <- data.frame(beta = rep(NA, dim(seed_sl_stat)[1]), 
+                        b_low_ci = rep(NA, dim(seed_sl_stat)[1]), 
+                        b_up_ci = rep(NA, dim(seed_sl_stat)[1]))
 
 amph_sl_stat <- cbind(amph_sl_stat, amph_beta)
 bird_sl_stat <- cbind(bird_sl_stat, bird_beta)
@@ -61,18 +63,16 @@ bird_branch <- readRDS("Slicing/branch_stats/bird_branch_stats.rds")
 chon_branch <- readRDS("Slicing/branch_stats/chon_branch_stats.rds")
 fish_branch <- readRDS("Slicing/branch_stats/fish_branch_stats.rds")
 squa_branch <- readRDS("Slicing/branch_stats/squa_branch_stats.rds")
-seed_branch <- readRDS("Slicing/branch_stats/seed_branch_stats.rds")
 
 amph_sl_stat <- cbind(amph_sl_stat, amph_branch)
 bird_sl_stat <- cbind(bird_sl_stat, bird_branch)
 chon_sl_stat <- cbind(chon_sl_stat, chon_branch)
 fish_sl_stat <- cbind(fish_sl_stat, fish_branch)
 squa_sl_stat <- cbind(squa_sl_stat, squa_branch)
-seed_sl_stat <- cbind(seed_sl_stat, seed_branch)
 
-sl_sum_stats<-rbind(agar_sl_stat, amph_sl_stat, bird_sl_stat, chon_sl_stat, fern_sl_stat, fish_sl_stat
-                 #, seed_sl_stat
-                 , squa_sl_stat, mamm_sl_stat)
+sl_sum_stats <- rbind(agar_sl_stat, amph_sl_stat, bird_sl_stat, 
+                      chon_sl_stat, fern_sl_stat, fish_sl_stat, 
+                      seed_sl_stat, squa_sl_stat, mamm_sl_stat)
 
 # RANKS ####
 agar_fams_stats<-readRDS("rank_sampling/agar_fams/output/agar_fams_sum_stats.rds")
@@ -158,9 +158,8 @@ rank_sum_stats<-rbind(agar_fams_stats, agar_ords_stats,
                       fern_fams_stats, fern_ords_stats, fern_clas_stats, 
                       fish_fams_stats, fish_ords_stats, 
                       mamm_fams_stats, mamm_ords_stats, 
-                      squa_fams_stats
-                 #,seed_fams_stats, seed_ords_stats, seed_clas_stats
-                 )
+                      squa_fams_stats,
+                      seed_fams_stats, seed_ords_stats, seed_clas_stats)
 rank_sum_stats$rank <- sapply(strsplit(rank_sum_stats$taxon, "_"), "[", 2)
 rank_sum_stats$taxon <- stringr::str_extract(rank_sum_stats$taxon, "[^_]+")
 
@@ -233,8 +232,8 @@ bird_50<-readRDS("self_sim/stem_edge_add/bird/bird_50_sum_stats.rds")
 bird_50$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/bird/bird_50_brake_ages.rds")
 bird_50$taxon<-rep("bird_50", dim(bird_50)[1])
 
-chon_5<-readRDS("self_sim/stem_edge_add/chon/chon_5_sum_stats.rds")
-chon_5$taxon<-rep("chon_5", dim(chon_5)[1])
+#chon_5<-readRDS("self_sim/stem_edge_add/chon/chon_5_sum_stats.rds")
+#chon_5$taxon<-rep("chon_5", dim(chon_5)[1])
 chon_10<-readRDS("self_sim/stem_edge_add/chon/chon_10_sum_stats.rds")
 chon_10$taxon<-rep("chon_10", dim(chon_10)[1])
 chon_20<-readRDS("self_sim/stem_edge_add/chon/chon_20_sum_stats.rds")
@@ -291,6 +290,22 @@ mamm_50<-readRDS("self_sim/stem_edge_add/mamm/mamm_50/output/mamm_50_sum_stats.r
 mamm_50$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/mamm/mamm_50/mamm_50_brake_ages.rds")
 mamm_50$taxon<-rep("mamm_50", dim(mamm_50)[1])
 
+seed_10<-readRDS("self_sim/stem_edge_add/seed/seed_10/output/seed_10_sum_stats.rds")
+seed_10$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/seed/seed_10/seed_10_brake_ages.rds")
+seed_10$taxon<-rep("seed_10", dim(seed_10)[1])
+seed_20<-readRDS("self_sim/stem_edge_add/seed/seed_20/output/seed_20_sum_stats.rds")
+seed_20$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/seed/seed_20/seed_20_brake_ages.rds")
+seed_20$taxon<-rep("seed_20", dim(seed_20)[1])
+seed_30<-readRDS("self_sim/stem_edge_add/seed/seed_30/output/seed_30_sum_stats.rds")
+seed_30$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/seed/seed_30/seed_30_brake_ages.rds")
+seed_30$taxon<-rep("seed_30", dim(seed_30)[1])
+seed_40<-readRDS("self_sim/stem_edge_add/seed/seed_40/output/seed_40_sum_stats.rds")
+seed_40$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/seed/seed_40/seed_40_brake_ages.rds")
+seed_40$taxon<-rep("seed_40", dim(seed_40)[1])
+seed_50<-readRDS("self_sim/stem_edge_add/seed/seed_50/output/seed_50_sum_stats.rds")
+seed_50$orig_brake_age_f<-readRDS("self_sim/stem_edge_add/seed/seed_50/seed_50_brake_ages.rds")
+seed_50$taxon<-rep("seed_50", dim(seed_50)[1])
+
 squa_5<-readRDS("self_sim/stem_edge_add/squa/squa_5_sum_stats.rds")
 squa_5$taxon<-rep("squa_5", dim(squa_5)[1])
 squa_10<-readRDS("self_sim/stem_edge_add/squa/squa_10_sum_stats.rds")
@@ -312,7 +327,8 @@ fract_sum_edg <- rbind(agar_5, agar_10, agar_20, agar_30, agar_40, agar_50
                        ,fish_5, fish_10, fish_20, fish_30, fish_40, fish_50
                        ,mamm_5, mamm_10, mamm_20, mamm_30, mamm_40, mamm_50
                        ,squa_5, squa_10, squa_20, squa_30, squa_40, squa_50
-)
+                       ,seed_10, seed_20, seed_30, seed_40, seed_50)
+
 fract_sum_edg <- do.call(data.frame,lapply(fract_sum_edg, function(x) replace(x, is.infinite(x),NA)))
 fract_sum_edg$s_age <- paste0("ages_", sapply(strsplit(fract_sum_edg$taxon, "_"), "[", 2))
 fract_sum_edg$taxon <- sapply(strsplit(fract_sum_edg$taxon, "_"), "[", 1)
@@ -409,6 +425,17 @@ mamm_40n$taxon<-rep("mamm_40", dim(mamm_40n)[1])
 mamm_50n<-readRDS("self_sim/node_extract/mamm/mamm_50/output/mamm_50_sum_stats.rds")
 mamm_50n$taxon<-rep("mamm_50", dim(mamm_50n)[1])
 
+seed_10n<-readRDS("self_sim/node_extract/seed/seed_10/output/seed_10_sum_stats.rds")
+seed_10n$taxon<-rep("seed_10", dim(seed_10n)[1])
+seed_20n<-readRDS("self_sim/node_extract/seed/seed_20/output/seed_20_sum_stats.rds")
+seed_20n$taxon<-rep("seed_20", dim(seed_20n)[1])
+seed_30n<-readRDS("self_sim/node_extract/seed/seed_30/output/seed_30_sum_stats.rds")
+seed_30n$taxon<-rep("seed_30", dim(seed_30n)[1])
+seed_40n<-readRDS("self_sim/node_extract/seed/seed_40/output/seed_40_sum_stats.rds")
+seed_40n$taxon<-rep("seed_40", dim(seed_40n)[1])
+seed_50n<-readRDS("self_sim/node_extract/seed/seed_50/output/seed_50_sum_stats.rds")
+seed_50n$taxon<-rep("seed_50", dim(seed_50n)[1])
+
 squa_5n<-readRDS("self_sim/node_extract/squa/squa_5/output/squa_5_sum_stats.rds")
 squa_5n$taxon<-rep("squa_5", dim(squa_5n)[1])
 squa_10n<-readRDS("self_sim/node_extract/squa/squa_10/output/squa_10_sum_stats.rds")
@@ -428,7 +455,7 @@ fract_sum_node <- rbind(agar_5n, agar_10n, agar_20n, agar_30n, agar_40n, agar_50
                         chon_5n, chon_10n, chon_20n, chon_30n, chon_40n, chon_50n,
                         fern_5n, fern_10n, fern_20n, fern_30n, fern_40n, fern_50n,
                         fish_5n, fish_10n, fish_20n, fish_30n, fish_40n, fish_50n,
-                        #mamm_5n, 
+                        seed_10n, seed_20n, seed_30n, seed_40n, seed_50n,
                         mamm_10n, mamm_20n, mamm_30n, mamm_40n, mamm_50n,
                         squa_5n, squa_10n, squa_20n, squa_30n, squa_40n, squa_50n)
 fract_sum_node <- do.call(data.frame,lapply(fract_sum_node, function(x) replace(x, is.infinite(x),NA)))

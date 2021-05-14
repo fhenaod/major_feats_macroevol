@@ -88,24 +88,29 @@ gather(tall_mod_tb, value = model) %>%
   labs(title = "trees > 20 tips", x = "Distribution place", y = "Count")
 
 # Figures as in Venditti et al. 2009 ####
+cust_pal <- c("#003049","#d62828","#f77f00","#fcbf49","#eae2b7")
 # 1a
 pg1 <- gather(tall_mod_tb, value = model) %>% 
   group_by(model, key) %>% count() %>% filter(key == "p1") %>% 
   ggplot(aes(x = model, y = n, color = model, fill = model)) + 
   geom_bar(stat = "identity") + theme_classic() + 
   theme(legend.position = "none") +
-  scale_x_discrete(limits = c("Exponential","Weibull","Log-Normal", "Normal")) + 
-  labs(title = "Times it was the best model, trees > 20 tips",
-       x = "", y = "Count")
+  labs(title = "Best selected model", x = "", y = "Count") +
+  scale_x_discrete(limits = c("Exponential","Weibull","Log-Normal", "Normal"))
+
+pg1 <- pg1 + scale_color_manual(values = cust_pal) + scale_fill_manual(values = cust_pal)
 
 # 1b
 pg2 <- gather(tall_mod_tb, value = model) %>% 
   group_by(model) %>% 
   ggplot(aes(x = model, color = key, fill = key)) + 
   geom_histogram(stat = "count", position = position_dodge()) + theme_classic() + 
-  labs(title = "Distribution of each model’s finishing places", 
-       x = "", y = "Count") + 
+  labs(title = "Model’s finishing places", x = "", y = "Count") +
   scale_x_discrete(limits = c("Exponential","Weibull","Log-Normal", "Normal"))
+  
+pg2 <- pg2 + scale_color_manual(values = cust_pal) +
+  scale_fill_manual(values = cust_pal, 
+                    name = "Place", labels = c("p1" = "1st", "p2" = "2nd", "p3" = "3rd", "p4" = "4th"))
 
 ggarrange(pg1, pg2,
           ncol = 1, nrow = 2,

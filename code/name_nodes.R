@@ -139,5 +139,8 @@ tre_noded <- name_htaxa_nodes(tre_g_noded, m)
 plot(tre_noded, show.tip.label = F, no.margin = T, type = "clad")
 nodelabels(tre_noded$node.label, frame = "none", col = "red", cex = .65)
 
-saveRDS(tre_noded, paste0("data_megaPhylos/", clad,"_noded_tre.rds"))
+# remove NAs from empty node.labels ####
+tre_noded$node.label %>% is.na() %>% table()
+tre_noded$node.label <- replace_na(tre_noded$node.label, "")
 
+saveRDS(tre_noded, paste0("data_megaPhylos/", clad,"_noded_tre.rds"))

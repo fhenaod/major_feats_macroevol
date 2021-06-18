@@ -19,7 +19,7 @@ all_10_slic    # sliced 10 posterior trees
 all_10_rank    # rank sampled 10 posterior trees
 all_10_rando   # self-similar sampled 10 posterior trees
 
-sum_stats <- fract_sum_edg
+sum_stats <- rank_sum_stats
 
 # General exploratory ####
 # basic plots and paired correlations among all variables
@@ -31,10 +31,10 @@ sum_stats %>%
   select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
             p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
             b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  #filter(ntips >= 20) %>% 
   gather() %>% 
-  ggplot(aes(value)) +
-  facet_wrap(~ key, scales = "free") +
-  geom_histogram()
+  ggplot(aes(value)) + geom_histogram() + theme_classic() + 
+  facet_wrap(~ key, scales = "free")
 
 # density facet plots
 sum_stats %>%
@@ -42,10 +42,10 @@ sum_stats %>%
   select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
             p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
             b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  #filter(ntips >= 20) %>% 
   gather() %>% 
-  ggplot(aes(value)) +
+  ggplot(aes(value)) + geom_density() + theme_classic() + 
   facet_wrap(~ key, scales = "free") +
-  geom_density()
 
 # correlation facet matrix
 sum_stats %>%
@@ -55,6 +55,39 @@ sum_stats %>%
             b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
   PerformanceAnalytics::chart.Correlation(histogram = TRUE, 
                                           pch = 19, cex = .5)
+## ntips
+sum_stats %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, ln_dr)) %>%
+  filter(ntips >= 20) %>%
+  gather("variable", "value", gamma.stat:br.t_mean) %>%
+  ggplot(aes(x = log(ntips), y = log(value))) + geom_point() + 
+  geom_smooth(method = lm, col = "red") + theme_classic() + 
+  facet_wrap(~variable, scales = "free")
+  
+## tree age
+sum_stats %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, ln_dr)) %>%
+  filter(ntips >= 20) %>%
+  gather("variable", "value", gamma.stat:br.t_mean) %>%
+  ggplot(aes(x = log(tree.max.age), y = log(value))) + geom_point() + 
+  geom_smooth(method = lm, col = "red") + theme_classic() + 
+  facet_wrap(~variable, scales = "free")
+
+## relative age
+sum_stats %>%
+  keep(is.numeric) %>% 
+  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+            b_low_ci, b_up_ci, tree.min.age, ln_dr)) %>%
+  gather("variable", "value", gamma.stat:br.t_mean) %>%
+  ggplot(aes(x = log10(rel_age), y = log10(value))) + geom_point() + theme_classic() + 
+  facet_wrap(~variable, scales = "free")
 
 # Shape hists ####
 hh1<-ggplot(sum_stats, aes(x=shape.yule)) + geom_histogram(color="darkblue", fill="white") + 
@@ -165,6 +198,15 @@ hh12<-ggplot(sum_stats, aes(x=log(modalities))) + geom_histogram(color="darkblue
 ggarrange(hh9, hh10, hh11, hh12,   
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
+
+ggplot(sum_stats, aes(x = log(ntips), y = log(modalities))) + 
+  geom_point(color = "black", cex = 1) +
+  #geom_vline(aes(xintercept = mean(log(subset(sum_stats, !is.na(modalities))$modalities))),color="red", linetype="dashed", size=1) +
+  labs(title = "", x = "Tree age (Myr)", y = "Ln Modalities") + 
+  theme_tufte(base_family = "Helvetica", base_size = 13) +
+  geom_smooth(method = "lm")
+
+cor.test(log(sum_stats$ntips), log(sum_stats$modalities), method = "spearman")
 
 # Mean and CI95 ####
 x<-log(sum_stats$modalities)
@@ -768,10 +810,25 @@ rbind(
            taxon, rank, type)
 ) %>% filter(ntips >= 20) %>% filter(rank != "clas") %>%
   #filter(rank != "ords" & rank != "amph") %>% 
-  ggplot(aes(x = rank, y = log(principal_eigenvalue), fill = type)) + 
-  geom_boxplot() + 
-  scale_color_brewer(palette = "Dark2") + 
-  theme_classic() + theme(legend.position = "none", 
-        axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
-  facet_wrap(~ taxon, scales = "free")
-
+  ggplot(aes(x = rank, y = (shape.yule), fill = type)) + 
+  geom_boxplot() +
+  scale_fill_manual(values = c("#335C67", "#D5A021", "#9E2A2B", "#28AFB0"), 
+                    name = "", labels = c("Empirical", "Random")) +
+  theme_minimal() +
+  scale_x_discrete(labels = c("fams" = "Family", "ords" = "Order")) +
+  theme(legend.position = c(.8, .2),
+        axis.text.x = element_text(size = 7),
+        panel.border = element_blank(), 
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"), ) +
+  labs(x = "", y = "Shape (Yule)") +
+  facet_wrap(~ taxon, scales = "free",
+             labeller = labeller(taxon =  c("agar" = "Agaricomycetes", "amph" = "Amphibia", 
+                                            "bird" = "Aves", "chon" = "Chondrichthyes", 
+                                            "fern" = "Polypodiopsida", 
+                                            "fish" = "Actinopterygii",
+                                            "mamm" = "Mammalia", "squa" = "Squamata")) ) +
+  theme(strip.text.x = element_text(size = 11, hjust = 0), 
+        strip.text.y = element_text(size = 11))

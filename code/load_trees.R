@@ -20,7 +20,7 @@ names(e.trees) <- nams_trs
 J2012 <- read.tree("data_megaPhylos/tree_J2012_.txt")
 J2018 <- read.tree("data_megaPhylos/tree_J2018.cr.pr.bi_.txt")
 R2018 <- read.tree("data_megaPhylos/tree_R2018.cr_.txt")
-S2018 <- read.tree("data_megaPhylos/tree_S2018.cr.pr.bi_.txt") # Smith & Brown
+#S2018 <- read.tree("data_megaPhylos/tree_S2018.cr.pr.bi_.txt") # Smith & Brown
 S2018 <- read.tree("data_megaPhylos/tree_GBOTBsper.cr.bi.pr._.txt") # GBOTB
 ST2018 <-read.tree("data_megaPhylos/tree_ST2018.tr.cr_.txt")
 T2016 <- read.tree("data_megaPhylos/tree_T2016.cr.pr.bi_.txt")
@@ -28,6 +28,12 @@ TE2016<- read.tree("data_megaPhylos/tree_TE2016.cr.pr_.txt")
 V2019 <- read.tree("data_megaPhylos/tree_V2019.cr.pr_.txt")
 U2019 <- read.tree("data_megaPhylos/tree_U2019.cr.pr_.txt")
 
+emp_clean_trs <- list(J2012, J2018, R2018, S2018, 
+                      ST2018, T2016, TE2016, V2019, U2019)
+names(emp_clean_trs) <- c("J2012", "J2018", "R2018", "S2018", 
+                          "ST2018", "T2016", "TE2016", "V2019", "U2019")
+saveRDS(emp_clean_trs, file = "data_megaPhylos/emp_clean_trs.rds")
+  
 # node named ####
 bird_nd <- J2012_nd <- readRDS("data_megaPhylos/bird_noded_tre.rds")
 amph_nd <- J2018_nd <- readRDS("data_megaPhylos/amph_noded_tre.rds")

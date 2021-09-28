@@ -198,7 +198,7 @@ data.frame(x = sort(x$ntips),
 
 ### model fits ####
 library(poweRlaw)
-x <- rank_sum_stats %>% filter(ntips > 20) %>% keep(is.numeric) %>% head() 
+x <- sl_sum_stats %>% filter(ntips > 20) %>% keep(is.numeric) %>% 
   select(ntips, tree.max.age, trees_mean_dr, 
          principal_eigenvalue, peakedness, modalities, 
          br.len_mean, br.t_mean)
@@ -281,10 +281,13 @@ get_cdf_models=function(x, n_thr, n_sims){
 cd_mods_res <- get_cdf_models(x, 2, 2)
 
 #load rds
-cd_mods_res <- readRDS("powl/polw_mod_res.rds") 
+cd_mods_res <- readRDS("powl/rank_powl_mod_res.rds") 
+cd_mods_res <- readRDS("powl/slice_polw_mod_res.rds")
+cd_mods_res <- readRDS("powl/fractal_edge_polw_mod_res.rds") 
+cd_mods_res <- readRDS("powl/fractal_node_polw_mod_res.rds") 
 
-cd_mods_res$ntips
-cd_mods_res$modalities
+cd_mods_res$ntips %>% filter(mod == "dis_pl")
+cd_mods_res$modalities %>% filter(mod == "dis_pl")
 
 #
 i = 1

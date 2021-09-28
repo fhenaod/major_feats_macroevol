@@ -51,6 +51,7 @@ seed_beta <- data.frame(beta = rep(NA, dim(seed_sl_stat)[1]),
                         b_up_ci = rep(NA, dim(seed_sl_stat)[1]))
 
 amph_sl_stat <- cbind(amph_sl_stat, amph_beta)
+
 bird_sl_stat <- cbind(bird_sl_stat, bird_beta)
 chon_sl_stat <- cbind(chon_sl_stat, chon_beta)
 fish_sl_stat <- cbind(fish_sl_stat, fish_beta)
@@ -73,6 +74,20 @@ squa_sl_stat <- cbind(squa_sl_stat, squa_branch)
 sl_sum_stats <- rbind(agar_sl_stat, amph_sl_stat, bird_sl_stat, 
                       chon_sl_stat, fern_sl_stat, fish_sl_stat, 
                       seed_sl_stat, squa_sl_stat, mamm_sl_stat)
+
+saveRDS(sl_sum_stats, "Slicing/slice_sum_stats.rds")
+
+# simulated sliced
+sim_sl_stats <- readRDS("Slicing/simtrees/sim_trs_all_sum.rds")
+sim_sl_stats$taxon <- paste0(
+strsplit(sim_sl_stats$n_tree, "_") %>% sapply('[[', 1), "_",
+strsplit(sim_sl_stats$n_tree, "_") %>% sapply('[[', 2))
+
+# Sturges-Jenks intervals
+jnk_str_stats <- do.call(rbind, 
+                            lapply(paste0("Slicing/jk_str/output/", 
+                                          dir("Slicing/jk_str/output/")), readRDS))
+jnk_str_stats$taxon <- jnk_str_stats$taxa
 
 # RANKS ####
 agar_fams_stats<-readRDS("rank_sampling/agar_fams/output/agar_fams_sum_stats.rds")
@@ -162,6 +177,8 @@ rank_sum_stats<-rbind(agar_fams_stats, agar_ords_stats,
                       seed_fams_stats, seed_ords_stats, seed_clas_stats)
 rank_sum_stats$rank <- sapply(strsplit(rank_sum_stats$taxon, "_"), "[", 2)
 rank_sum_stats$taxon <- stringr::str_extract(rank_sum_stats$taxon, "[^_]+")
+
+saveRDS(rank_sum_stats, "rank_sampling/rank_sum_stats.rds")
 
 ## approximate-age-rank random trees
 agar_fams_rdm <- readRDS("rand_age_rank/output/agar_fams_rdm_trs.rds_sum.rds")
@@ -333,6 +350,8 @@ fract_sum_edg <- do.call(data.frame,lapply(fract_sum_edg, function(x) replace(x,
 fract_sum_edg$s_age <- paste0("ages_", sapply(strsplit(fract_sum_edg$taxon, "_"), "[", 2))
 fract_sum_edg$taxon <- sapply(strsplit(fract_sum_edg$taxon, "_"), "[", 1)
 
+saveRDS(fract_sum_edg, "self_sim/stem_edge_add/fract_sum_edg.rds")
+
 # node extracted trees
 agar_5n<-readRDS("self_sim/node_extract/agar/agar_5/output/agar_5_sum_stats.rds")
 agar_5n$taxon<-rep("agar_5", dim(agar_5n)[1])
@@ -462,6 +481,8 @@ fract_sum_node <- do.call(data.frame,lapply(fract_sum_node, function(x) replace(
 fract_sum_node$s_age <- paste0("ages_", sapply(strsplit(fract_sum_node$taxon, "_"), "[", 2))
 fract_sum_node$taxon <- sapply(strsplit(fract_sum_node$taxon, "_"), "[", 1)
 
+saveRDS(fract_sum_node, "self_sim/node_extract/fract_sum_node.rds")
+
 # Simulated trees from empirican bird parameters ####
 sim_bird_5<-readRDS("self_sim/sim_bird/sim_bird_5_sum_stats.rds")
 sim_bird_5$taxon<-rep("sim_bird_5", dim(sim_bird_5)[1])
@@ -533,3 +554,4 @@ squa_10_rando <- readRDS("rand_post_tree/fract_samp/output/squa_sum.rds")
 all_10_rando <- rbind(amph_10_rando, bird_10_rando, mamm_10_rando, shar_10_rando, squa_10_rando)
 all_10_rando$taxon <- stringr::str_extract(all_10_rando$n_tree, "[^_]+")
 all_10_rando$s_age <- sapply(strsplit(all_10_rando$ht_smp, "_"), "[", 2)
+

@@ -75,7 +75,7 @@ sum_stats$rel_age<-sum_stats$tree.max.age/113.25
 #Add empirical bird tree stats
 sum_stats<-rbind(sum_stats,bird_sl_stat)
 
-# Phylospace graph ####
+# Phylospace graph 
 library(plotly)
 plot_ly(data = sum_stats,
         x = ~log(principal_eigenvalue[1:1018]), y  = ~asymmetry[1:1018], z = ~peakedness[1:1018],
@@ -117,3 +117,86 @@ plot_ly(data = sum_stats,
                  zaxis = list(title = "η")),
     legend = list(orientation = 'h')
   ) 
+
+e_tips <- sapply(e.trees, Ntip)
+e_ages <- sapply(e.trees, branching.times) %>% sapply(., max) %>% round(2)
+
+
+####
+## Simulate trees with constant net diversification or turnover #####
+####
+
+# phytools ####
+# conditioning on net divers
+birth <- c(.7)
+r <- c(.1, .25, .7)
+death <- abs(birth - r)
+
+sim_r_tr <- list()
+for(i in 1:length(r)){
+  strs <- pbtree(b = birth, d = death[i], n = 1000, scale = 100, 
+                 nsim = 10, type = "continuous", extant.only = T)
+  names(strs) <- rep(r[i], length(strs)) %>% paste0("r",.)
+  
+  sim_r_tr <- c(sim_r_tr, strs)
+}
+
+# conditionin on extinction fract
+birth <- c(.9)
+eps <- c(.01, .1, .25, .7)
+death <- c(eps/birth) %>% round(2)
+
+sim_r_tr2 <- list()
+for(i in 1:length(eps)){
+  strs <- pbtree(b = birth, d = death[i], n = 1000, scale = 100, 
+                 nsim = 10, type = "continuous", extant.only = T)
+  names(strs) <- rep(death[i], length(strs)) %>% paste0("eps",.)
+  
+  sim_r_tr2 <- c(sim_r_tr2, strs)
+}
+
+names(sim_r_tr2) %>% table()
+sapply(sim_r_tr2, class)
+sapply(sim_r_tr2, Ntip) %>% hist()
+
+plot(sim_r_tr2[[2]], show.tip.label = F)
+
+# TreeSim ####
+library(TreeSim)
+# conditionin on extinction fract
+birth <- c(.9)
+eps <- c(.01, .1, .25, .7)
+death <- c(eps/birth) %>% round(2)
+
+sim_r_tr3 <- list()
+for(i in 1:length(eps)){
+  strs <- sim.bd.taxa(n = 1000, numbsim = 10, 
+                      lambda = birth, mu = death[i], 
+                      frac = 1, complete = F, stochsampling = FALSE)
+  names(strs) <- rep(death[i], length(strs)) %>% paste0("eps_",.)
+  
+  sim_r_tr3 <- c(sim_r_tr3, strs)
+}
+
+names(sim_r_tr3) %>% table()
+
+sim_r_tr3_sc <- sim_r_tr3
+for(i in 1:length(sim_r_tr3)){
+  sim_r_tr3_sc[[i]]$edge.length <- sim_r_tr3[[i]]$edge.length*20
+}
+lapply(sim_r_tr3, branching.times) %>% 
+  sapply(., max) %>% round(2)
+
+lapply(sim_r_tr3_sc, branching.times) %>% 
+  sapply(., max) %>% round(2) %>% summary()
+
+# slicing and adding to list, not necessry for the general cluster code
+sl_sim_trs <- list()
+for(i in 1:length(sim_r_tr3_sc)){
+  strs <- slice_tree_ages(sim_r_tr3_sc[[i]], 
+                  ages2cut = seq(from = 5, to = max(branching.times(sim_r_tr3_sc[[i]])), 
+                                 by = 5))
+  names(strs) <- names(sim_r_tr3_sc)[[i]]
+  
+  sim_r_tr3 <- c(sim_r_tr3, strs)
+}

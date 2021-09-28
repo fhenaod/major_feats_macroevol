@@ -1,6 +1,7 @@
 library(diversitree)
 library(tidyverse)
 library(rncl)
+library(ggpubr)
 source('code/ageGenerator.R', chdir = TRUE)
 source('code/funct_mets.R', chdir = TRUE)
 
@@ -295,14 +296,15 @@ for(h in 1:length(nod_tre_ls)){
 ggarrange(plotlist = grp_ls3, 
           ncol = 3, nrow = 3)
 
-# plot stem edge from named node
+# plot stem edge from named node ####
+library(phytools)
 plot(chon_nd, show.tip.label = F, type = "fan", no.margin = T)
 #nodelabels(node = Ntip(chon_nd) + which(!is.na(chon_nd$node.label)), frame = "none", col = "red") # node numbers
-nodelabels(chon_nd$node.label, frame = "none",cex = .7,  col = "darkblue") # node names
+nodelabels(chon_nd$node.label, frame = "none", cex = .7,  col = "darkblue") # node names
 nodelabels(node = Ntip(chon_nd) + which(!is.na(chon_nd$node.label)), pch = 20, col = "red") # nodes with red points
 
 int_nd <- ((Ntip(chon_nd)+1):(Ntip(chon_nd)+chon_nd$Nnode))[which(!is.na(chon_nd$node.label))]
 plotSimmap(phytools::paintBranches(chon_nd, int_nd[2:165], anc.state = "1", state = "2"), 
            colors = setNames(c("black", "red"), c(1,2)), 
-           fsize = .0001, lwd = 1, type = "fan")
+           fsize = .0001, lwd = 1, type = "fan", part = .5)
 nodelabels(node = Ntip(chon_nd) + which(!is.na(chon_nd$node.label)), pch = 20, col = "red")

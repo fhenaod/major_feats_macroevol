@@ -9,17 +9,19 @@ library(plotly)
 library(scales)
 
 # results dataframes
-sl_sum_stats   # sliced concensus trees
+sl_sum_stats   # sliced concensus trees, constant intervals
+jnk_str_stats  # sliced concensus trees, Sturges-Jenks intervals
 rank_sum_stats # rank sampling consensus trees
 fract_sum_node # self-similar sampling by nodes consensus trees
 fract_sum_edg  # self-similar sampling by edges consensus trees
 
 all_1k_sum     # 1000 posterior trees 
 all_10_slic    # sliced 10 posterior trees
+sim_sl_stats   # sliced simulated trees
 all_10_rank    # rank sampled 10 posterior trees
 all_10_rando   # self-similar sampled 10 posterior trees
 
-sum_stats <- rank_sum_stats
+sum_stats <- jnk_str_stats #%>% filter(ntips >=20)
 
 # General exploratory ####
 # basic plots and paired correlations among all variables
@@ -148,13 +150,38 @@ ggarrange(hh1.1, hh2.1,
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 
-# p-value tests ####
-hist(table(sum_stats$p.coless.t.y.less<=0.05))
-hist(table(sum_stats$p.coless.t.y.great<=0.05))
-hist(table(sum_stats$p.coless.t.pda.less<=0.05))
-hist(table(sum_stats$p.coless.t.pda.great<=0.05))
-hist(table(sum_stats$p.lt.yule<=0.05))
-hist(table(sum_stats$p.lt.pda<=0.05))
+# Likelihood Ratio Test: p-values ####
+
+lrt_p <- list()
+for(i in 1:3){
+  lrt_p[[i]] <- 
+  list(sl_sum_stats, rank_sum_stats, fract_sum_node)[[i]] %>% 
+    filter(ntips >= 20) %>% 
+    select(LTR_Yule = p.lt.yule, LTR_PDA = p.lt.pda) %>% 
+    gather() %>% 
+    ggplot(aes(x = value)) + geom_histogram(binwidth = 0.05) + 
+    theme_minimal(base_size = 14) +
+    theme(#legend.position = c(.8, .2),
+      #axis.text.x = element_text(size = 7),
+      panel.border = element_blank(), 
+      panel.background = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.line = element_line(colour = "black"),
+      plot.title = element_text(face = "bold")) +
+    geom_vline(xintercept = 0.05, colour = "red", lty = 2) +
+    labs(x = "p-value", y = "Count") +
+    facet_wrap(~key, scales = "fixed", ncol = 2)
+}
+ggarrange(plotlist = lrt_p, 
+          labels = LETTERS[1:3], 
+          ncol = 1, nrow = 3)
+ggsave2("ltr_panel.png", width = 20, height = 20, units = "cm", dpi = 320)
+
+sum_stats %>% filter(ntips >= 20) %>%
+  select(p.lt.yule, p.lt.pda) %>% gather() %>% 
+  mutate(p_bin = value < 0.05) %>% group_by(key, p_bin) %>% 
+  summarise(n = n()) %>% mutate('%' = (n/sum(n))*100) %>% filter(p_bin == T)
 
 # Outer and Cherry branches ####
 hh7<-ggplot(sum_stats, aes(x = n_cherries)) + geom_histogram(color="darkblue", fill="white") + 
@@ -222,7 +249,7 @@ hh13<-ggplot(sum_stats, aes(x=ln_dr)) + geom_histogram(color="darkblue", fill="w
   geom_rangeframe(data=data.frame(x = c(-5, 0),
                                   y = c(0, 50)), aes(x, y)) 
 
-hh14<-ggplot(sum_stats, aes(x=gamma.stat)) + geom_histogram(color="darkblue", fill="white") + 
+hh14<-ggplot(sum_stats, aes(x=(gamma.stat))) + geom_histogram(color="darkblue", fill="white") + 
   #geom_vline(aes(xintercept= mean(subset(sum_stats, !is.na(gamma.stat))$gamma.stat)),color="red", linetype="dashed", size=1) +
   labs(title="", x="Gamma statistic", y = "Count") + theme_tufte(base_family = "Helvetica") + 
   geom_rangeframe(data=data.frame(x = c(-60, 30), 
@@ -275,6 +302,38 @@ hh15<-ggplot(sum_stats, aes(x = log(tree.max.age), y = br.t_mean)) +
 ggarrange(hh14, hh15,   
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
+# Gamma-stat 
+gam_p<-sum_stats %>% filter(ntips > 20) %>% 
+  ggplot(aes(x = (tree.max.age), y = gamma.stat, color = taxon)) +
+  geom_point(size = .9, alpha=1/2) + 
+  labs(title = "", x = "Clade age (Myr)", y = "γ-statistic") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
+  theme_minimal() + theme(legend.position = "none")# + geom_smooth(method=lm, se=FALSE)
+
+gam_p_rel<-sum_stats %>% filter(ntips > 20) %>% 
+  ggplot(aes(x = (rel_age), y = gamma.stat, color = taxon)) +
+  geom_point(size = .9, alpha=1/2) + 
+  labs(title = "", x = "Relative clade age (Myr)", y = "") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
+  theme_minimal() + theme(legend.position = "none")#
+
+ggarrange(gam_p, gam_p_rel,
+          ncol = 2, nrow = 1,
+          labels = c("A","B"))
+
+sum_stats %>% filter(ntips > 20) %>% 
+  ggplot(aes(x = (taxon), y = gamma.stat, color = taxon)) +
+  geom_boxplot() +
+  geom_point(size = .9, alpha=1/2) + 
+  labs(title = "", x = "Taxon", y = "γ-statistic") +
+  geom_hline(yintercept = 0, colour = "red", lty = 3, lwd = 1) + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) +
+  theme_classic() + theme(legend.position = "none")# + geom_smooth(method=lm, se=FALSE)
+
+sum_stats %>% filter(ntips > 20) %>% group_by(taxon) %>% 
+  summarise(ci = list(enframe(Hmisc::smean.cl.normal(gamma.stat)))) %>% 
+  unnest(cols = c(ci)) %>% spread(name, value)
+
 
 # RPANDA
 par(mfrow=c(2,2))
@@ -289,13 +348,22 @@ summary(lm(log(peakedness)~log(tree.max.age), data=sum_stats))
 summary(lm(log(modalities)~log(tree.max.age), data=sum_stats))
 
 # Correlation matrix ####
-par(mfrow=c(1,1))
+par(mfrow = c(1,1))
+
+df2plot <- sl_sum_stats
+
 # propertCorrM
-M <- df2plot %>%
+M <- df2plot %>% filter(ntips >= 20) %>%
   keep(is.numeric) %>% 
-  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
-            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
-            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  #select(-c(beta, br.len_mean, br.t_mean, 
+  #          colles.yule, colles.pda, sackin.pda, sackin.yule,
+  #          p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+  #          p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+  #          b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  select(ntips, Age = tree.max.age, gamma_stat = gamma.stat, #Shape_Yule = shape.yule,
+         Ln_DR = ln_dr, #Relative_age = rel_age,
+         Principal_eigenvalue = principal_eigenvalue, 
+         Asymmetry = asymmetry, Peakedness = peakedness, Modalities = modalities) %>% 
   psych::lowerCor(digits = 2, method = "spearman")
 # mat : is a matrix of data
 # ... : further arguments to pass to the native R cor.test function
@@ -314,21 +382,28 @@ cor.mtest <- function(mat, ...) {
   p.mat
 }
 # matrix of the p-value of the correlation
-p.mat <- df2plot %>%
+p.mat <- df2plot %>% filter(ntips >= 20) %>%
   keep(is.numeric) %>% 
-  select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
-            p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
-            b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  #select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+  #          p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+  #          b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+  select(ntips, Age = tree.max.age, gamma_stat = gamma.stat,#Shape_Yule = shape.yule, 
+         Ln_DR = ln_dr, #Relative_age = rel_age,
+         Principal_eigenvalue = principal_eigenvalue, 
+         Asymmetry = asymmetry, Peakedness = peakedness, Modalities = modalities) %>% 
   cor.mtest()
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-corrplot::corrplot(M, method="color", col = RColorBrewer::brewer.pal(n = 8, name = "RdYlBu"),  
-                   type="upper", order="hclust", 
-                   addCoef.col = "black", number.cex = .5,  # Coefficient of correlation, size
-                   tl.col="black", tl.srt=45, tl.cex = .5,  #Text label color, rotation, size
+
+png(file = "fig_.png", width = 700, height = 450)
+corrplot::corrplot(M, method = "ellipse", col = RColorBrewer::brewer.pal(n = 8, name = "RdYlBu"),  
+                   type = "upper", order = "hclust", 
+                   addCoef.col = "black", number.cex = 1,  # Coefficient of correlation, size
+                   tl.col = "black", tl.srt = 45, tl.cex = 1,  # Text label color, rotation, size
                    # Combine with significance
                    p.mat = p.mat, sig.level = 0.05, insig = "blank", 
                    # hide correlation coefficient on the principal diagonal
-                   diag=FALSE, mar = c(0.06,0.06,0.06,0.06))
+                   diag = FALSE, mar = c(0.06,0.06,0.06,0.06))
+dev.off()
 
 # 3D-plot ####
 
@@ -832,3 +907,18 @@ rbind(
                                             "mamm" = "Mammalia", "squa" = "Squamata")) ) +
   theme(strip.text.x = element_text(size = 11, hjust = 0), 
         strip.text.y = element_text(size = 11))
+
+# sampling-slicing scheme####
+tree2plot <- J2012
+par(mfrow = c(1, 2))
+plot(tree2plot, show.tip.label = F, main = "This work", edge.color = "gray")
+axisPhylo()
+abline(v = seq(from = 4, to = max(branching.times(tree2plot)), by = 5), 
+       col = "red", lty = 2, lwd = 2)
+plot(tree2plot, show.tip.label = F, main = "Sturges-Jenks", edge.color = "gray")
+axisPhylo()
+abline(v = round(BAMMtools::getJenksBreaks(branching.times(tree2plot), 
+                                           nclass.Sturges(branching.times(tree2plot))),3), 
+       col = "red", lty = 2, lwd = 2)
+
+

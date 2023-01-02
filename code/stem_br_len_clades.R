@@ -154,23 +154,40 @@ for(h in 1:length(grp_ls4)){
   print(p1)
 }
 
-grp_ls4.1[[1]] <- grp_ls4.1[[1]] + annotation_custom(tax_pics[[nams_ranks[1]]], xmin = 2,  xmax = 2.5, ymin = 45, ymax = 55)
-grp_ls4.1[[2]] <- grp_ls4.1[[2]] + annotation_custom(tax_pics[[nams_ranks[2]]], xmin = 1.2,  xmax = 1.5, ymin = 80, ymax = 90) 
-grp_ls4.1[[3]] <- grp_ls4.1[[3]] + annotation_custom(tax_pics[[nams_ranks[3]]], xmin = 2,  xmax = 2.5, ymin = 25, ymax = 30)
-grp_ls4.1[[4]] <- grp_ls4.1[[4]] + annotation_custom(tax_pics[[nams_ranks[4]]], xmin = 2,  xmax = 2.5, ymin = 120, ymax = 140)
-grp_ls4.1[[5]] <- grp_ls4.1[[5]] + annotation_custom(tax_pics[[nams_ranks[5]]], xmin = 2,  xmax = 2.5, ymin = 145, ymax = 170)
-grp_ls4.1[[6]] <- grp_ls4.1[[6]] + annotation_custom(tax_pics[[nams_ranks[6]]], xmin = 2,  xmax = 2.5, ymin = 70, ymax = 80)
-grp_ls4.1[[7]] <- grp_ls4.1[[7]] + annotation_custom(tax_pics[[nams_ranks[7]]], xmin = 2,  xmax = 2.5, ymin = 40, ymax = 47)
-grp_ls4.1[[8]] <- grp_ls4.1[[8]] + annotation_custom(tax_pics[[nams_ranks[8]]], xmin = 2,  xmax = 2.8, ymin = 62, ymax = 82)
-grp_ls4.1[[9]] <- grp_ls4.1[[9]] + annotation_custom(tax_pics[[nams_ranks[9]]], xmin = 1.2,  xmax = 1.5, ymin = 50, ymax = 65)
+# phylopics
+#grp_ls4.1[[1]] <- grp_ls4.1[[1]] + annotation_custom(tax_pics[[nams_ranks[1]]], xmin = 2,  xmax = 2.5, ymin = 45, ymax = 55)
+#grp_ls4.1[[2]] <- grp_ls4.1[[2]] + annotation_custom(tax_pics[[nams_ranks[2]]], xmin = 1.2,  xmax = 1.5, ymin = 80, ymax = 90) 
+#grp_ls4.1[[3]] <- grp_ls4.1[[3]] + annotation_custom(tax_pics[[nams_ranks[3]]], xmin = 2,  xmax = 2.5, ymin = 25, ymax = 30)
+#grp_ls4.1[[4]] <- grp_ls4.1[[4]] + annotation_custom(tax_pics[[nams_ranks[4]]], xmin = 2,  xmax = 2.5, ymin = 120, ymax = 140)
+#grp_ls4.1[[5]] <- grp_ls4.1[[5]] + annotation_custom(tax_pics[[nams_ranks[5]]], xmin = 2,  xmax = 2.5, ymin = 145, ymax = 170)
+#grp_ls4.1[[6]] <- grp_ls4.1[[6]] + annotation_custom(tax_pics[[nams_ranks[6]]], xmin = 2,  xmax = 2.5, ymin = 70, ymax = 80)
+#grp_ls4.1[[7]] <- grp_ls4.1[[7]] + annotation_custom(tax_pics[[nams_ranks[7]]], xmin = 2,  xmax = 2.5, ymin = 40, ymax = 47)
+#grp_ls4.1[[8]] <- grp_ls4.1[[8]] + annotation_custom(tax_pics[[nams_ranks[8]]], xmin = 2,  xmax = 2.8, ymin = 62, ymax = 82)
+#grp_ls4.1[[9]] <- grp_ls4.1[[9]] + annotation_custom(tax_pics[[nams_ranks[9]]], xmin = 1.2,  xmax = 1.5, ymin = 50, ymax = 65)
+
+# icons 
+grp_ls4.1[[1]] <- grp_ls4.1[[1]] + annotation_custom(tax_pics[[nams_ranks[1]]], xmin = 2,   xmax = 2.5, ymin = 45, ymax = 55)
+grp_ls4.1[[2]] <- grp_ls4.1[[2]] + annotation_custom(tax_pics[[nams_ranks[2]]], xmin = 1.3, xmax = 1.7, ymin = 70, ymax = 92) 
+grp_ls4.1[[3]] <- grp_ls4.1[[3]] + annotation_custom(tax_pics[[nams_ranks[3]]], xmin = 2,   xmax = 2.5, ymin = 24, ymax = 30)
+grp_ls4.1[[4]] <- grp_ls4.1[[4]] + annotation_custom(tax_pics[[nams_ranks[4]]], xmin = 2,   xmax = 2.5, ymin = 100, ymax = 135)
+grp_ls4.1[[5]] <- grp_ls4.1[[5]] + annotation_custom(tax_pics[[nams_ranks[5]]], xmin = 2,   xmax = 2.5, ymin = 125, ymax = 165)
+grp_ls4.1[[6]] <- grp_ls4.1[[6]] + annotation_custom(tax_pics[[nams_ranks[6]]], xmin = 2,   xmax = 2.5, ymin = 65, ymax = 82)
+grp_ls4.1[[7]] <- grp_ls4.1[[7]] + annotation_custom(tax_pics[[nams_ranks[7]]], xmin = 2,   xmax = 2.5, ymin = 35, ymax = 45)
+grp_ls4.1[[8]] <- grp_ls4.1[[8]] + annotation_custom(tax_pics[[nams_ranks[8]]], xmin = 2,   xmax = 2.5, ymin = 62, ymax = 80)
+grp_ls4.1[[9]] <- grp_ls4.1[[9]] + annotation_custom(tax_pics[[nams_ranks[9]]], xmin = 1.2, xmax = 1.5, ymin = 48, ymax = 60)
 
 ggarrange(plotlist = grp_ls4.1,
           ncol = 3, nrow = 3) %>% 
-  annotate_figure(left = textGrob("Stem branch length (Myr)", rot = 90, vjust = 1, gp = gpar(cex = 1)) 
-                  #, bottom = textGrob("", gp = gpar(cex = 1))
+  annotate_figure(left = text_grob("Stem branch length (Myr)", 
+                                  rot = 90, vjust = 1, size = 12) 
+                  #, bottom = text_grob("", gp = gpar(cex = 1))
                   )
+ggsave(file = "figures/fig_3.svg",
+       width = 20, height = 20, units = "cm", dpi = 300)
+ggsave(file = "figures/fig_3.png",
+       width = 20, height = 20, units = "cm", dpi = 300)
 
-# normality test
+# normality test ####
 mn_shp_rs <- list()
 for(w in 1:length(names(nod_tre_ls))){
   temp_dfr <- rbind(dplyr::select(tr_tx_ls[[w]], clade_nm, clade_rk = rank, ed.len, type) %>% 

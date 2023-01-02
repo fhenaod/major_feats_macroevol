@@ -21,7 +21,7 @@ sim_sl_stats   # sliced simulated trees
 all_10_rank    # rank sampled 10 posterior trees
 all_10_rando   # self-similar sampled 10 posterior trees
 
-sum_stats <- jnk_str_stats #%>% filter(ntips >=20)
+sum_stats <- sl_sum_stats %>% filter(ntips >=20)
 
 # General exploratory ####
 # basic plots and paired correlations among all variables
@@ -348,10 +348,12 @@ summary(lm(log(peakedness)~log(tree.max.age), data=sum_stats))
 summary(lm(log(modalities)~log(tree.max.age), data=sum_stats))
 
 # Correlation matrix ####
-par(mfrow = c(1,1))
 
-df2plot <- sl_sum_stats
-
+dfs_ls2p <- list(sl_sum_stats, rank_sum_stats, 
+                 fract_sum_node, fract_sum_edg )
+i=4
+df2plot <- dfs_ls2p[[i]]
+  
 # propertCorrM
 M <- df2plot %>% filter(ntips >= 20) %>%
   keep(is.numeric) %>% 
@@ -360,41 +362,43 @@ M <- df2plot %>% filter(ntips >= 20) %>%
   #          p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
   #          p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
   #          b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
-  select(ntips, Age = tree.max.age, gamma_stat = gamma.stat, #Shape_Yule = shape.yule,
-         Ln_DR = ln_dr, #Relative_age = rel_age,
-         Principal_eigenvalue = principal_eigenvalue, 
-         Asymmetry = asymmetry, Peakedness = peakedness, Modalities = modalities) %>% 
+  dplyr::select(ntips, Age = tree.max.age, Gamma_statistic = gamma.stat, #Shape_Yule = shape.yule,
+                Ln_DR = ln_dr, #Relative_age = rel_age,
+                Principal_eigenvalue = principal_eigenvalue, 
+                Asymmetry = asymmetry, Peakedness = peakedness, Modalities = modalities) %>% 
   psych::lowerCor(digits = 2, method = "spearman")
+  
 # mat : is a matrix of data
-# ... : further arguments to pass to the native R cor.test function
+  # ... : further arguments to pass to the native R cor.test function
 cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    mat <- as.matrix(mat)
+    n <- ncol(mat)
+    p.mat<- matrix(NA, n, n)
+    diag(p.mat) <- 0
+    for (i in 1:(n - 1)) {
+      for (j in (i + 1):n) {
+        tmp <- cor.test(mat[, i], mat[, j], ...)
+        p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+      }
     }
+    colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+    p.mat
   }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-# matrix of the p-value of the correlation
+  # matrix of the p-value of the correlation
 p.mat <- df2plot %>% filter(ntips >= 20) %>%
-  keep(is.numeric) %>% 
-  #select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
-  #          p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
-  #          b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
-  select(ntips, Age = tree.max.age, gamma_stat = gamma.stat,#Shape_Yule = shape.yule, 
-         Ln_DR = ln_dr, #Relative_age = rel_age,
-         Principal_eigenvalue = principal_eigenvalue, 
-         Asymmetry = asymmetry, Peakedness = peakedness, Modalities = modalities) %>% 
-  cor.mtest()
+    keep(is.numeric) %>% 
+    #select(-c(p.coless.t.y.less, p.coless.t.y.great, p.lt.yule,
+    #          p.coless.t.pda.less, p.coless.t.pda.great, p.lt.pda,
+    #          b_low_ci, b_up_ci, tree.min.age, trees_mean_dr)) %>% 
+    dplyr::select(ntips, Age = tree.max.age, Gamma_statistic = gamma.stat, #Shape_Yule = shape.yule, 
+                  Ln_DR = ln_dr, #Relative_age = rel_age,
+                  Principal_eigenvalue = principal_eigenvalue, 
+                  Asymmetry = asymmetry, Peakedness = peakedness, Modalities = modalities) %>% 
+    cor.mtest()
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-
-png(file = "fig_.png", width = 700, height = 450)
+  
+par(mfrow = c(1,1))
+png(file = paste0("fig7supp_",letters[i],".png"), width = 25, height = 25, units = "cm", res = 300)
 corrplot::corrplot(M, method = "ellipse", col = RColorBrewer::brewer.pal(n = 8, name = "RdYlBu"),  
                    type = "upper", order = "hclust", 
                    addCoef.col = "black", number.cex = 1,  # Coefficient of correlation, size
@@ -402,8 +406,55 @@ corrplot::corrplot(M, method = "ellipse", col = RColorBrewer::brewer.pal(n = 8, 
                    # Combine with significance
                    p.mat = p.mat, sig.level = 0.05, insig = "blank", 
                    # hide correlation coefficient on the principal diagonal
-                   diag = FALSE, mar = c(0.06,0.06,0.06,0.06))
+                   diag = FALSE, mar = c(0.005,
+                                         0.005, 
+                                         0.005, 
+                                         0.005))
+mtext(LETTERS[i], side = 3, adj = 0.05, line = -1.3, cex = 1.5, font = 2)
 dev.off()
+
+
+m_slice <- M
+m_ranks <- M
+m_nodes <- M
+m_stems <- M
+
+m_slice[lower.tri(m_slice, diag = F)] <- NA 
+m_ranks[lower.tri(m_ranks, diag = F)] <- NA 
+m_nodes[lower.tri(m_nodes, diag = F)] <- NA 
+m_stems[lower.tri(m_stems, diag = F)] <- NA 
+
+cors_tab <- 
+  rbind(
+    m_slice %>% as.data.frame %>% tibble::rownames_to_column() %>% 
+      tidyr::pivot_longer(-rowname) %>% filter(rowname != name) %>% 
+      select(met1 = rowname, met2 = name, val = value) %>% 
+      filter(!is.na(val)) %>% 
+      mutate(samp = 1, comp = paste(met1, met2, sep = "_"))
+    ,
+    m_ranks %>% as.data.frame %>% tibble::rownames_to_column() %>% 
+      tidyr::pivot_longer(-rowname) %>% filter(rowname != name) %>% 
+      select(met1 = rowname, met2 = name, val = value) %>% 
+      filter(!is.na(val)) %>% 
+      mutate(samp = 2, comp = paste(met1, met2, sep = "_"))
+    ,
+    m_nodes %>% as.data.frame %>% tibble::rownames_to_column() %>% 
+      tidyr::pivot_longer(-rowname) %>% filter(rowname != name) %>% 
+      select(met1 = rowname, met2 = name, val = value) %>% 
+      filter(!is.na(val)) %>% 
+      mutate(samp = 3, comp = paste(met1, met2, sep = "_"))
+    ,
+    m_stems %>% as.data.frame %>% tibble::rownames_to_column() %>% 
+      tidyr::pivot_longer(-rowname) %>% filter(rowname != name) %>% 
+      select(met1 = rowname, met2 = name, val = value) %>% 
+      filter(!is.na(val)) %>% 
+      mutate(samp = 4, comp = paste(met1, met2, sep = "_"))
+  )
+
+cors_tab %>% filter(!grepl("gamma", comp)) %>% 
+  #filter(grepl("Asym", comp)) %>% 
+  ggplot(aes(x = samp, y = val, color = comp)) +
+  geom_point() + geom_line() + theme_minimal()
 
 # 3D-plot ####
 
@@ -482,34 +533,44 @@ sum_stats$taxon<-fct_relevel(sum_stats$taxon,
                              #"sim_bird_5", "sim_bird_10", "sim_bird_20", "sim_bird_30", "sim_bird_40", "sim_bird_50"
                              )
 
-vpp<-ggplot(sum_stats, aes(x = taxon, y = tree.max.age, fill = taxon)) + geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Clade age") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+vpp<-ggplot(sum_stats, aes(x = taxon, y = tree.max.age, fill = taxon)) + 
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + 
+  labs(title = "", x = "", y = "Clade age") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp<-ggplot(sum_stats, aes(x = taxon, y = ln_dr, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Ln DR") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp1<-ggplot(sum_stats, aes(x = taxon, y = gamma.stat, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Gamma statistic") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp2<-ggplot(sum_stats, aes(x = taxon, y = beta, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Beta") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 
 ggarrange(vpp, vp, vp1, vp2,    
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
-vp3<-ggplot(sum_stats, aes(x = taxon, y = shape.yule, fill = taxon)) + geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Shape (Yule)") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+vp3<-ggplot(sum_stats, aes(x = taxon, y = shape.yule, fill = taxon)) + 
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + 
+  labs(title = "", x = "", y = "Shape (Yule)") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp4<-ggplot(sum_stats, aes(x = taxon, y = shape.pda, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Shape (PDA)") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 
 ggarrange(vp3, vp4,    
@@ -518,27 +579,33 @@ ggarrange(vp3, vp4,
 
 vp5<-ggplot(sum_stats, aes(x = taxon, y = colles.pda, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Colless (PDA)") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp6<-ggplot(sum_stats, aes(x = taxon, y = sackin.pda, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Sackin (PDA)") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp7<-ggplot(sum_stats, aes(x = taxon, y = colles.yule, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Colless (Yule)") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp8<-ggplot(sum_stats, aes(x = taxon, y = sackin.yule, fill = taxon)) + geom_violin(trim = FALSE) +
   geom_boxplot(width = 0.1, fill = "white") + labs(title = "", x = "", y = "Sackin (Yule)") + 
-  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 
 ggarrange(vp5, vp6, vp7, vp8,    
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
 
-vp9<-ggplot(sum_stats, aes(x = taxon, y = log(principal_eigenvalue), fill = taxon)) + geom_violin(trim = FALSE) +
-  geom_boxplot(width = 0.1, fill = "white") + labs(title = "",x = "", y = "Ln λ") + 
+vp9<-ggplot(sum_stats, aes(x = taxon, y = log(principal_eigenvalue), fill = taxon)) + 
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + 
+  labs(title = "",x = "", y = "Ln λ") + 
   scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + theme_minimal() + 
   theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1))
 vp10<-ggplot(sum_stats, aes(x = taxon, y = asymmetry, fill = taxon)) + geom_violin(trim = FALSE) +
@@ -871,20 +938,21 @@ fract_sum_node %>% filter(ntips >= 20) %>%
 # empirical ranks and aprox. same-age random ####
 rbind(
   rank_sum_stats %>% mutate(type = "empirical") %>% 
-    select(ntips, tree.max.age, trees_mean_dr, 
+    dplyr::select(ntips, tree.max.age, trees_mean_dr, 
            shape.yule, colles.yule, sackin.yule,
            shape.pda, colles.pda, sackin.pda,
            principal_eigenvalue, asymmetry, peakedness,
            taxon, rank, type),
   
   rank_rdm_sum %>% mutate(type = "random_age_rank") %>% 
-    select(ntips, tree.max.age, trees_mean_dr, 
+    dplyr::select(ntips, tree.max.age, trees_mean_dr, 
            shape.yule, colles.yule, sackin.yule, 
            shape.pda, colles.pda, sackin.pda,
            principal_eigenvalue, asymmetry, peakedness,
            taxon, rank, type)
-) %>% filter(ntips >= 20) %>% filter(rank != "clas") %>%
-  #filter(rank != "ords" & rank != "amph") %>% 
+) %>% filter(ntips >= 20) %>% filter(rank != "clas", taxon != "seed") %>%
+  mutate(filt = ifelse(rank == "ords" & taxon == "amph", yes = 1, no = 0)) %>% 
+  filter(filt == 0) %>% 
   ggplot(aes(x = rank, y = (shape.yule), fill = type)) + 
   geom_boxplot() +
   scale_fill_manual(values = c("#335C67", "#D5A021", "#9E2A2B", "#28AFB0"), 
@@ -892,7 +960,7 @@ rbind(
   theme_minimal() +
   scale_x_discrete(labels = c("fams" = "Family", "ords" = "Order")) +
   theme(legend.position = c(.8, .2),
-        axis.text.x = element_text(size = 7),
+        axis.text.x = element_text(size = 9),
         panel.border = element_blank(), 
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -905,8 +973,9 @@ rbind(
                                             "fern" = "Polypodiopsida", 
                                             "fish" = "Actinopterygii",
                                             "mamm" = "Mammalia", "squa" = "Squamata")) ) +
-  theme(strip.text.x = element_text(size = 11, hjust = 0), 
-        strip.text.y = element_text(size = 11))
+  theme(strip.text.x = element_text(size = 12, hjust = 0), 
+        strip.text.y = element_text(size = 12))
+ggsave(file = "fig6_supp.png", width = 16, height = 16, units = "cm")
 
 # sampling-slicing scheme####
 tree2plot <- J2012
@@ -920,5 +989,20 @@ axisPhylo()
 abline(v = round(BAMMtools::getJenksBreaks(branching.times(tree2plot), 
                                            nclass.Sturges(branching.times(tree2plot))),3), 
        col = "red", lty = 2, lwd = 2)
+
+##
+library(patchwork)
+lay_des <- '
+AAAA#BB
+#CC#DD#'
+f2b1 + f2b2 + f2b3 + f2b4 + 
+  plot_layout(design = lay_des) + 
+  plot_annotation(tag_levels = 'A')
+ggsave(file = "mock_plot.png",
+       width = 20, height = 20, units = "cm", dpi = 300)
+
+f2b2 / f2b3 / f2b4
+ggsave(file = "mock_plot2.png",
+       width = 20, height = 20, units = "cm", dpi = 300)
 
 

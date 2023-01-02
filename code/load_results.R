@@ -1,5 +1,5 @@
 ###
-##### Conscensus tree
+##### Consensus trees
 ###
 
 # SLICING #####
@@ -483,7 +483,7 @@ fract_sum_node$taxon <- sapply(strsplit(fract_sum_node$taxon, "_"), "[", 1)
 
 saveRDS(fract_sum_node, "self_sim/node_extract/fract_sum_node.rds")
 
-# Simulated trees from empirican bird parameters ####
+# Simulated trees from empirical bird parameters ####
 sim_bird_5<-readRDS("self_sim/sim_bird/sim_bird_5_sum_stats.rds")
 sim_bird_5$taxon<-rep("sim_bird_5", dim(sim_bird_5)[1])
 sim_bird_10<-readRDS("self_sim/sim_bird/sim_bird_10_sum_stats.rds")

@@ -60,7 +60,7 @@ nams_ranks <- c("Agaricomycetes", "Amphibia", "Aves",
                 "Chondrichthyes", "Polypodiopsida", "Actinopterygii", 
                 "Mammalia", "Spermatophyta" ,"Squamata")
 
-# are stem branch lengths from named clades different from random trees ones?
+# are stem branch lengths from named clades different from random trees ones? ####
 files <- dir("rand_age_rank/samp_trees/") # load random sample trees
 stem_len_rnd <- c()
 for(j in 1:length(files)){
@@ -120,7 +120,7 @@ for(h in 1:length(grp_ls4)){
 ggarrange(plotlist = grp_ls4,
           ncol = 3, nrow = 3)
 
-# boxplots
+## figure 3 boxplots ####
 grp_ls4.1 <- vector('list', length(nod_tre_ls))
 for(h in 1:length(grp_ls4)){
   message(h)
@@ -141,7 +141,7 @@ for(h in 1:length(grp_ls4)){
       ungroup() # remove outliers by group
     
     p1 <- ggplot(data.frame(mn_bl), aes(x = clade_rk, y = (ed.len), fill = type)) + 
-      geom_boxplot() + 
+      geom_boxplot(na.rm = T, varwidth = T, outlier.size = .5) + 
       #stat_summary(fun.data = mean_sdl, mult = 1, geom = "pointrange", width = 0.01, color = "black") + 
       scale_fill_manual(values = c("#335C67", "#D5A021", "#9E2A2B", "#28AFB0"), 
                         name = "", labels = c("Empirical", "Random")) +
@@ -184,8 +184,8 @@ ggarrange(plotlist = grp_ls4.1,
                   )
 ggsave(file = "figures/fig_3.svg",
        width = 20, height = 20, units = "cm", dpi = 300)
-ggsave(file = "figures/fig_3.png",
-       width = 20, height = 20, units = "cm", dpi = 300)
+ggsave(file = "figures/fig_3.pdf", bg = "white",
+       width = 25, height = 25, units = "cm", dpi = 600)
 
 # normality test ####
 mn_shp_rs <- list()
@@ -230,7 +230,7 @@ for(w in 1:length(names(nod_tre_ls))){
 data.frame(clade = names(nod_tre_ls), do.call(rbind.data.frame, m_w_ts)) %>% 
   mutate(eta = (statistic-2+1)/(n - 2)) %>% arrange(desc(eta))
 
-# are branch lengths from named clades different from a random edge draw? ####
+# are branch lengths from named clades different from a random edges? ####
 grp_ls <- vector('list', length(nod_tre_ls))
 for(h in 1:length(nod_tre_ls)){
   message(h)

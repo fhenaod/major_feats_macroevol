@@ -8,7 +8,7 @@ library(visreg)
 library(plotly)
 library(scales)
 
-# results dataframes
+# results dataframes ####
 sl_sum_stats   # sliced concensus trees, constant intervals
 jnk_str_stats  # sliced concensus trees, Sturges-Jenks intervals
 rank_sum_stats # rank sampling consensus trees
@@ -347,6 +347,44 @@ summary(lm(log(asymmetry+min(asymmetry)+1)~log(tree.max.age), data=sum_stats))
 summary(lm(log(peakedness)~log(tree.max.age), data=sum_stats))
 summary(lm(log(modalities)~log(tree.max.age), data=sum_stats))
 
+# metric vs tree age by taxon ####
+i=1
+df2plot %>% filter(ntips >= min_tips[i]) %>% 
+  dplyr::select(any_of(n2subs)) %>% 
+  mutate(ln_principal_eigenvalue = log(principal_eigenvalue),
+         ln_peakedness = log(peakedness), .keep = "unused") %>% 
+  gather(metric, value, -ntips, -taxon, -tree.max.age) %>% 
+  ggplot(aes(x = log(tree.max.age), y = value)) +
+  geom_point(aes(size = ntips, color = taxon)) +
+  labs(title = "", x = "Ln Tree age (Myr)", y = "Metric") +
+  #scale_colour_gradientn(colours = pal) +
+  theme_classic(base_size = 13) + theme(legend.position = "none") +
+  facet_wrap(~ metric, scales = "free")
+
+###
+all_1k_sum %>% select(shape.yule, colles.yule, sackin.yule, 
+                      shape.pda, colles.pda, sackin.pda, taxon) %>% 
+  gather(metric, value, -taxon) %>% 
+  ggplot(aes(x = taxon, y = value, fill = taxon)) + 
+  #geom_violin(trim = FALSE) +
+  #geom_boxplot(width = 0.1, fill = "white") +
+  geom_point(fill = "white")
+labs(title = "", x = "", y = "") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_classic() + 
+  theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ metric, scales = "free", ncol = 2)
+
+all_1k_sum %>% select(principal_eigenvalue, asymmetry, peakedness, modalities, taxon) %>% 
+  gather(metric, value, -taxon) %>% 
+  ggplot(aes(x = taxon, y = value, fill = taxon)) + 
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") + 
+  labs(title = "", x = "", y = "") + 
+  scale_colour_manual(values = colorRampPalette(brewer.pal(8, "Dark2"))(length(unique(sum_stats$taxon)))) + 
+  theme_classic() + 
+  theme(legend.position = "none", axis.text.x = element_text(size = 6, angle = 45, vjust = 0.1)) +
+  facet_wrap(~ metric, scales = "free", ncol = 2)
 # Correlation matrix ####
 
 dfs_ls2p <- list(sl_sum_stats, rank_sum_stats, 
@@ -934,48 +972,6 @@ fract_sum_node %>% filter(ntips >= 20) %>%
   theme(legend.position = "none", 
         axis.text.x = element_text(size = 7, angle = 45, vjust = 0.1)) +
   facet_wrap(~ taxon, scales = "free")
-
-# empirical ranks and aprox. same-age random ####
-rbind(
-  rank_sum_stats %>% mutate(type = "empirical") %>% 
-    dplyr::select(ntips, tree.max.age, trees_mean_dr, 
-           shape.yule, colles.yule, sackin.yule,
-           shape.pda, colles.pda, sackin.pda,
-           principal_eigenvalue, asymmetry, peakedness,
-           taxon, rank, type),
-  
-  rank_rdm_sum %>% mutate(type = "random_age_rank") %>% 
-    dplyr::select(ntips, tree.max.age, trees_mean_dr, 
-           shape.yule, colles.yule, sackin.yule, 
-           shape.pda, colles.pda, sackin.pda,
-           principal_eigenvalue, asymmetry, peakedness,
-           taxon, rank, type)
-) %>% filter(ntips >= 20) %>% filter(rank != "clas", taxon != "seed") %>%
-  mutate(filt = ifelse(rank == "ords" & taxon == "amph", yes = 1, no = 0)) %>% 
-  filter(filt == 0) %>% 
-  ggplot(aes(x = rank, y = (shape.yule), fill = type)) + 
-  geom_boxplot() +
-  scale_fill_manual(values = c("#335C67", "#D5A021", "#9E2A2B", "#28AFB0"), 
-                    name = "", labels = c("Empirical", "Random")) +
-  theme_minimal() +
-  scale_x_discrete(labels = c("fams" = "Family", "ords" = "Order")) +
-  theme(legend.position = c(.8, .2),
-        axis.text.x = element_text(size = 9),
-        panel.border = element_blank(), 
-        panel.background = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"), ) +
-  labs(x = "", y = "Shape (Yule)") +
-  facet_wrap(~ taxon, scales = "free",
-             labeller = labeller(taxon =  c("agar" = "Agaricomycetes", "amph" = "Amphibia", 
-                                            "bird" = "Aves", "chon" = "Chondrichthyes", 
-                                            "fern" = "Polypodiopsida", 
-                                            "fish" = "Actinopterygii",
-                                            "mamm" = "Mammalia", "squa" = "Squamata")) ) +
-  theme(strip.text.x = element_text(size = 12, hjust = 0), 
-        strip.text.y = element_text(size = 12))
-ggsave(file = "fig6_supp.png", width = 16, height = 16, units = "cm")
 
 # sampling-slicing scheme####
 tree2plot <- J2012

@@ -2,7 +2,7 @@ library(tidyverse)
 library(ggpubr)
 library(grid)
 
-# results dataframes
+# results dataframes #####
 sl_sum_stats   # sliced concensus trees
 rank_sum_stats # rank sampling consensus trees
 fract_sum_node # self-similar sampling by nodes consensus trees
@@ -31,7 +31,7 @@ gp_sl <- x %>% filter(ntips > 20) %>%
              )) + stat_ecdf(na.rm = T, pad = FALSE) + 
   theme_minimal() + theme(legend.position = "none") +
   scale_x_log10() + scale_y_log10() + annotation_logticks() + 
-  labs(title = "Time sampling", x = "", 
+  labs(title = "Temporal sampling", x = "", 
        y = "") + 
   theme(#legend.position = c(.8, .2),
     #axis.text.x = element_text(size = 7),
